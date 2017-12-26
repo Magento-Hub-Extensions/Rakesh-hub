@@ -1,0 +1,14 @@
+<?xml version="1.0"?>   
+<layout version="0.1.0">   
+   <default>
+      <reference name="head">
+          <action method="addItem"><type>skin_css</type><name>css/openpaywidget/productcalculator.css</name></action>
+         <action  method="addItem" ifconfig="widget_setup/openpayconfig/calculator_needjquery"><type>skin_js</type><name>js/openpaywidget/jquery-1.10.2.js</name></action>
+        </reference>
+    </default>
+	<catalog_product_view>
+        <reference name="alert.urls"> 
+            <block type="productcalculatorwidget/index" name="productcalculatorwidget_index" template="productcalculatorwidget/index.phtml"/>  
+        </reference>
+  </catalog_product_view>
+</layout>

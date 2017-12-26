@@ -1,0 +1,31 @@
+/*13-11-2017*/
+.catalog-category-view .item .product-image { position: relative; }
+.catalog-category-view .item .product-image:after { content: ""; position: absolute; width: 100%; height: 100%; top: 0; left: 0; background: rgba(0,0,0,0.4); opacity: 0; -webkit-transition: all 0.5s ease-in-out; -moz-transition: all 0.5s ease-in-out; transition: all 0.5s ease-in-out; z-index: 0; display: block; }
+.catalog-category-view  .product-image:hover:after, .catalog-category-view .product-image:hover .price_calc { opacity: 1; }
+.catalog-category-view .item .price_calc { width: 90%; height: 90%; text-align: center; background: rgba(255,255,255,0.6); padding: 5px; position: absolute; top: 50%; left: 50%; border: solid 1px #fff; -webkit-transform: translate(-50%, -50%); -moz-transform: translate(-50%, -50%); transform: translate(-50%, -50%); -webkit-border-radius: 100%; -moz-border-radius: 100%; border-radius: 100%; opacity: 0; -webkit-transition: all 0.5s ease-in-out; -moz-transition: all 0.5s ease-in-out; transition: all 0.5s ease-in-out; z-index: 1; }
+.catalog-category-view .item .price_calc span { display: inline-block; vertical-align: middle; position: relative; top: 50%; left: 50%; font-size: 10px; line-height: 14px; font-weight: 400; color: #333 !important; -webkit-transform: translate(-50%, -50%); -moz-transform: translate(-50%, -50%); transform: translate(-50%, -50%); }
+.catalog-category-view .item .price_calc span p { margin-bottom: 5px; }
+.catalog-category-view .item .price_calc span p:last-of-type { margin-bottom: 0; }
+.catalog-category-view .item .price_calc img { width: auto !important; height: auto !important; margin: 0 auto 5px; display: block; }
+
+/*List View*/
+.catalog-category-view .products-list .item .price_calc { width: 170px; height: 170px; }
+/*Responsive*/
+@media only screen and (max-width: 639px) {
+.catalog-category-view .products-list .item .price_calc { width: 130px; height: 130px; }
+}
+@media only screen and (max-width: 479px) {
+.catalog-category-view .products-list .item .price_calc { width: 90px; -webkit-border-radius: 0; -moz-border-radius: 0; border-radius: 0; }
+}
+
+
+/* 15-11-2017 */
+.product-shop { position: relative; }
+.product-info .price_calc_box span img, .product-shop .f-fix .price_calc_box span img { display: inline-block; vertical-align: top; margin-top: 4px; }
+.product-info .price_calc_box, .product-shop .f-fix .price_calc_box  { width: 100%; height: auto; padding: 10px; position: relative; background: #fff; text-align: center; z-index: 2; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; overflow: hidden;  -webkit-transition: all 0.5s ease-in-out; -moz-transition: all 0.5s ease-in-out; transition: all 0.5s ease-in-out; }
+.product-shop .f-fix .price_calc_box { left: auto; right: 0; text-align: left; }
+.product-info .price_calc_box span, .product-shop .f-fix .price_calc_box span { font-family: 'proxima_softthin'; position: relative; font-size: 14px; line-height: 20px; color: #4B4A49; display: block; }
+.product-info:hover .price_calc_box, .product-shop .f-fix:hover .price_calc_box { opacity: 1; }
+.product-info .price_calc_box span a, .product-shop .f-fix .price_calc_box span a  { color: #4B4A49; font-style: italic; text-decoration: none; display: block; margin-top: 8px; }
+.product-info .price_calc_box span a:hover, .product-shop .f-fix .price_calc_box span a:hover { text-decoration: none; }
+.product-info .price_calc_box span p:last-of-type, .product-shop .f-fix .price_calc_box span p:last-of-type { margin-bottom: 0; }

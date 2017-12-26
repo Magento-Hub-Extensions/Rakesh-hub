@@ -1,0 +1,20 @@
+<?php if(Mage::getStoreConfig('widget_setup/openpayconfig/openpay_enable',Mage::app()->getStore())){ ?>
+	<?php
+	$cart_subtotal = Mage::getSingleton('checkout/cart')->getQuote()->getSubtotal();
+	$openpay_min_amount = Mage::getStoreConfig('payment/openpay/min_order_total',Mage::app()->getStore());
+
+	$final_amount = 0;
+
+	if($cart_subtotal>0 && $cart_subtotal<$openpay_min_amount){
+		$final_amount = $openpay_min_amount - $cart_subtotal;
+	}
+	if (empty(Mage::getSingleton('checkout/cart')->getQuote()->getItem())) {
+		$final_amount = $openpay_min_amount;
+	}
+
+	if($final_amount > 0){
+	?>
+	<div class="openpay-productdetails-block" style="background-color: #<?php echo Mage::getStoreConfig('widget_setup/productdetails/productdetails_color',Mage::app()->getStore()); ?> "> Openpay available at an
+	additional <?php echo Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol().$final_amount;?> of purcahse</div>
+	<?php } ?>
+<?php } ?>

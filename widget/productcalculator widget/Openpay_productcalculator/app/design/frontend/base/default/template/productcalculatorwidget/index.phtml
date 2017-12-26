@@ -1,0 +1,66 @@
+<?php if($this->enablecalculator() && $this->payofmonth() && $this->deposite_percentage() && $this->enableprocalculator()){?>
+<div class="price-content">
+<?php
+$imageUrl1 = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA).'openpay-widget/icon-openpay.png';
+$imageUrl2 = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA).'openpay-widget/icon-info.png';
+$imageUrl3 = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA).'openpay-widget/details-top-right.png';
+$imageUrl4 = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA).'openpay-widget/details-bottom-left.png';?>
+
+
+<p class="top-info">Or choose to pay over time interest free <img src="<?php echo $imageUrl1;?>" alt=""><a href="javascript:void(0)"><img src="<?php echo $imageUrl2;?>" alt=""></a></p>
+<div class="details-price" style="display: none;">
+	<p><?php echo $this->__("Buy today. Zero interest. More time to pay.");?></p>
+	<span class="price-info"><?php echo $this->__("Today's payment:");?> <span><?php echo $this->depositePrice();?></span></span>
+	<ul class="widget-tabs">
+		<li class="tab-link current" data-tab="tab-1">weekly</li>
+		<li class="tab-link" data-tab="tab-2">Fortnightly</li>
+		<li class="tab-link" data-tab="tab-3">Monthly</li>
+	</ul>
+	<div id="tab-1" class="tab-content current">
+		<?php echo $this->getweeklydata();?>
+	</div>
+	<div id="tab-2" class="tab-content">
+		<?php echo $this->getfortnightlydata();?>
+	</div>
+	<div id="tab-3" class="tab-content">
+		<?php echo $this->getmonthlydata();?>
+	</div>
+	<p class="condition">Full terms and conditions available <a target="_blank" href="https://www.openpay.com.au/">here</a></p>
+</div>
+</div>
+<?php } ?>
+
+<style type="text/css">
+
+
+.details-price:before { content: ""; width: 40px; height: 40px; position: absolute; top: -1px; right: -1px; background: url('<?php echo $imageUrl3;?>') no-repeat; z-index: 0; }
+
+.details-price:after { content: ""; width: 136px; height: 102px; position: absolute; bottom: -1px; left: -1px; background: url('<?php echo $imageUrl4;?>') no-repeat; z-index: 0; }
+</style>
+
+<script type="text/javascript">
+jQuery(document).ready(function($){
+
+	$('.details-price .tab-link').click(function(){
+	//console.log('Hii');
+		var tab_id = jQuery(this).attr('data-tab');
+		$(this).closest('.widget-tabs').find('li').removeClass('current');
+		$('.tab-content').removeClass('current');
+		$(this).addClass('current');
+		$("#"+tab_id).addClass('current');
+	});
+	
+	
+	$('.top-info a').on('click',function(){
+		if ( $( ".details-price" ).is( ":hidden" ) ) {
+		$( ".details-price" ).slideDown( "slow" );
+	        } else {
+		$( ".details-price" ).slideUp( "slow" );
+		//$( ".details-price" ).hide();
+	        }
+		
+		
+	});
+
+});
+</script>

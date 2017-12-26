@@ -1,0 +1,12 @@
+@font-face {
+    font-family: 'proxima_softthin';
+    src: url('../../fonts/openpaywidget/mark_simonson_-_proxima_soft_thin-webfont.woff2') format('woff2'),
+         url('../../fonts/openpaywidget/mark_simonson_-_proxima_soft_thin-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.minicart-widget { width: 100%; margin: 0 0 20px; padding: 15px; display: inline-block; vertical-align: top; text-align: center; -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; -webkit-box-shadow: rgba(0,0,0,0.3) 2px 4px 6px; -moz-box-shadow: rgba(0,0,0,0.3) 2px 4px 6px; box-shadow: rgba(0,0,0,0.3) 2px 4px 6px;font-family: 'proxima_softthin'; }
+.minicart-widget .minicart-widget-image-outer img { margin: 0 auto 15px; }
+.minicart-widget p { font-size: 14px; line-height: 20px; color: #5c5e64; margin: 0 0 10px;font-family: 'proxima_softthin'; }
+.minicart-widget p:last-of-type { margin-bottom: 0; }

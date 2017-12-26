@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<config>
+	  <tabs>
+        <openpay_widget translate="label" module="checkoutwidget">
+            <label>Openpay Widget</label>
+            <sort_order>600</sort_order>
+        </openpay_widget>
+	  </tabs>
+	  <sections>
+		<widget_setup  translate="label" module="checkoutwidget">                    
+		<label>Widget Setup</label>
+		<tab>openpay_widget</tab>
+		<frontend_type>text</frontend_type>
+		<sort_order>0</sort_order>
+		<show_in_default>1</show_in_default>
+		<show_in_website>1</show_in_website>
+		<show_in_store>1</show_in_store>            
+		<groups>
+						
+		<openpayconfig translate="label"> 
+			<label>Openpay Widget Configuration</label>
+			<frontend_type>text</frontend_type>
+			<sort_order>0</sort_order>
+			<show_in_default>1</show_in_default>
+			<show_in_website>1</show_in_website>
+			<show_in_store>1</show_in_store>
+			 <fields>
+			  <openpay_enable translate="label">
+			    <label>Enable Calculator widget</label>
+			    <frontend_type>select</frontend_type>
+			    <source_model>adminhtml/system_config_source_enabledisable</source_model>
+			    <sort_order>0</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			  </openpay_enable>
+			</fields>
+		</openpayconfig>				
+						
+		<checkoutcalculator translate="label"> 
+		        <label>Checkout Calculator  Widget</label>
+		        <frontend_type>text</frontend_type>
+		        <sort_order>5</sort_order>
+		        <show_in_default>1</show_in_default>
+		        <show_in_website>1</show_in_website>
+		        <show_in_store>1</show_in_store>
+		 <fields>
+                          <checkoutcal_status translate="label">
+                            <label>Checkout Calculator Status</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                          </checkoutcal_status>
+		  
+		   <manage_checkout_widget_label translate="label">
+                            <label>Manage Checkout Widget Label</label>
+		    <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                          </manage_checkout_widget_label>
+		   
+		   <checkout_widget_imagefield> <!-- Make up a field key -->
+                            <label>Manage Checkout Widget Image</label>
+                            <frontend_type>image</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_image</backend_model>
+                            <upload_dir config="system/filesystem/media" scope_info="1">uploaddir</upload_dir> <!-- would upload into media/uploaddir -->
+                            <base_url type="media" scope_info="1">uploaddir</base_url> <!-- same as previous line -->
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </checkout_widget_imagefield>
+		  
+                          <deposit_percentage translate="label">
+                            <label>Deposit Amount</label>
+		    <frontend_type>text</frontend_type>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                          </deposit_percentage>
+                          <pay_of_month translate="label">
+                            <label>Pay of Month</label>
+		    <frontend_type>text</frontend_type>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                          </pay_of_month>
+		 </fields>
+		</checkoutcalculator>
+				   
+		</groups>
+		</widget_setup>
+	  </sections>
+</config>

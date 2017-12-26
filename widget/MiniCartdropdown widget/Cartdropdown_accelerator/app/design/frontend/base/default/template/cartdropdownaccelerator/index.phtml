@@ -1,0 +1,20 @@
+
+<?php 
+$imageUrl = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA).'openpaywidget/icon-openpay-minicart.png';
+
+$price = $this->additionalprice();?>
+
+<?php if($this->enablecalculator() && $this->enablecartacceslarator()){?>
+
+<div class="minicart-widget">
+
+<span class="minicart-widget-image-outer"><img src="<?php echo $imageUrl;?>" class="minicart-widget-image" alt="" /></span>
+
+<div class="minicart-widget-content">
+<p><?php echo 'Spend an additional '. $price. ' and use Openpay to pay over time, interest free.';?></p>
+</div>
+	
+	
+</div>
+<?php }?>
+

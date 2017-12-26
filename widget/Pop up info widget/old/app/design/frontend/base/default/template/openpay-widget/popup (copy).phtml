@@ -1,0 +1,75 @@
+<script>
+ /* jQuery(document).ready(function($){
+      var divs = $('.header-ad');
+
+      function fade() {
+          var current = $('.current');
+          var currentIndex = divs.index(current),
+              nextIndex = currentIndex + 1;
+          if (nextIndex >= divs.length) {
+              nextIndex = 0;
+          }
+          var next = divs.eq(nextIndex);
+          next.stop().fadeIn(1000, function () {
+              $(this).addClass('current');
+          });
+          current.stop().fadeOut(1000, function () {
+              $(this).removeClass('current');
+              setTimeout(fade, 4000);
+          });
+      }
+      setTimeout(fade, 4000);
+  });*/
+</script>
+
+<?php if(Mage::getStoreConfig('widget_setup/openpayconfig/openpay_enable',Mage::app()->getStore())){ ?>
+
+<div id="header-top-ad">
+    <div class="header-ad current" style="background: #<?php echo Mage::getStoreConfig('widget_setup/addwidget/popup_colour_1',Mage::app()->getStore()); ?>">
+        <div class="container">
+          <div class="content-text">
+            <img src="<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA).'catalog/product/watermark/'.Mage::getStoreConfig('widget_setup/addwidget/openpay_logo_1',Mage::app()->getStore()); ?>" width="90" />
+            <span style="color: #<?php echo Mage::getStoreConfig('widget_setup/addwidget/popup_font_colour_1',Mage::app()->getStore()); ?>;"> <?php echo Mage::getStoreConfig('widget_setup/addwidget/popup_text_1',Mage::app()->getStore()); ?> <a href="javascript:void(0);" data-toggle="modal" data-target="#myModal" >Learn more</a></span>
+          </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog">
+      <div class="modal-dialog">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Modal Header</h4>
+          </div>
+          <div class="modal-body">
+            <p>Some text in the modal.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+   <?php /* ?> <div class="header-ad" style="background-color: #<?php echo Mage::getStoreConfig('widget_setup/addwidget/popup_colour_2',Mage::app()->getStore()); ?>">
+        <div class="container">
+          <div class="content-text">
+            <img src="<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA).'catalog/product/watermark/'.Mage::getStoreConfig('widget_setup/addwidget/openpay_logo_2',Mage::app()->getStore()); ?>" width="90" />
+            <span style="color: #<?php echo Mage::getStoreConfig('widget_setup/addwidget/popup_font_colour_2',Mage::app()->getStore()); ?>; "> <?php echo Mage::getStoreConfig('widget_setup/addwidget/popup_text_2',Mage::app()->getStore()); ?></span>
+          </div>  
+        </div>
+    </div>
+    <div class="header-ad" style="background: #<?php echo Mage::getStoreConfig('widget_setup/addwidget/popup_colour_3',Mage::app()->getStore()); ?>">
+        <div class="container">
+          <div class="content-text">
+            <img src="<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA).'catalog/product/watermark/'.Mage::getStoreConfig('widget_setup/addwidget/openpay_logo_3',Mage::app()->getStore()); ?>" width="90" />
+            <span style="color: #<?php echo Mage::getStoreConfig('widget_setup/addwidget/popup_font_colour_3',Mage::app()->getStore()); ?>;"> <?php echo Mage::getStoreConfig('widget_setup/addwidget/popup_text_3',Mage::app()->getStore()); ?></span>
+          </div>
+        </div>
+    </div> <?php */ ?>
+</div>
+
+<?php } ?>

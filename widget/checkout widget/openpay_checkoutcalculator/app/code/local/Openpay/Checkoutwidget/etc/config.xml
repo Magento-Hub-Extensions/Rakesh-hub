@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <Openpay_Checkoutwidget>
+      <version>0.1.0</version>
+    </Openpay_Checkoutwidget>
+  </modules>
+  <frontend>
+    <routers>
+      <checkoutwidget>
+        <use>standard</use>
+          <args>
+            <module>Openpay_Checkoutwidget</module>
+            <frontName>checkoutwidget</frontName>
+          </args>
+      </checkoutwidget>
+    </routers>
+		<layout>
+		  <updates>
+			<checkoutwidget>
+			  <file>checkoutwidget.xml</file>
+			</checkoutwidget>
+		  </updates>
+		</layout>
+		
+	<!--	<events>
+    <sales_quote_payment_import_data_before>
+        <observers>
+            <checkoutwidget_payment>
+								<type>singleton</type>
+                <class>openpay_checkoutwidget/observer</class>
+                <method>getpayment</method>
+            </checkoutwidget_payment>
+        </observers>
+    </sales_quote_payment_import_data_before>
+		</events>-->
+		
+		
+  </frontend>
+	
+	
+  <global>
+		<!-- <resources>
+			<openpay_checkoutwidget_setup>
+								<setup>
+										<module>Openpay_Checkoutwidget</module>
+								</setup>
+						</openpay_checkoutwidget_setup>
+			</resources>-->
+		 
+		<models>
+		<openpay_checkoutwidget>
+				<class>Openpay_Checkoutwidget_Model</class>
+		</openpay_checkoutwidget>
+		<openpay>
+				<rewrite>
+					<payment_openpay>Openpay_Checkoutwidget_Model_Payment_Openpay</payment_openpay>
+				</rewrite>
+			</openpay>
+   </models>
+		
+    <helpers>
+      <checkoutwidget>
+        <class>Openpay_Checkoutwidget_Helper</class>
+      </checkoutwidget>
+    </helpers>
+	<blocks>
+		
+		<checkout>
+          <rewrite>
+            <onepage_payment_methods>Openpay_Checkoutwidget_Block_Onepage_Payment_Methods</onepage_payment_methods>
+          </rewrite>
+      </checkout>
+		
+	  <checkoutwidget>
+		<class>Openpay_Checkoutwidget_Block</class>
+	  </checkoutwidget>
+		
+		 
+		
+		
+	</blocks>
+	
+	
+  </global>
+</config> 

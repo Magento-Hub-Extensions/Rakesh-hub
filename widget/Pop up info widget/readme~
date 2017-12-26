@@ -1,0 +1,8 @@
+Steps :
+
+1. Upload theme files to the current theme.
+2. Add the following code in <YOUR THEME>/template/page/html/header.phtml file of current theme.
+
+	 <?php echo $this->getChildHtml('popup_widget') ?>
+
+   Add it before '<header id="header" class="page-header">'.

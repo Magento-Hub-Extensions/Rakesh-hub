@@ -1,0 +1,57 @@
+
+.product-view .price-content{font-family: 'proxima_softthin'; font-weight: normal;font-style: normal;margin: auto 0 0 0;}
+.product-view .top-info{clear: both;}
+
+* { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; outline: none; }
+body { margin: 0; padding: 0; font-family: 'proxima_softthin'; }
+img { max-width: 100%; }
+
+@font-face {
+    font-family: 'proxima_softthin';
+    src: url('../../fonts/openpaywidget/mark_simonson_-_proxima_soft_thin-webfont.woff2') format('woff2'),
+         url('../../fonts/openpaywidget/mark_simonson_-_proxima_soft_thin-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+.zoomContainer { z-index: 1; }
+.price-content { max-width: 420px; position: relative; margin: 0 auto; }
+.top-info { display: block; text-align: center; margin: 0 auto 13px; font-size: 16px; line-height: 22px; color: #bababb; }
+.top-info img, .top-info a { margin-left: 10px; display: inline-block; }
+.top-info a { vertical-align: bottom; }
+.details-price { width: 100%; position: relative; margin: 0 auto 20px; padding: 12px 20px 22px; background: #f6f6f7; border: solid 1px #f6f6f6; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; overflow: hidden; }
+.details-price * { position: relative; font-family: 'proxima_softthin'; }
+.details-price p { font-size: 17px; line-height: 23px; color: #5c5e64; margin: 0 0 10px; }
+.details-price .price-info { display: block; float: left !important; padding: 0 0 0 20px !important; font-size: 14px; line-height: 26px; color: #6c6565; margin-bottom: 15px !important; position: relative; }
+.details-price .price-info:before { content: ""; position: absolute; width: 10px; height: 10px; background: #1DD2B6; top: 50%; left: 0; -webkit-border-radius: 50px; -moz-border-radius: 50px; border-radius: 50px; -webkit-transform: translateY(-50%); -moz-transform: translateY(-50%); transform: translateY(-50%); }
+
+.details-price .price-info span { font-size: 26px; display: inline-block; vertical-align: top; color: #79787a; font-weight: 500; padding-left: 10px; }
+
+.details-price ul.widget-tabs { width: 100%; display: inline-block; vertical-align: top; text-align: center; margin-bottom: 20px; }
+.details-price ul.widget-tabs li { background: none; font-size: 14px; line-height: 20px; color: #a6a7ab; display: inline-block; padding: 10px 14px; cursor: pointer; text-transform: uppercase; border-bottom: solid 2px transparent; }
+.details-price ul.widget-tabs li.current { color: #77aab2; border-color: #77aab2; }
+.details-price .tab-content { display: none; width: 100%; max-height: 170px; padding: 0 15px; width: 100%; overflow-y: auto; margin-bottom: 10px; z-index: 1; }
+.details-price .tab-content.current { display: inherit; }
+
+.details-price .price-sec { width: 100%; margin: 0 0 8px; padding: 10px 6px 5px; display: inline-block; vertical-align: top; border: solid 1px #83c1bb; background: #fff; -webkit-border-radius: 4px; }
+.details-price .price-sec:last-of-type { margin-bottom: 0; }
+.details-price .price-sec ul li { width: 33.33%; float: left; text-align: center; padding: 0 5px; font-size: 15px; line-height: 21px; color: #babbbc; }
+.details-price .price-sec ul li.month span { font-size: 34px; color: #80beb9; display: inline-block; vertical-align: top; margin-right: 8px; }
+.details-price .price-sec ul li.price-box { color: #babbbc; }
+
+.details-price .condition { text-align: center; font-size: 16px; line-height: 22px; color: #000; margin: 0; font-style: italic; z-index: 1; }
+.details-price .condition a { color: #000; text-decoration: underline; }
+.details-price .condition a:hover { color: #51949d; }
+
+.details-price .price-sec:hover { background: rgb(131,193,187); /* Old browsers */
+background: -moz-linear-gradient(left, rgba(131,193,187,1) 0%, rgba(80,147,156,1) 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(left, rgba(131,193,187,1) 0%,rgba(80,147,156,1) 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to right, rgba(131,193,187,1) 0%,rgba(80,147,156,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#83c1bb', endColorstr='#50939c',GradientType=1 ); /* IE6-9 */ }
+.details-price .price-sec:hover ul li, .details-price .price-sec:hover ul li span { color: #fff; }
+
+#checkout-step-payment .price-content { max-width: 500px; margin: 20px 0; }
+
+
+
+
+

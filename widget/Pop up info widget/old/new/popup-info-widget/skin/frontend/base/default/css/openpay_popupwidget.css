@@ -1,0 +1,174 @@
+@font-face {
+    font-family: 'proxima_softregular';
+    src: url('../fonts/popupwidget/mark_simonson_-_proxima_soft-webfont.eot');
+    src: url('../fonts/popupwidget/mark_simonson_-_proxima_soft-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/popupwidget/mark_simonson_-_proxima_soft-webfont.woff2') format('woff2'),
+         url('../fonts/popupwidget/mark_simonson_-_proxima_soft-webfont.woff') format('woff'),
+         url('../fonts/popupwidget/mark_simonson_-_proxima_soft-webfont.ttf') format('truetype'),
+         url('../fonts/popupwidget/mark_simonson_-_proxima_soft-webfont.svg#proxima_softregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+@font-face {
+    font-family: 'proxima_softthin';
+    src: url('../fonts/popupwidget/mark_simonson_-_proxima_soft_thin-webfont.woff2') format('woff2'),
+         url('../fonts/popupwidget/mark_simonson_-_proxima_soft_thin-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+#header-top-ad {
+        position: relative;
+        height: 40px;
+        overflow: hidden;
+        /*background: #71dbd4; background: #F5F6F7;*/
+        font-family: 'proxima_softregular';
+    }
+    .header-ad {
+    display: none;
+    /* height: 40px; */
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    padding: 7px 0px 5px;
+    transform: translateY(-100%);
+    -webkit-transform: translateY(-100%);
+}
+
+.content-text{-moz-transition:all 300ms ease;-webkit-transition:all 300ms ease;transition:all 300ms ease;/* -moz-transform:scale(1.5);-webkit-transform:scale(1.5);transform:scale(1.5); */font-size: 17px;padding: 0; margin: 0 0 2px 0; }
+.current{display: block; animation: slide-in 0.6s forwards; -webkit-animation: slide-in 0.6s forwards;}
+/* .current .content-text{-webkit-transform:scale(1.0);-moz-transform:scale(1.0);transform:scale(1.0);} */
+@keyframes slide-in {
+  100% { transform: translateY(0%); }
+}
+#header-top-ad .content-text img {
+    margin-right: 10px;
+    display: inline-block;
+    vertical-align: top;
+    line-height: 20px;
+    margin-top:4px;
+    width: auto;
+    height: 19px;
+}
+
+@media only screen and (max-width: 767px) {
+.header-ad .content-text{text-align:center; padding:0;}
+.header-ad .content-text span{display:inline-block; width:100%;}
+#header-top-ad, .header-ad{height: 75px;}
+}
+@media only screen and (max-width: 639px) {
+#header-top-ad{height:90px}
+.header-ad{height:90px}
+.header-ad a{display: inline-block;margin:0 auto;padding: 0;}
+}
+
+.price_calc span {
+    font-family: 'proxima_softregular';
+    font-weight: bold;
+    animation-name: flash;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-play-state: running;
+}
+
+.openpay-productdetails-block, .openpay-display-block{clear: both; width: 100%; color: red !important; border:1px solid red; padding: 10px; margin: 0 0 7px;}
+
+.price_calc span img { display: inline-block; vertical-align: top; margin-top: 4px; }
+
+.modal-dialog.openpay-dialog{width: 680px;font-family: 'proxima_softthin';}
+.main-outer-openpay-modal { max-width: 680px; margin: 0 auto; padding: 40px 30px 30px 30px; position: relative; background: #f6f5f5; text-align: center; -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; overflow: hidden; }
+.main-outer-openpay-modal:before { content: ""; width: 124px; height: 97px; position: absolute; top: 0; right: 0; background: url('../images/popupwidget/top-right.png') no-repeat; }
+.main-outer-openpay-modal:after { content: ""; width: 83px; height: 76px; position: absolute; top: 0; left: 0; background: url('../images/popupwidget/top-left.png') no-repeat; }
+.main-outer-openpay-modal .bottom-left { width: 124px; height: 90px; position: absolute; bottom: 0; left: 0; background: url('../images/popupwidget/bottom-left.png') no-repeat; }
+
+.main-outer-openpay-modal .btn { position: absolute; top: 20px; right: 20px; background: url('../images/popupwidget/close.png') no-repeat; font-size: 0; border: none; padding: 16px; }
+.main-outer-openpay-modal .btn:hover { background-color: transparent; }
+.main-outer-openpay-modal .btn-default.focus, .main-outer-openpay-modal .btn-default:focus, .main-outer-openpay-modal .btn.active, .main-outer-openpay-modal .btn:active, .main-outer-openpay-modal .btn-default:active:focus{ background-color: transparent; border:0;-moz-box-shadow: none;-webkit-box-shadow: none;box-shadow: none;outline: 0;}
+
+
+.main-outer-openpay-modal .logo { width: 40%; display: inline-block; vertical-align: top; margin: 0 auto 10px; float: none; max-height: auto; min-height: auto; padding: 0; }
+.main-outer-openpay-modal p { font-size: 17px; line-height: 23px; color: #010101; margin: 0 0 15px; }
+.main-outer-openpay-modal .main-body { width: 100%; background: #fff;margin-top: 20px; margin-bottom: 15px; padding: 30px 48px; position: relative; -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; z-index: 1; -webkit-box-shadow: rgba(0,0,0,0.1) 0 2px 4px; -moz-box-shadow: rgba(0,0,0,0.1) 0 2px 4px; box-shadow: rgba(0,0,0,0.1) 0 2px 4px;display: inline-block; }
+.main-outer-openpay-modal .main-body h2 { font-size: 22px; line-height: 28px; margin: 0 0 20px;font-family: 'proxima_softthin';text-transform: none; }
+.main-outer-openpay-modal .main-body .step-sec { width: 100%; display: inline-block; vertical-align: top; margin: 0 0 20px; padding: 0; }
+.main-outer-openpay-modal .main-body .step-sec li { width: 30.5%; min-height: auto; margin-left: 4%; float: left; padding: 1px; position: relative; -webkit-border-radius: 20px; -moz-border-radius: 20px; border-radius: 20px; overflow: hidden; list-style-type: none;
+background: rgb(48,133,245); /* Old browsers */
+background: -moz-linear-gradient(left, rgba(48,133,245,1) 0%, rgba(59,222,213,1) 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(left, rgba(48,133,245,1) 0%,rgba(59,222,213,1) 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to right, rgba(48,133,245,1) 0%,rgba(59,222,213,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3085f5', endColorstr='#3bded5',GradientType=1 ); /* IE6-9 */
+ }
+.main-outer-openpay-modal .main-body .step-sec li:first-child { margin-left: 0; }
+.main-outer-openpay-modal .main-body .step-sec li .inner { width: 100%; height: 100%; padding: 40px 10px; background: #fff; -webkit-border-radius: 20px; -moz-border-radius: 20px; border-radius: 20px; }
+.main-outer-openpay-modal .main-body .step-sec li .step { width: 50px; height: 50px; padding: 1px; background: #000; display: inline-block; vertical-align: top; margin-bottom: 10px; -webkit-border-radius: 40px; -moz-border-radius: 40px; border-radius: 40px; background: rgb(48,133,245); /* Old browsers */
+background: -moz-linear-gradient(left, rgba(48,133,245,1) 0%, rgba(59,222,213,1) 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(left, rgba(48,133,245,1) 0%,rgba(59,222,213,1) 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to right, rgba(48,133,245,1) 0%,rgba(59,222,213,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3085f5', endColorstr='#3bded5',GradientType=1 ); /* IE6-9 */ }
+
+.main-outer-openpay-modal .main-body .step-sec li .step .step-inner { width: 100%; height: 100%; font-size: 20px; line-height: 50px; font-weight: 700; background: #fff; -webkit-border-radius: 40px; -moz-border-radius: 40px; border-radius: 40px;   }
+// .main-outer-openpay-modal .main-body .step-sec li .step .step-inner span { background: -webkit-linear-gradient(#eee, #333); background: linear-gradient(#00d0ba, #0098e3); background-color: #fff; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-fill-color: transparent; }
+.main-outer-openpay-modal .main-body .step-sec li p { margin: 0; font-size: 14px; line-height: 20px; min-height: 60px; }
+.main-outer-openpay-modal .main-body p { margin-bottom: 30px; }
+.main-outer-openpay-modal .main-body .enquery { margin: 0; padding: 0; width: 100%; display: inline-block; vertical-align: top; }
+.main-outer-openpay-modal .main-body .enquery li { display: inline-block; vertical-align: top; margin: 0 0 10px 10px; padding-left: 20px; list-style-type: none; font-size: 15px; line-height: 19px; color: #020202; position: relative; }
+.main-outer-openpay-modal .main-body .enquery li:before { content: ""; width: 25px; height: 25px; position: absolute; top: 2px; left: 0; background: url('../images/popupwidget/icon-bullet.png') no-repeat; }
+
+.main-outer-openpay-modal .terms, .main-outer-openpay-modal .copyright, .main-outer-openpay-modal .site-link { margin: 0; font-size: 14px; line-height: 20px; color: #000; display: inline-block; vertical-align: top; position: relative; z-index: 2; }
+.main-outer-openpay-modal .terms { float: left; }
+.main-outer-openpay-modal .site-link { float: right; text-transform: uppercase; }
+.main-outer-openpay-modal .copyright { font-size: 16px; color: #666; }
+
+/* Responsive */
+@media only screen and (max-width: 980px){
+    .modal-dialog.openpay-dialog{width: auto;}
+}
+
+@media only screen and (max-width: 767px) {
+.main-outer-openpay-modal { max-width: 90%; padding: 50px 15px 20px 15px; }
+.main-outer-openpay-modal .logo { width: 40%; margin-bottom: 10px; }
+.main-outer-openpay-modal .close { width: 7%; top: 20px; right: 20px; }
+.main-outer-openpay-modal p { font-size: 18px; line-height: 24px; margin-bottom: 15px; }
+.main-outer-openpay-modal .main-body h2 { font-size: 24px; line-height: 30px; margin: 0 0 15px; }
+.main-outer-openpay-modal .main-body .step-sec { margin-bottom: 20px; }
+.main-outer-openpay-modal .main-body .step-sec li { width: 100%; margin: 0 0 15px; }
+.main-outer-openpay-modal .main-body .step-sec li:last-child { margin-bottom: 0; }
+.main-outer-openpay-modal .main-body p { margin-bottom: 20px; }
+.main-outer-openpay-modal .main-body .enquery li { font-size: 16px; line-height: 22px; }
+.main-outer-openpay-modal .main-body .step-sec li p { min-height: auto; }
+}
+@media only screen and (max-width: 639px) {
+.main-outer-openpay-modal .main-body { margin-bottom: 15px; padding: 15px; }
+.main-outer-openpay-modal .main-body h2 { font-size: 20px; line-height: 26px; }
+.main-outer-openpay-modal .main-body .step-sec li .inner { padding: 20px; }
+.main-outer-openpay-modal .terms, .main-outer-openpay-modal .copyright, .main-outer-openpay-modal .site-link { display: block; float: none; margin-bottom: 5px; }
+.main-outer-openpay-modal .site-link { margin-bottom: 0; }
+.main-outer-openpay-modal p { font-size: 14px; line-height: 20px; }
+}
+@media only screen and (max-width: 479px) {
+.main-outer-openpay-modal .main-body .enquery li { width: 100%; margin-left: 0; text-align: left; }
+}
+
+.header-ad { padding: 0;} 
+.content-text .text-wrapper { width: 100%; margin: 0 auto; padding: 8px 0px; /* background: #ededed; */ position: relative; overflow: hidden;  /* -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; */  } 
+/* .content-text .text-wrapper:before { content: ""; width: 30px; height: 24px; position: absolute; bottom: 0; right: 0; background: url('../images/header-top-left.png') no-repeat; }
+.content-text .text-wrapper:after { content: ""; width: 30px; height: 28px; position: absolute; top: 0; left: 0; background: url('../images/header-top-right.png') no-repeat; -webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg); transform: rotate(-90deg); } */
+.header-ad a{outline: none;color: #9a989c;font-style: italic; margin: 5px 0 5px 30px; position: relative;}
+.header-ad a:after{content: ""; display: inline-block; width: 12px; height: 12px; background: url('../images/popupwidget/right-arrow.png') no-repeat center;vertical-align: baseline; margin-left: 8px;}
+
+.header-ad a.openpay-modal-view:visited,
+.header-ad a.openpay-modal-view:focus,
+.header-ad a.openpay-modal-view:active {
+    color: #9a989c;
+    text-decoration: none;
+    outline: none;
+}
+/* .header-ad .container{width: 100%;padding: 0;margin: 0 auto;} */
+
+@media only screen and (max-width:980px){
+    .content-text .text-wrapper{width: 100%;}
+    .header-ad a{margin-left: 5px;}
+}
+

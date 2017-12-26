@@ -1,0 +1,288 @@
+<?xml version="1.0"?>
+<config>
+    <tabs>
+    <openpay_widget translate="label" module="addwidget">
+            <label>Openpay Widget</label>
+            <sort_order>600</sort_order>
+        </openpay_widget>
+    </tabs>
+    <sections>
+    <widget_setup  translate="label" module="addwidget">                    
+    <label>Widget Setup</label>
+    <tab>openpay_widget</tab>
+    <frontend_type>text</frontend_type>
+    <sort_order>1</sort_order>
+    <show_in_default>1</show_in_default>
+    <show_in_website>1</show_in_website>
+    <show_in_store>1</show_in_store>  
+          <groups>
+            <openpayconfig translate="label"> 
+              <label>Openpay Widget Configuration</label>
+              <frontend_type>text</frontend_type>
+              <sort_order>1</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>1</show_in_store>
+                <fields>
+                  <openpay_enable translate="label">
+                    <label>Enable Widget</label>
+                    <frontend_type>select</frontend_type>
+                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                    <sort_order>1</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                  </openpay_enable>
+               </fields>
+             </openpayconfig>
+          </groups>          
+          <groups>
+            <addwidget translate="label"> 
+              <label>Pop Up Info Text Configuration (Header Top)</label>
+              <frontend_type>text</frontend_type>
+              <sort_order>2</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>1</show_in_store>
+                <fields>
+                  <popup_text_1 translate="label">
+                    <label>Popup Text 1</label>
+                    <frontend_type>textarea</frontend_type>
+                    <sort_order>1</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                  </popup_text_1>
+                  <openpay_logo_1 translate="label">
+                    <label>Openpay Logo 1</label>
+                    <frontend_type>image</frontend_type>
+                    <backend_model>adminhtml/system_config_backend_image</backend_model>
+                    <upload_dir config="system/filesystem/media" scope_info="1">catalog/product/watermark</upload_dir>
+                    <base_url type="media" scope_info="1">catalog/product/watermark</base_url>
+                    <sort_order>2</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                  </openpay_logo_1>
+                  <popup_colour_1 translate="label">
+                    <label>Popup Bg Colour 1</label>
+                    <frontend_type>text</frontend_type>
+                    <validate>color</validate>
+                    <sort_order>3</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <comment>Specify first popup color.</comment>
+                  </popup_colour_1>
+                  <popup_font_colour_1 translate="label">
+                    <label>Popup font Colour 1</label>
+                    <frontend_type>text</frontend_type>
+                    <validate>color</validate>
+                    <sort_order>4</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <comment>Specify first popup font color.</comment>
+                  </popup_font_colour_1>
+
+
+                  <popup_text_2 translate="label">
+                    <label>Popup Text 2</label>
+                    <frontend_type>textarea</frontend_type>
+                    <sort_order>5</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                  </popup_text_2>
+                  <openpay_logo_2 translate="label">
+                    <label>Openpay Logo 2</label>
+                    <frontend_type>image</frontend_type>
+                    <backend_model>adminhtml/system_config_backend_image</backend_model>
+                    <upload_dir config="system/filesystem/media" scope_info="1">catalog/product/watermark</upload_dir>
+                    <base_url type="media" scope_info="1">catalog/product/watermark</base_url>
+                    <sort_order>6</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                  </openpay_logo_2>
+                  <popup_colour_2 translate="label">
+                    <label>Popup Bg Colour 2</label>
+                    <frontend_type>text</frontend_type>
+                    <validate>color</validate>
+                    <sort_order>7</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <comment>Specify Second popup color.</comment>
+                  </popup_colour_2>
+                  <popup_font_colour_2 translate="label">
+                    <label>Popup font Colour 2</label>
+                    <frontend_type>text</frontend_type>
+                    <validate>color</validate>
+                    <sort_order>8</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <comment>Specify Second popup font color.</comment>
+                  </popup_font_colour_2>
+
+
+                  <popup_text_3 translate="label">
+                    <label>Popup Text 3</label>
+                    <frontend_type>textarea</frontend_type>
+                    <sort_order>9</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                  </popup_text_3>
+                  <openpay_logo_3 translate="label">
+                    <label>Openpay Logo 3</label>
+                    <frontend_type>image</frontend_type>
+                    <backend_model>adminhtml/system_config_backend_image</backend_model>
+                    <upload_dir config="system/filesystem/media" scope_info="1">catalog/product/watermark</upload_dir>
+                    <base_url type="media" scope_info="1">catalog/product/watermark</base_url>
+                    <sort_order>10</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                  </openpay_logo_3>
+                  <popup_colour_3 translate="label">
+                    <label>Popup Bg Colour 3</label>
+                    <frontend_type>text</frontend_type>
+                    <validate>color</validate>
+                    <sort_order>11</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <comment>Specify third popup color.</comment>
+                  </popup_colour_3>
+                  <popup_font_colour_3 translate="label">
+                    <label>Popup font Colour 3</label>
+                    <frontend_type>text</frontend_type>
+                    <validate>color</validate>
+                    <sort_order>12</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <comment>Specify third popup font color.</comment>
+                  </popup_font_colour_3>
+
+                  <!--<mouse_over_text translate="label">
+                    <label>Mouse Over Text</label>
+                    <frontend_type>textarea</frontend_type>
+                    <sort_order>13</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                  </mouse_over_text>
+                  <deposit_amount translate="label">
+                    <label>Deposit Amount</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>14</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                  </deposit_amount>-->
+               </fields>
+             </addwidget>
+          </groups>
+          <groups>
+            <pricecalculator translate="label"> 
+              <label>Price Calculator Widget</label>
+              <frontend_type>text</frontend_type>
+              <sort_order>3</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>1</show_in_store>
+                <fields>
+                  <deposit_percentage translate="label">
+                    <label>Deposit Percentage</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>13</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                  </deposit_percentage>
+                  <pay_of_month translate="label">
+                    <label>Pay of month</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>14</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                  </pay_of_month>
+                  <price_calculator_color translate="label">
+                    <label>Choose Text Colour</label>
+                    <frontend_type>text</frontend_type>
+                    <validate>color</validate>
+                    <sort_order>15</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                  </price_calculator_color>
+                </fields>
+             </pricecalculator>
+          </groups>
+          <groups>
+            <mouseover translate="label"> 
+              <label>Mouse Over Widget</label>
+              <frontend_type>text</frontend_type>
+              <sort_order>4</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>1</show_in_store>
+                <fields>
+                  <mouseover_color translate="label">
+                    <label>Choose Bg Colour</label>
+                    <frontend_type>text</frontend_type>
+                    <validate>color</validate>
+                    <sort_order>16</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                  </mouseover_color>
+                  <mouseover_font_color translate="label">
+                    <label>Choose Text Colour</label>
+                    <frontend_type>text</frontend_type>
+                    <validate>color</validate>
+                    <sort_order>17</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                  </mouseover_font_color>
+                </fields>
+             </mouseover>
+          </groups>
+          <groups>
+            <productdetails translate="label"> 
+              <label>Productdetails Color Widget</label>
+              <frontend_type>text</frontend_type>
+              <sort_order>5</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>1</show_in_store>
+                <fields>
+                  <productdetails_color translate="label">
+                    <label>Choose Bg Colour</label>
+                    <frontend_type>text</frontend_type>
+                    <validate>color</validate>
+                    <sort_order>18</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                  </productdetails_color>
+                  <productdetails_font_color translate="label">
+                    <label>Choose Bg Colour</label>
+                    <frontend_type>text</frontend_type>
+                    <validate>color</validate>
+                    <sort_order>19</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                  </productdetails_font_color>
+                </fields>
+             </productdetails>
+          </groups>
+    </widget_setup>
+    </sections>
+</config>

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+  <addwidget_adminhtml_addwidgetbackend_index>
+	<reference name="content">
+	  <block type="addwidget/adminhtml_addwidgetbackend" name="addwidgetbackend" template="addwidget/addwidgetbackend.phtml"/>
+	</reference>
+  </addwidget_adminhtml_addwidgetbackend_index>
+  <adminhtml_system_config_edit>
+  <reference name="head">
+   <action method="addJs"><file>jscolor/jscolor.js</file></action>
+  </reference>
+ </adminhtml_system_config_edit>
+</layout>
