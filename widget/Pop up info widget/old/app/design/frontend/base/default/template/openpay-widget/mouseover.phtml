@@ -1,4 +1,0 @@
-<?php if(Mage::getStoreConfig('widget_setup/openpayconfig/openpay_enable',Mage::app()->getStore())){ ?>
-<div class="openpay-display-block" style="background-color: #<?php echo Mage::getStoreConfig('widget_setup/mouseover/mouseover_color',Mage::app()->getStore()); ?> ">With Openpay available above <?php echo Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol().Mage::getStoreConfig('payment/openpay/min_order_total',Mage::app()->getStore());?> of purcahse</div>
-
-<?php } ?>

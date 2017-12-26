@@ -1,7 +1,0 @@
-Openpay_AddWidgets module is for displaying widgets regarding Openpay promotion. This module is compatible with Magento version 1.x.
-This module is functional if and only if the Openpay Payment Method module(Aopen_Openpay) is already running in your website.
-
-This module represents the following widgets :
-1. Pop up info widget - will appear on the top of all contents for all pages
-
-For setting up this module, please refer to 'installation-guide.pdf' available inside this module.
