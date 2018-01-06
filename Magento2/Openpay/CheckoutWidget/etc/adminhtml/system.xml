@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="openpay_widgets" translate="label" sortOrder="999"> 
+            <!-- add a new tab with id helloworld -->
+            <label>Openpay Widgets</label>
+        </tab>
+        <section id="openpay_widget" translate="label" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+            <!-- add a new section with id helloworld and for tab helloworld -->
+            <class>separator-top</class>
+            <label>Settings</label>
+            <tab>openpay_widgets</tab>
+            <resource>Openpay_Widget::test_config</resource>
+            <group id="active_display" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                <!-- add a new group with id active display -->
+                <label>Openpay Widgets Configuration</label>
+                <field id="scope" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <!-- add a new field with id scope -->
+                    <label>Enable Widgets</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
+            <group id="checkout_widget_details" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Checkout  Widget</label>
+                <field id="enable_checkoutwidget" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <!-- add a new field with id scope -->
+                    <label>Enable Checkout  Widget</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                
+                <field id="manage_checkoutwidget_label" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <!-- add a new field with id scope -->
+                    <label>Manage Checkout Widget Label</label>
+                </field>
+                
+                
+                 <field id="manage_checkoutwidget_image" translate="label" type="image" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">
+                   <label>Manage Checkout Widget Label</label>
+                    <backend_model>Openpay\CheckoutWidget\Model\Config\Backend\Image</backend_model>
+                    <base_url type="media" scope_info="1">openpay/checkoutwidget</base_url>
+                </field>
+                
+                <field id="manage_checkoutwidget_depositamount" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <!-- add a new field with id scope -->
+                    <label>Enter Deposit Amount(%)</label>
+                </field>
+                
+                <field id="manage_checkoutwidget_payofmonth" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <!-- add a new field with id scope -->
+                    <label>Enter Pay of Month</label>
+                </field>
+               
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,337 @@
+<?php $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+if($objectManager->create('Openpay\PopupWidget\Helper\Data')->isEnabled()){
+
+$enable_info1 = $objectManager->create('Openpay\PopupWidget\Helper\Data')->getConfig('openpay_widget/popupinfotext/enable_info1');
+$enable_info2 = $objectManager->create('Openpay\PopupWidget\Helper\Data')->getConfig('openpay_widget/popupinfotext/enable_info2');
+$enable_info3 = $objectManager->create('Openpay\PopupWidget\Helper\Data')->getConfig('openpay_widget/popupinfotext/enable_info3');
+
+if($enable_info1 || $enable_info2 || $enable_info3): ?>
+  <script>
+    require(['jquery'],function($){
+        var divs = $('.header-ad');
+
+        function fade() {
+            var current = $('.current');
+            var currentIndex = divs.index(current),
+                nextIndex = currentIndex + 1;
+            if (nextIndex >= divs.length) {
+                nextIndex = 0;
+            }
+            var next = divs.eq(nextIndex);
+            next.stop().fadeIn(1000, function () {
+                $(this).addClass('current');
+            });
+            current.stop().fadeOut(1000, function () {
+                $(this).removeClass('current');
+                setTimeout(fade, 4000);
+            });
+        }
+        setTimeout(fade, 4000);
+    });
+  </script>
+
+<?php 
+
+$class='current'; 
+$class_found=false; 
+
+$media_url = $objectManager->get('Magento\Store\Model\StoreManagerInterface')->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA);
+
+$logo1 = $logo2 = $logo3 = $this->getViewFileUrl('images/logo.png');
+$fontcolor1 = $fontcolor2 = $fontcolor3 = '#3c465a';
+$bgcolor1 = $bgcolor2 = $bgcolor3 = '#f5f6f7';
+
+if($temp_logo = $objectManager->create('Openpay\PopupWidget\Helper\Data')->getConfig('openpay_widget/popupinfotext/popupinfo_logo1')):
+  $logo1 = $media_url.'openpay/popupwidget/'.$temp_logo;
+endif;
+if($temp_logo = $objectManager->create('Openpay\PopupWidget\Helper\Data')->getConfig('openpay_widget/popupinfotext/popupinfo_logo2')):
+  $logo2 = $media_url.'openpay/popupwidget/'.$temp_logo;
+endif;
+if($temp_logo = $objectManager->create('Openpay\PopupWidget\Helper\Data')->getConfig('openpay_widget/popupinfotext/popupinfo_logo3')):
+  $logo3 = $media_url.'openpay/popupwidget/'.$temp_logo;
+endif;
+
+if($temp_fontcolor = $objectManager->create('Openpay\PopupWidget\Helper\Data')->getConfig('openpay_widget/popupinfotext/font_color1')):
+  $fontcolor1 = $temp_fontcolor;
+endif;
+if($temp_fontcolor = $objectManager->create('Openpay\PopupWidget\Helper\Data')->getConfig('openpay_widget/popupinfotext/font_color2')):
+  $fontcolor2 = $temp_fontcolor;
+endif;
+if($temp_fontcolor = $objectManager->create('Openpay\PopupWidget\Helper\Data')->getConfig('openpay_widget/popupinfotext/font_color3')):
+  $fontcolor3 = $temp_fontcolor;
+endif;
+
+if($temp_bgcolor = $objectManager->create('Openpay\PopupWidget\Helper\Data')->getConfig('openpay_widget/popupinfotext/color1')):
+  $bgcolor1 = $temp_bgcolor;
+endif;
+if($temp_bgcolor = $objectManager->create('Openpay\PopupWidget\Helper\Data')->getConfig('openpay_widget/popupinfotext/color2')):
+  $bgcolor2 = $temp_bgcolor;
+endif;
+if($temp_bgcolor = $objectManager->create('Openpay\PopupWidget\Helper\Data')->getConfig('openpay_widget/popupinfotext/color3')):
+  $bgcolor3 = $temp_bgcolor;
+endif;
+
+?>
+
+<div id="header-top-ad">
+    <?php if($enable_info1 && ($text1=$objectManager->create('Openpay\PopupWidget\Helper\Data')->getConfig('openpay_widget/popupinfotext/info_text1'))): ?>
+      <div class="header-ad <?php if(!$class_found): echo $class; $class_found=true; endif; ?>" style="background-color: <?php echo $bgcolor1; ?>">
+          <div class="container">
+            <div class="content-text">
+              <div class="text-wrapper">
+                <img src="<?php echo $logo1; ?>" height="18" />
+                <span style="color: <?php echo $fontcolor1; ?>;"> <?php echo $text1; ?></span>
+                <a href="javascript:void();" class="loadModal1" data-toggle="modal" data-target="#openpayModal1"> Learn more </a>
+              </div>
+            </div>
+          </div>
+      </div>
+      <!-- Modal -->
+      <!-- <div class="modal fade no-display" id="openpayModal" role="dialog"> -->
+        <div class="main-outer-openlay no-display" id="openpayModal1">
+          <a class="close" data-role="closeBtn" href="javascript:void();"><img src="<?php echo $this->getViewFileUrl('Openpay_PopupWidget::images/close.png'); ?>"></a>
+          <a class="logo" href="javascript:void(0)"><img src="<?php echo $logo1; ?>" alt=""></a>
+          <p>Openpay is a simple and flexible way to buy now <br>and pay later - with zero interest. We offer longer, more flexible terms all easily managed through the Openpay App.</p>
+          <div class="main-body">
+            <h2>Buy with Openpay in 3 easy steps:</h2>
+            <ul class="step-sec">
+              <li>
+                <div class="inner">
+                  <div class="step">
+                    <div class="step-inner">
+                      <span>1</span>
+                    </div>
+                  </div>
+                  <p>Shop &amp; <br>checkout</p>
+                </div>
+              </li>
+              <li>
+                <div class="inner">
+                  <div class="step">
+                    <div class="step-inner">
+                      <span>2</span>
+                    </div>
+                  </div>
+                  <p>Select Openpay from payment options</p>
+                </div>
+              </li>
+              <li>
+                <div class="inner">
+                  <div class="step">
+                    <div class="step-inner">
+                      <span>3</span>
+                    </div>
+                  </div>
+                  <p>Register &amp; design your plan</p>
+                </div>
+              </li>
+            </ul>
+            <p>If you are 18 years or older and a permanent resident of Australia all you’ll  need is:</p>
+            <ul class="enquery">
+              <li>Photo ID</li>
+              <li>Debit or credit card</li>
+              <li>Email address</li>
+              <li>The required deposit</li>
+              <li>Mobile phone (+ another contact number)</li>
+            </ul>
+          </div>
+          <p class="terms"></p>
+          <p class="copyright">© Openpay 2017</p>
+          <p class="site-link">openpay.com.au</p>
+          <span class="bottom-left"></span>
+        </div>
+      <!-- </div> -->
+    <?php endif; ?>
+
+    <?php if($enable_info2 && ($text2=$objectManager->create('Openpay\PopupWidget\Helper\Data')->getConfig('openpay_widget/popupinfotext/info_text2'))): ?>
+      <div class="header-ad <?php if(!$class_found): echo $class; $class_found=true; endif; ?>" style="background-color: <?php echo $bgcolor2; ?>">
+          <div class="container">
+            <div class="content-text">
+              <div class="text-wrapper">
+                <img src="<?php echo $logo2; ?>" height="18" />
+                <span style="color: <?php echo $fontcolor2; ?>;"> <?php echo $text2; ?></span>
+                <a href="javascript:void();" class="loadModal2" data-toggle="modal" data-target="#openpayModal2"> Learn more </a>
+              </div>
+            </div>  
+          </div>
+      </div>
+      <!-- Modal -->
+      <!-- <div class="modal fade no-display" id="openpayModal" role="dialog"> -->
+        <div class="main-outer-openlay no-display" id="openpayModal2">
+          <a class="close" data-role="closeBtn" href="javascript:void();"><img src="<?php echo $this->getViewFileUrl('Openpay_PopupWidget::images/close.png'); ?>"></a>
+          <a class="logo" href="javascript:void(0)"><img src="<?php echo $logo2; ?>" alt=""></a>
+          <p>Openpay is a simple and flexible way to buy now <br>and pay later - with zero interest. We offer longer, more flexible terms all easily managed through the Openpay App.</p>
+          <div class="main-body">
+            <h2>Buy with Openpay in 3 easy steps:</h2>
+            <ul class="step-sec">
+              <li>
+                <div class="inner">
+                  <div class="step">
+                    <div class="step-inner">
+                      <span>1</span>
+                    </div>
+                  </div>
+                  <p>Shop &amp; <br>checkout</p>
+                </div>
+              </li>
+              <li>
+                <div class="inner">
+                  <div class="step">
+                    <div class="step-inner">
+                      <span>2</span>
+                    </div>
+                  </div>
+                  <p>Select Openpay from payment options</p>
+                </div>
+              </li>
+              <li>
+                <div class="inner">
+                  <div class="step">
+                    <div class="step-inner">
+                      <span>3</span>
+                    </div>
+                  </div>
+                  <p>Register &amp; design your plan</p>
+                </div>
+              </li>
+            </ul>
+            <p>If you are 18 years or older and a permanent resident of Australia all you’ll  need is:</p>
+            <ul class="enquery">
+              <li>Photo ID</li>
+              <li>Debit or credit card</li>
+              <li>Email address</li>
+              <li>The required deposit</li>
+              <li>Mobile phone (+ another contact number)</li>
+            </ul>
+          </div>
+          <p class="terms"></p>
+          <p class="copyright">© Openpay 2017</p>
+          <p class="site-link">openpay.com.au</p>
+          <span class="bottom-left"></span>
+        </div>
+      <!-- </div> -->
+    <?php endif; ?>
+
+    <?php if($enable_info3 && ($text3=$objectManager->create('Openpay\PopupWidget\Helper\Data')->getConfig('openpay_widget/popupinfotext/info_text3'))): ?>
+      <div class="header-ad <?php if(!$class_found): echo $class; $class_found=true; endif; ?>" style="background-color: <?php echo $bgcolor3; ?>">
+          <div class="container">
+            <div class="content-text">
+              <div class="text-wrapper">
+                <img src="<?php echo $logo3; ?>" height="18" />
+                <span style="color: <?php echo $fontcolor3; ?>;"> <?php echo $text3; ?></span>
+                <a href="javascript:void();" class="loadModal3" data-toggle="modal" data-target="#openpayModal3"> Learn more </a>
+              </div>
+            </div>
+          </div>
+      </div>
+      <!-- Modal -->
+      <!-- <div class="modal fade no-display" id="openpayModal" role="dialog"> -->
+        <div class="main-outer-openlay no-display" id="openpayModal3">
+          <a class="close" data-role="closeBtn" href="javascript:void();"><img src="<?php echo $this->getViewFileUrl('Openpay_PopupWidget::images/close.png'); ?>"></a>
+          <a class="logo" href="javascript:void(0)"><img src="<?php echo $logo3; ?>" alt=""></a>
+          <p>Openpay is a simple and flexible way to buy now <br>and pay later - with zero interest. We offer longer, more flexible terms all easily managed through the Openpay App.</p>
+          <div class="main-body">
+            <h2>Buy with Openpay in 3 easy steps:</h2>
+            <ul class="step-sec">
+              <li>
+                <div class="inner">
+                  <div class="step">
+                    <div class="step-inner">
+                      <span>1</span>
+                    </div>
+                  </div>
+                  <p>Shop &amp; <br>checkout</p>
+                </div>
+              </li>
+              <li>
+                <div class="inner">
+                  <div class="step">
+                    <div class="step-inner">
+                      <span>2</span>
+                    </div>
+                  </div>
+                  <p>Select Openpay from payment options</p>
+                </div>
+              </li>
+              <li>
+                <div class="inner">
+                  <div class="step">
+                    <div class="step-inner">
+                      <span>3</span>
+                    </div>
+                  </div>
+                  <p>Register &amp; design your plan</p>
+                </div>
+              </li>
+            </ul>
+            <p>If you are 18 years or older and a permanent resident of Australia all you’ll  need is:</p>
+            <ul class="enquery">
+              <li>Photo ID</li>
+              <li>Debit or credit card</li>
+              <li>Email address</li>
+              <li>The required deposit</li>
+              <li>Mobile phone (+ another contact number)</li>
+            </ul>
+          </div>
+          <p class="terms"></p>
+          <p class="copyright">© Openpay 2017</p>
+          <p class="site-link">openpay.com.au</p>
+          <span class="bottom-left"></span>
+        </div>
+      <!-- </div> -->
+    <?php endif; ?>
+</div>
+
+<script>
+    require(
+        [
+            'jquery',
+            'Magento_Ui/js/modal/modal'
+        ],
+        function(
+            $,
+            modal
+        ) {
+            var options = {
+                type: 'popup',
+                // responsive: true,
+                // innerScroll: true,
+                // title: 'popup modal title',
+                // buttons: [{
+                //     text: $.mage.__('Continue'),
+                //     class: '',
+                //     click: function () {
+                //         this.closeModal();
+                //     }
+                // }]
+            };
+
+            $(".loadModal1").click(function() {
+
+                $("#openpayModal1").modal(options).modal('openModal');
+
+            });
+
+            $(".loadModal2").click(function() {
+
+                $("#openpayModal2").modal(options).modal('openModal');
+
+            });
+
+            $(".loadModal3").click(function() {
+
+                $("#openpayModal3").modal(options).modal('openModal');
+
+            });
+
+        }
+    );
+</script>
+
+<?php endif; ?>
+
+<?php 
+}
+?>
+

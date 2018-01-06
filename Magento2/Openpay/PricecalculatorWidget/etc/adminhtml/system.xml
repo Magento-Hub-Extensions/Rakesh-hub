@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="openpay_widgets" translate="label" sortOrder="999"> 
+            <!-- add a new tab with id helloworld -->
+            <label>Openpay Widgets</label>
+        </tab>
+        <section id="openpay_widget" translate="label" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+            <!-- add a new section with id helloworld and for tab helloworld -->
+            <class>separator-top</class>
+            <label>Settings</label>
+            <tab>openpay_widgets</tab>
+            <resource>Openpay_Widget::test_config</resource>
+            <group id="active_display" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                <!-- add a new group with id active display -->
+                <label>Openpay Widgets Configuration</label>
+                <field id="scope" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <!-- add a new field with id scope -->
+                    <label>Enable Widgets</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
+            <group id="pricecalculator" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="0" showInStore="0">
+                <!-- add a new group with id active display -->
+                <label>Price Calculator Widget(Product Listing)</label>
+                <field id="option1" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <!-- add a new field with id scope -->
+                    <label>Enable Product roll-over (option 01)</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="option2" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <!-- add a new field with id scope -->
+                    <label>Enable Product roll-over (option 02)</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="deposit_percent" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <!-- add a new field with id scope -->
+                    <label>Enter Deposit Percentage(%)</label>
+                </field>
+                <field id="pay_off_months" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <!-- add a new field with id scope -->
+                    <label>Enter Pay Off Months Count</label>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,18 @@
+
+<?php $price  = $block->displayprice();
+
+$currencycode = $block->currencycode();
+?>
+<?php if($block->isEnabled() && $block->cartaccelaratorstatus() && $price){?>
+
+<div class="minicart-widget">
+
+<span class="minicart-widget-image-outer"><img src="<?php echo $this->getViewFileUrl('Openpay_Cartdropdownaccelerator::images/icon-openpay.png'); ?>" class="minicart-widget-image" alt="" /></span>
+
+<div class="minicart-widget-content">
+<p><?php echo 'Spend an additional '. $currencycode . $price. ' and use Openpay to pay over time, interest free.';?></p>
+</div>
+	
+	
+</div>
+<?php }?>

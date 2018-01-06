@@ -1,0 +1,30 @@
+<?php 
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+if($objectManager->create('Openpay\PricecalculatorWidget\Helper\Data')->isEnabled() && $objectManager->create('Openpay\PricecalculatorWidget\Helper\Data')->getConfig('openpay_widget/pricecalculator/option2')){
+
+$_product = $block->getProduct();
+$priceHelper = $objectManager->create('Magento\Framework\Pricing\Helper\Data'); // Instance of Pricing Helper
+$finalPriceAmt = $_product->getPriceInfo()->getPrice('final_price')->getValue();
+$depositAmt = floatval($finalPriceAmt * $objectManager->create('Openpay\PricecalculatorWidget\Helper\Data')->getConfig('openpay_widget/pricecalculator/deposit_percent') / 100);
+$restAmt = $finalPriceAmt - $depositAmt;
+
+$pay_off_months = $objectManager->create('Openpay\PricecalculatorWidget\Helper\Data')->getConfig('openpay_widget/pricecalculator/pay_off_months');
+$weekCount = $pay_off_months * 4;
+$weekAmt = $priceHelper->currency(floatval($restAmt / $weekCount));
+$fortnightCount = $pay_off_months * 2;
+$fortnightAmt = $priceHelper->currency(floatval($restAmt / $fortnightCount));
+
+?>
+
+<div class="price_calc_text">
+	<span>
+		<img src="<?php echo $this->getViewFileUrl('Openpay_PricecalculatorWidget::images/logo-small.png'); ?>" /> available
+		<p>Pay <?php echo $priceHelper->currency(floatval($depositAmt)); ?> today then <?php echo $weekCount; ?> interest free weekly payments </p>
+		<p class="text_more">Learn More</p>
+	</span>
+</div>
+
+<?php 
+} 
+?>

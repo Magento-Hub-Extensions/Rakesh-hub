@@ -1,0 +1,92 @@
+<?php 
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+if($objectManager->create('Openpay\ProductcalculatorWidget\Helper\Data')->isEnabled()){
+
+$_product = $block->getProduct();
+$priceHelper = $objectManager->create('Magento\Framework\Pricing\Helper\Data'); // Instance of Pricing Helper
+$deposit_percent = $objectManager->create('Openpay\ProductcalculatorWidget\Helper\Data')->getConfig('openpay_widget/pricecalculator_details/deposit_percent');
+$pay_off_months = $objectManager->create('Openpay\ProductcalculatorWidget\Helper\Data')->getConfig('openpay_widget/pricecalculator_details/pay_off_months');
+$finalPriceAmt = $_product->getFinalPrice();
+$depositAmt = $finalPriceAmt * $deposit_percent / 100;
+$today_amount = $priceHelper->currency(floatval($depositAmt));
+$restAmt = $finalPriceAmt - $depositAmt;
+?>
+
+<div class="price-content">
+	<p class="top-info">
+		or choose to pay over timeinterest free 
+		<img src="<?php echo $this->getViewFileUrl('Openpay_ProductcalculatorWidget::images/icon-openpay.png'); ?>" alt="">
+		<a href="javascript:void(0)" class="op_info">
+			<img src="<?php echo $this->getViewFileUrl('Openpay_ProductcalculatorWidget::images/icon-info.png'); ?>" alt="">
+		</a>
+	</p>
+	<div class="details-price no-display">
+		<p>Buy today. Zero interest. More time to pay.</p>
+		<span class="price-info">Todays payment: <span><?php echo $today_amount; ?></span></span>
+		<ul class="nav nav-tabs widget-tabs responsive">
+			<li class="tab-link active" data-tab="weekly">Weekly</li>
+			<li class="tab-link" data-tab="fortnightly">Fortnightly</li>
+			<li class="tab-link" data-tab="monthly">Monthly</li>
+		</ul>
+		<div class="tab-content responsive">
+			<div class="tab-pane active" id="weekly">
+				<?php for($i=2; $i<=($pay_off_months+1); $i++){ ?>
+				<div class="price-sec">
+					<ul>
+						<li class="month"><span><?php echo $i; ?></span>months</li>
+						<li class="payment"><?php echo $i * 4 ?> payments</li>
+						<li class="price-box"><?php echo $priceHelper->currency(floatval($restAmt / ($i * 4))); ?>*</li>
+					</ul>
+				</div>
+				<?php } ?>
+			</div>
+			<div class="tab-pane" id="fortnightly">
+				<?php for($i=2; $i<=($pay_off_months+1); $i++){ ?>
+				<div class="price-sec">
+					<ul>
+						<li class="month"><span><?php echo $i; ?></span>months</li>
+						<li class="payment"><?php echo $i * 2 ?> payments</li>
+						<li class="price-box"><?php echo $priceHelper->currency(floatval($restAmt / ($i * 2))); ?>*</li>
+					</ul>
+				</div>
+				<?php } ?>
+			</div>
+			<div class="tab-pane" id="monthly">
+				<?php for($i=2; $i<=($pay_off_months+1); $i++){ ?>
+				<div class="price-sec">
+					<ul>
+						<li class="month"><span><?php echo $i; ?></span>months</li>
+						<li class="payment"><?php echo $i * 1 ?> payments</li>
+						<li class="price-box"><?php echo $priceHelper->currency(floatval($restAmt / ($i * 1))); ?>*</li>
+					</ul>
+				</div>
+				<?php } ?>
+			</div>
+		</div>
+		<p class="condition">Full names and conditions available <a href="https://www.openpay.com.au/" target="_blank">here</a></p>
+	</div>
+</div>
+
+<script type="text/javascript">
+require(['jquery'],function($){
+
+	$(".op_info").click(function(){
+		$(".details-price").fadeToggle("slow");
+	})
+
+	$('.details-price .tab-link').click(function(){
+		//console.log('Hii');
+		var tab_id = $(this).attr('data-tab');
+		$('.tab-link').removeClass('active');
+		$('.tab-pane').removeClass('active');
+		$(this).addClass('active');
+		$("#"+tab_id).addClass('active');
+	});
+
+});
+</script>
+
+<?php
+}
+?>

@@ -1,0 +1,19 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
+
+	<head>
+        
+     <css src="Openpay_Cartdropdownaccelerator::css/cartdropdownacce.css"/>
+    </head> 
+
+    <body>
+
+      
+      <referenceContainer name="minicart.addons">
+          
+          <block class="Openpay\Cartdropdownaccelerator\Block\Index\Index" name="cartdropdownaccelerator_index_index" template="Openpay_Cartdropdownaccelerator::cartdropdownaccelerator_index_index.phtml"/>
+          
+       </referenceContainer>
+
+
+    </body>
+</page>
