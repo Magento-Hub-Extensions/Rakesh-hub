@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <DAPL_SampleCustomProduct>
+      <version>0.1.0</version>
+    </DAPL_SampleCustomProduct>
+  </modules>
+  <global>
+    <helpers>
+      <samplecustomproduct>
+        <class>DAPL_SampleCustomProduct_Helper</class>
+      </samplecustomproduct>
+    </helpers>
+	<models>
+	  <samplecustomproduct>
+		<class>DAPL_SampleCustomProduct_Model</class>
+		<resourceModel>samplecustomproduct_mysql4</resourceModel>
+	  </samplecustomproduct>
+	</models>
+    <events>
+	  <sales_quote_save_after> <!-- identifier of the event we want to catch -->
+        <observers>
+          <sales_quote_save_after_handler> <!-- identifier of the event handler -->
+            <type>model</type> <!-- class method call type; valid are model, object and singleton -->
+            <class>samplecustomproduct/observer</class> <!-- observers class alias -->
+            <method>updateSampleItem</method>  <!-- observer's method to be called -->
+          </sales_quote_save_after_handler>
+        </observers>
+      </sales_quote_save_after>
+    </events>
+  </global>
+</config> 
