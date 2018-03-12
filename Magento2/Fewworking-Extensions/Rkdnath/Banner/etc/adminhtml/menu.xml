@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../Magento/Backend/etc/menu.xsd">
+    <menu>
+        <add id="Rkdnath_Banner::parent" title="Banner" module="Rkdnath_Banner" sortOrder="100" resource="Rkdnath_Banner::parent"/>
+		<add id="Rkdnath_Banner::banner" title="Rkdnath Banner" module="Rkdnath_Banner" sortOrder="20" parent="Rkdnath_Banner::parent" action="banner/banner" resource="Rkdnath_Banner::banner"/>
+
+    </menu>
+</config>

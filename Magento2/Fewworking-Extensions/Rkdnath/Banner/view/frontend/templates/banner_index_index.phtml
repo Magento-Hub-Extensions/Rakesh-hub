@@ -1,0 +1,42 @@
+<?php
+
+
+$collection = $block->getBannerCollection();
+
+//echo '<pre>';print_r($collection->getData());exit();
+
+
+?>
+
+<div id="owl-demo" class="owl-carousel">
+	<?php foreach ($collection as  $_collection) {?>
+    <div class="item">
+        <img src="<?php echo $block->getMediaUrl().$_collection->getImage();?>" alt="<?php echo $_collection->getTitle();?>" />
+    </div>
+    <?php } ?>
+    
+</div>
+
+<script>
+require(['jquery', 'owlcarousel'], function ($,owlcarousel) {
+	$(document).ready(function(){
+		$("#owl-demo").owlCarousel({
+					loop:true,
+					margin:10,
+					nav:true,
+					responsive:{
+						0:{
+						items:1
+						},
+						600:{
+						items:1
+						},
+						1000:{
+						items:1
+						}
+					}
+		});
+	});
+
+});;
+</script>

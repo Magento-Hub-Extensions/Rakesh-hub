@@ -1,0 +1,26 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
+
+	<head>
+        <title>Sample Banner</title>
+        <!-- 
+		demo
+		<css src="Rkdnath_Banner::css/css.css"/>
+		<script src="Rkdnath_Banner::js/js.js"/>
+		<css src="jquery/fileUploader/css/jquery.fileupload-ui.css"/>
+		<script src="path/file.js" defer="defer"/>
+		<link src="http://url.com" src_type="url"/>
+		<remove src="path/remove/file.css"/>
+
+		-->
+        <css src="Rkdnath_Banner::css/owl.carousel.css"/>
+        <css src="Rkdnath_Banner::css/owl.theme.default.css"/>
+    </head> 
+
+    <body>
+
+        <referenceContainer name="content">
+            <block class="Rkdnath\Banner\Block\Index\Index" name="banner_index_index" template="Rkdnath_Banner::banner_index_index.phtml"/>
+        </referenceContainer>
+
+    </body>
+</page>
