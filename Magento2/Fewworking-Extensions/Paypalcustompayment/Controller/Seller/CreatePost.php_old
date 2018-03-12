@@ -1,0 +1,260 @@
+<?php
+namespace DAPL\Paypalcustompayment\Controller\Seller;
+ 
+use Magento\Customer\Model\Account\Redirect as AccountRedirect;
+use Magento\Customer\Api\Data\AddressInterface;
+use Magento\Framework\Api\DataObjectHelper;
+use Magento\Framework\App\Action\Context;
+use Magento\Customer\Model\Session;
+use Magento\Customer\Api\AccountManagementInterface;
+use Magento\Framework\UrlFactory;
+use Magento\Customer\Api\Data\CustomerInterfaceFactory;
+use Magento\Framework\Escaper;
+use Magento\Framework\Exception\StateException;
+use Magento\Framework\Exception\InputException;
+ 
+ 
+ 
+    class CreatePost extends  \Lof\MarketPlace\Controller\Seller\CreatePost
+    {
+		
+	protected $resultJsonFactory; 
+		
+	protected $urlfactory;
+	
+	protected $curldata = [];
+	   
+	   
+public function __construct(
+        Context $context, 
+        Session $customerSession, 
+        AccountManagementInterface $accountManagement, 
+        UrlFactory $urlFactory, 
+        Escaper $escaper, 
+        DataObjectHelper $dataObjectHelper, 
+        \Lof\MarketPlace\Model\Sender $sender,
+        \Lof\MarketPlace\Helper\Data $sellerHelper,
+        AccountRedirect $accountRedirect,
+		\Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory) 
+    {
+		$this->resultJsonFactory = $resultJsonFactory;
+		$this->urlfactory = $urlFactory->create();
+        parent::__construct(
+            $context,
+            $customerSession,
+            $accountManagement,
+            $urlFactory,
+            $escaper,
+            $dataObjectHelper,
+            $sender,
+            $sellerHelper,
+            $accountRedirect
+        );
+		
+    }
+       
+	  /**
+     * Create customer account action
+     *
+     * @return void @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
+    public function execute() {
+		
+		$planvalue = $this->getRequest()->getParam('plan');
+		echo $planvalue;exit;
+		
+		
+        $resultRedirectFlag = 0;
+        $objectModelManager = \Magento\Framework\App\ObjectManager::getInstance ();
+        /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
+        $resultRedirect = $this->resultRedirectFactory->create ();
+        
+        if ($this->session->isLoggedIn () || ! $objectModelManager->get ( 'Magento\Customer\Model\Registration' )->isAllowed ()) {
+            $resultRedirect->setPath ( '*/*/' );
+            return $resultRedirect;
+        }
+        
+        if (! $this->getRequest ()->isPost ()) {
+            $url = $this->urlModel->getUrl ( '*/*/create', [ 
+                    '_secure' => true 
+            ] );
+            $resultRedirect->setUrl ( $this->_redirect->error ( $url ) );
+            return $resultRedirect;
+        }
+        
+        $this->session->regenerateId ();
+        
+        try {
+            $address = $this->extractAddress ();
+            $addresses = $address === null ? [ ] : [ 
+                    $address 
+            ];
+            
+            $customer = $objectModelManager->get ( 'Magento\Customer\Model\CustomerExtractor' )->extract ( 'customer_account_create', $this->_request );
+            $customer->setAddresses ( $addresses );
+            
+            $password = $this->getRequest ()->getParam ( 'password' );
+			
+			//echo $password;exit;
+			
+            $confirmation = $this->getRequest ()->getParam ( 'password_confirmation' );
+            $redirectUrl = $this->session->getBeforeAuthUrl ();
+            
+            $this->checkPasswordConfirmation ( $password, $confirmation );
+            
+            $customer = $this->accountManagement->createAccount ( $customer, $password, $redirectUrl );
+            
+            if ($this->getRequest ()->getParam ( 'is_subscribed', false )) {
+                $objectModelManager->get ( 'Magento\Newsletter\Model\SubscriberFactory' )->create ()->subscribeCustomerById ( $customer->getId () );
+            }
+            
+            $this->_eventManager->dispatch ( 'customer_register_success', [ 
+                    'account_controller' => $this,
+                    'customer' => $customer 
+            ] );
+            
+            $confirmationStatus = $this->accountManagement->getConfirmationStatus ( $customer->getId () );
+            if ($confirmationStatus === AccountManagementInterface::ACCOUNT_CONFIRMATION_REQUIRED) {
+                $email = $objectModelManager->get ( 'Magento\Customer\Model\Url' )->getEmailConfirmationUrl ( $customer->getEmail () );
+                
+                $this->messageManager->addSuccess ( __ ( 'You must confirm your account. Please check your email for the confirmation link or <a href="%1">click here</a> for a new link.', $email ) );
+                
+                $url = $this->urlModel->getUrl ( '*/*/index', [ 
+                        '_secure' => true 
+                ] );
+                $resultRedirect->setUrl ( $this->_redirect->success ( $url ) );
+				
+				$result = $this->resultJsonFactory->create();
+		        return $result->setData(['url-pass' => $this->urlfactory->getUrl('lofmarketplace/seller/create/')]);
+				
+				
+            } else {
+                $this->session->setCustomerDataAsLoggedIn ( $customer );
+                $this->messageManager->addSuccess ( $this->getSuccessMessage () );
+                $resultRedirect = $this->accountRedirect->getRedirect ();
+                $url = $this->urlModel->getUrl ( 'customer/account', [ 
+                        '_secure' => true 
+                ] );
+                $resultRedirect->setUrl ( $this->_redirect->success ( $url ) );
+            }
+            $resultRedirectFlag = 1;          
+        } catch ( StateException $e ) {
+            $url = $this->urlModel->getUrl ( 'customer/account/forgotpassword' );
+            $message = __ ( 'There is already an account with this email address. If you are sure that it is your email address, <a href="%1">click here</a> to get your password and access your account.', $url );
+            $this->messageManager->addError ( $message );
+			
+			$result = $this->resultJsonFactory->create();
+		    return $result->setData(['url-pass' => $this->urlfactory->getUrl('lofmarketplace/seller/create/')]);
+			
+        } catch ( InputException $e ) {
+            $this->messageManager->addError ( $this->escaper->escapeHtml ( $e->getMessage () ) );
+            foreach ( $e->getErrors () as $error ) {
+                $this->messageManager->addError ( $this->escaper->escapeHtml ( $error->getMessage () ) );
+            }
+        } catch ( \Exception $e ) {
+            $this->messageManager->addException ( $e, __ ( 'We can\'t save the customer.' ) );
+        }
+        if($resultRedirectFlag == 0){
+        $this->session->setCustomerFormData ( $this->getRequest ()->getPostValue () );
+        $defaultUrl = $this->urlModel->getUrl ( '*/*/create', [ 
+                '_secure' => true 
+        ] );        
+        $resultRedirect->setUrl ( $this->_redirect->error ( $defaultUrl ) );
+        }
+    
+        $url                = $this->getRequest()->getPost('url');
+        $group              = $this->getRequest()->getPost('group');
+        $layout             = "2columns-left";
+        $stores = array();
+        $stores[] = $this->_sellerHelper->getCurrentStoreId();
+         
+        $objectManager      = \Magento\Framework\App\ObjectManager::getInstance ();
+        $customerSession    = $objectManager->get('Magento\Customer\Model\Session');
+        
+        if ($customerSession->isLoggedIn()) {
+
+            $customerId     = $customerSession->getId ();
+            $customerObject = $customerSession->getCustomer ();
+            $customerEmail  = $customerObject->getEmail ();
+            $customerName   = $customerObject->getName();
+            $sellerApproval = $this->_sellerHelper->getConfig('general_settings/seller_approval');
+           
+            if ($sellerApproval) {
+                $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+                $sellerModel = $objectManager->get('Lof\MarketPlace\Model\Seller');
+                try {
+                    $sellerModel->setName($customerName)->setEmail($customerEmail)->setStatus(0)->setGroupId($group)->setCustomerId($customerId)->setStores($stores)->setUrlKey($url)->setPageLayout($layout)->save();
+                    //$this->_redirect ('lofmarketplace/seller/becomeseller/approval/0');
+					
+					$result = $this->resultJsonFactory->create();
+		            return $result->setData(['url-pass' => $this->urlfactory->getUrl('lofmarketplace/seller/becomeseller/approval/0')]);
+					
+                }  catch (\Magento\Framework\Exception\LocalizedException $e) {
+                    $this->messageManager->addError($e->getMessage());
+					$result = $this->resultJsonFactory->create();
+		            return $result->setData(['url-pass' => $this->urlfactory->getUrl('lofmarketplace/seller/becomeseller')]);
+                     //$this->_redirect ('lofmarketplace/seller/becomeseller');
+                } 
+            } else {
+                $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+                $sellerModel = $objectManager->get('Lof\MarketPlace\Model\Seller');
+                try {
+                    $sellerModel->setName($customerName)->setEmail($customerEmail)->setStatus(1)->setGroupId($group)->setCustomerId($customerId)->setUrlKey($url)->save();
+					
+					
+			    $result = $this->resultJsonFactory->create();
+					if($planvalue == 'standard')
+					{
+							$querystring = '';
+							$paypal_email = 'dipankar.pay@gmail.com';
+							$querystring .= "?business=".urlencode($paypal_email)."&";
+							$querystring .= "item_name=".urlencode($planvalue)."&";
+							$querystring .= "amount=".urlencode('49.99')."&";
+							
+							
+							$querystring .= "return=".urlencode(stripslashes($this->urlfactory->getUrl('paypalcustompayment/seller/returnpaypal')))."&";
+							//$querystring .= "cancel_return=".urlencode(stripslashes($cancel_url))."&";
+							//$querystring .= "notify_url=".urlencode($notify_url);
+							
+            return $result->setData(['url-paypal' =>"location:https://www.sandbox.paypal.com/cgi-bin/webscr".$querystring]);
+					
+					}
+					
+					
+					
+					
+					
+					
+					
+					
+					
+                    //$this->_redirect ('marketplace/catalog/dashboard');
+
+                } catch (\Magento\Framework\Exception\LocalizedException $e) {
+                    $this->messageManager->addError($e->getMessage());
+					$result = $this->resultJsonFactory->create();
+		            return $result->setData(['url-pass' => $this->urlfactory->getUrl('lofmarketplace/seller/becomeseller')]);
+                    //$this->_redirect ('lofmarketplace/seller/becomeseller');
+                }
+            }
+
+            if($this->_sellerHelper->getConfig('email_settings/enable_send_email')) {
+                $data = [];
+                $data['name'] = $customerName;
+                $data['email'] = $customerEmail;
+                $data['group'] = $group;
+                $data['url'] = $sellerModel->getUrl();
+                $this->sender->registerSeller($data);
+            } 
+     
+        } else {
+            //$resultRedirect = $this->resultRedirectFactory->create ();
+			$result = $this->resultJsonFactory->create();
+		    return $result->setData(['url-pass' => $this->urlfactory->getUrl('customer/account/login/')]);
+            //$resultRedirect->setPath('customer/account/login/');
+            //return $resultRedirect;
+        }
+    }
+	  
+    
+    }
