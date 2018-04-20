@@ -32,12 +32,16 @@ class Save extends \Magento\Backend\App\Action
             $model = $this->_objectManager->create('Rkdnath\Banner\Model\Banner');
 
             $id = $this->getRequest()->getParam('id');
+            //echo $id;exit();
             if ($id) {
                 $model->load($id);
                 $model->setCreatedAt(date('Y-m-d H:i:s'));
             }
 			
 			try{
+
+                $new_image = 0;
+                 //echo 'ijsdhgfd';exit();
 				$uploader = $this->_objectManager->create(
 					'Magento\MediaStorage\Model\File\Uploader',
 					['fileId' => 'image']
@@ -51,16 +55,21 @@ class Save extends \Magento\Backend\App\Action
 				$mediaDirectory = $this->_objectManager->get('Magento\Framework\Filesystem')
 					->getDirectoryRead(DirectoryList::MEDIA);
 				$result = $uploader->save($mediaDirectory->getAbsolutePath('banner_banner'));
-					if($result['error']==0)
-					{
-						$data['image'] = 'banner_banner' . $result['file'];
-					}
+
+				if($result['error']==0)
+				{
+					$data['image'] = 'banner_banner' . $result['file'];
+				}
 			} catch (\Exception $e) {
 				//unset($data['image']);
             }
-			//var_dump($data);die;
-			if(isset($data['image']['delete']) && $data['image']['delete'] == '1')
-				$data['image'] = '';
+			if(isset($data['image']['delete']) && $data['image']['delete'] == '1'){
+                $data['image'] = '';
+            }
+
+            if(isset($data['image']['value']) && $data['image']['value'] != '' && $new_image == 0){
+                $data['image'] = $data['image']['value'];
+            }
 
 			
             $model->setData($data);
