@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <Loritel_Uploadprescription>
+      <version>0.1.0</version>
+    </Loritel_Uploadprescription>
+  </modules>
+    <global>
+    <helpers>
+      <uploadprescription>
+        <class>Loritel_Uploadprescription_Helper</class>
+      </uploadprescription>
+    </helpers>
+	<blocks>
+	  <uploadprescription>
+		<class>Loritel_Uploadprescription_Block</class>
+	  </uploadprescription>
+		<adminhtml>
+		<!-- <rewrite>
+			<adminhtml_catalog_product_edit_tabs>Loritel_Uploadprescription_Block_Adminhtml_Uploadprescription_Edit_Tabs</adminhtml_catalog_product_edit_tabs>
+			<adminhtml_catalog_product_edit_tab_attributes>Loritel_Uploadprescription_Block_Adminhtml_Uploadprescription_Edit_Tab_Attributes</adminhtml_catalog_product_edit_tab_attributes>
+		</rewrite> -->
+		</adminhtml>
+	</blocks>
+	<models>
+	  <uploadprescription>
+		<class>Loritel_Uploadprescription_Model</class>
+		<resourceModel>uploadprescription_mysql4</resourceModel>
+	  </uploadprescription>
+	  <uploadprescription_mysql4>
+		<class>Loritel_Uploadprescription_Model_Mysql4</class>
+		<entities>		  
+			  <uploadprescription>
+				<table>prescription_details</table>
+			  </uploadprescription>
+        </entities>
+	  </uploadprescription_mysql4>
+	</models>
+	<resources>
+	  <uploadprescription_setup>
+		<setup>
+		  <module>Loritel_Uploadprescription</module>
+		</setup>
+		<connection>
+		  <use>core_setup</use>
+		</connection>
+	  </uploadprescription_setup>
+	  <uploadprescription_write>
+		<connection>
+		  <use>core_write</use>
+		</connection>
+	  </uploadprescription_write>
+	  <uploadprescription_read>
+		<connection>
+		  <use>core_read</use>
+		</connection>
+	  </uploadprescription_read>
+	</resources>
+  </global>
+  <frontend>
+    
+	
+
+		
+
+	<routers>
+        <uploadprescriptions>
+            <use>standard</use>
+            <args>
+                <module>Loritel_Uploadprescription</module>
+                <frontName>uploadprescriptions</frontName>
+            </args>
+        </uploadprescriptions>
+    </routers>
+
+        <layout>
+		    <updates>
+		        <module module="Loritel_Uploadprescription">
+		            <file>uploadprescriptions.xml</file>
+		        </module>
+		    </updates>
+		</layout>
+
+
+
+  </frontend>
+
+  <admin>
+	<routers>
+	  <uploadprescription>
+	    <use>admin</use>
+		<args>
+		  <module>Loritel_Uploadprescription</module>
+		  <frontName>admin_prescription</frontName>
+		</args>
+	  </uploadprescription>
+	</routers>
+  </admin>
+  <adminhtml>
+	<menu>
+	  <uploadprescription module="uploadprescription">
+		<title>Uploadprescription</title>
+		<sort_order>100</sort_order>
+		<children>
+		  <uploadprescription module="uploadprescription">
+		    <title>Manage Uploadprescription</title>
+			<sort_order>0</sort_order>
+			<action>admin_prescription/adminhtml_prescription</action>
+		  </uploadprescription>
+		</children>
+	  </uploadprescription>
+	</menu>
+	<acl>
+	  <resources>
+		<all>
+		  <title>Allow Everything</title>
+		</all>
+		<admin>
+		  <children>
+			<uploadprescription translate="title" module="uploadprescription">
+			  <title>Uploadprescription</title>
+			  <sort_order>1000</sort_order>
+			  <children>
+		 
+		  <uploadprescription translate="title">
+			<title>Manage Uploadprescription</title>
+			<sort_order>0</sort_order>
+		  </uploadprescription>
+			  </children>
+			</uploadprescription>
+		  </children>
+		</admin>
+	  </resources>
+	</acl>
+	<layout>
+	  <updates>
+		<uploadprescription>
+		  <file>uploadprescription.xml</file>
+		</uploadprescription>
+	  </updates>
+	</layout>
+  </adminhtml>
+</config> 
