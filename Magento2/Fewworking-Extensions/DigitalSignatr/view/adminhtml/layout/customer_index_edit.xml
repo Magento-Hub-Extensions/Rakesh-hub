@@ -1,0 +1,17 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+           <referenceBlock name="customer_form">
+             <block class="DAPL\DigitalSignatr\Block\Adminhtml\Edit\Tab\DigitalSignature" name="customer_edit_tab_digitalsignature">
+             <arguments>
+	              <argument name="priority" xsi:type="string">11</argument>
+	              <argument name="sort_order" xsi:type="number">11</argument>
+            </arguments>
+            </block>
+            <action method="addTabAfter">
+                <argument name="name" xsi:type="string">digital_signature</argument>
+                <argument name="block" xsi:type="string">customer_edit_tab_digitalsignature</argument>
+                <argument name="after" xsi:type="string">customer</argument>
+            </action>
+          </referenceBlock>
+    </body>
+</page>
