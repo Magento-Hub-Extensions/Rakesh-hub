@@ -1,0 +1,13 @@
+1. Install Magento 1 and Fresh Magento 2 
+2. Database Backup - M2 
+3. a) composer config repositories.magento composer https://repo.magento.com 
+b) composer require magento/data-migration-tool:2.2.4 
+c) Public Key: 0efe3f5f112bbcaaeaf9a4bde3881fbc | Private Key: f14c70e3630115717394d84d1c1b527f 
+d) Update database details on vendor/magento/data-migration-tool/etc/opensource-to-opensource/1.9.3.1/config.xml 
+4. bin/magento migrate:settings /var/www/html/motorcorner/vendor/magento/data-migration-tool/etc/opensource-to-opensource/1.9.3.1/config.xml 
+5. Database Backup - M2 
+6. Delete duplicate rows from catalog_category_entity_text and catalog_category_entity_varchar 
+7. a) sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf and change required things. b) sudo service mysql restart 
+8. php -d memory_limit=10G bin/magento migrate:data -r -a /var/www/html/motorcorner/vendor/magento/data-migration-tool/etc/opensource-to-opensource/1.9.3.1/config.xml 
+9. Install Amasty part finder via composer a) composer config repositories.amasty composer https://composer.amasty.com/community/ b) composer require amasty/finder c) Public Key: 045ea2a3610a22a894f3045e215a2972 | Private Key: 8eeb5753e5c74d6ff2195e77f9753003 
+10. composer config repositories.magento composer https://repo.magento.com
