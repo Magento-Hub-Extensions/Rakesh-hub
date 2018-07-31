@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <Loritel_CustomPrice>
+      <version>0.1.0</version>
+    </Loritel_CustomPrice>
+  </modules>
+  <global>
+    <helpers>
+      <customprice>
+        <class>Loritel_CustomPrice_Helper</class>
+      </customprice>
+    </helpers>
+    <models>
+      <customprice>
+      <class>Loritel_CustomPrice_Model</class>
+      </customprice>
+  </models>
+	<blocks>
+	  <customprice>
+		 <class>Loritel_CustomPrice_Block</class>
+	  </customprice>
+	</blocks>
+   <events>
+    <checkout_cart_add_product_complete> <!-- identifier of the event we want to catch -->
+        <observers>
+          <checkout_cart_add_product_complete_handler> <!-- identifier of the event handler -->
+            <type>model</type> <!-- class method call type; valid are model, object and singleton -->
+            <class>customprice/observer</class> <!-- observers class alias -->
+            <method>updateprice</method>  <!-- observer's method to be called -->
+          </checkout_cart_add_product_complete_handler>
+        </observers>
+      </checkout_cart_add_product_complete>
+    </events>
+  </global>
+</config> 
