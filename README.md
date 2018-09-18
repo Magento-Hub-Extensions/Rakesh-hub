@@ -20,8 +20,8 @@ Follow [Docksal environment setup instructions](https://github.com/docksal/docks
 1. Clone this repo into your Projects directory
 
     ```
-    git clone https://github.com/docksal/magento.git
-    cd magento
+    git clone https://github.com/Magento-Hub-Extensions/Rakesh-hub
+    cd Rakesh-hub
     ```
 
 2. Initialize the site
