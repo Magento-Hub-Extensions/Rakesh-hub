@@ -8,11 +8,17 @@ Features:
 
 ### Step #2: Project setup
 
-1. Clone this repo into your Projects directory
+>> Clone this repo into your Projects directory
 
-    ```
     git clone https://github.com/Magento-Hub-Extensions/Rakesh-hub
     cd Rakesh-hub
-    ```
+    
+>> FEDEX RATE
+
+>> RECENT ORDER NOTIFICATION OF MAGENTO 2.
+
+>> CRM SYSTEM OF MAGENTO 2.4 .
+
+
 
 
