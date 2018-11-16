@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+	<default>
+		<order_notification_section>
+				<ordernotification_general>
+					        <ordernotification_msg_template><![CDATA[ Someone in [city],[region], [country]  bought[product_link] </br> [item_price] [ordered_time] </br> Test]]></ordernotification_msg_template>
+							<ordernotification_time_delay>50</ordernotification_time_delay>
+							<ordernotification_first_page_load>5</ordernotification_first_page_load>
+							<ordernotification_reappear_after_close>2</ordernotification_reappear_after_close>
+				</ordernotification_general>
+		</order_notification_section>
+	</default>
+</config>

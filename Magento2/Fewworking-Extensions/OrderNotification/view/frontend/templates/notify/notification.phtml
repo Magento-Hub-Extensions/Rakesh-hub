@@ -1,0 +1,79 @@
+<!-- <div id="growls" class="bc">
+			<div class="growl growl-default growl-medium">
+				<div class="growl-close">×</div>
+				<div class="growl-title">Growl</div>
+				<div class="growl-message">
+					<div class="recentordernotification">
+					<div class="notice-img">
+						<a class="notice-product-link" href="http://magedemo.fmv.cc/ElsnerM2Demos/breathe-easy-tank.html"><img src="http://magedemo.fmv.cc/ElsnerM2Demos/pub/media/catalog/product/cache/thumbnail/80x/beff4985b56e3afdbeabfc89641a4582/w/t/wt09-white_main.jpg" alt="Breathe-Easy Tank" title="Breathe-Easy Tank"></a>
+					</div>
+					<div class="notice-text"> Someone in Australia Fair,Manitoba, Canada  bought<a class="notice-product-link" href="http://magedemo.fmv.cc/ElsnerM2Demos/breathe-easy-tank.html">Breathe-Easy Tank</a> <br> 
+						<div class="bottom-line price">$34.00</div> 
+						<div class="time-ago bottom-line">224 days ago</div> <br> Test
+					</div>
+					</div>
+				</div>
+		  </div>
+</div> -->
+
+<?php
+
+$helper = $this->helper('Ueg\OrderNotification\Helper\Data');
+$position = $helper->getNotifyPosition();
+$getFirstPageLoad = $helper->getFirstPageLoad();
+
+$getReappearAfterClose = $helper->getReappearAfterClose();
+
+$getTimeDelay = $helper->getTimeDelay();
+
+
+?>
+
+<script type="text/javascript">
+		require(['jquery', 'Ueg_OrderNotification/js/jquery.growl'], function($){ 
+			function showLastOrder(){
+				var windowSize = $( window ).width();
+				if(parseInt(windowSize) >= parseInt(768) || 1) {
+			        var order_data=null
+						$.get( "<?php echo $this->getUrl('ordernotification/index/notification');?>", { order_token:readPopupCookie("order_security_token")} )
+						  .done(function( data ) {
+							order_data = data ;
+							//order_data.update = true;
+							var exist = $('#growls .recentordernotification').length;
+							console.log(exist);
+							if(order_data.update && exist < 1){
+								$('.growl-close').triggerHandler('click');
+								if(!readPopupCookie("hideOrderNotifcation")){
+									$.growl({ title: "Growl",duration:'<?php echo $getReappearAfterClose;?>',location:"<?php echo $position;?>" ,message: order_data.msg })
+								};
+							}
+						});
+					}
+					$('.growl-close').triggerHandler('click');
+					setTimeout(showLastOrder ,<?php echo $getTimeDelay;?> );
+				}     
+			 $(document).ready(function() {
+			     setTimeout(showLastOrder, <?php echo $getFirstPageLoad;?>);
+			});
+
+			
+
+			window.order_nofication_cookie_timing = "2";
+
+			function readPopupCookie(name) {
+				var nameEQ = name + "=";
+				var ca = document.cookie.split(";");
+				for(var i=0;i < ca.length;i++) {
+					var c = ca[i];
+					while (c.charAt(0)==" ") c = c.substring(1,c.length);
+					if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+				}
+				return null;
+			}
+
+			function eraseCookie(name) {
+				createPopupCookie(name,"",-1);
+			}
+		 });
+
+</script>

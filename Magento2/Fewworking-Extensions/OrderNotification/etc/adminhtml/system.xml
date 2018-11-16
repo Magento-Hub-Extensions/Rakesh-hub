@@ -1,0 +1,112 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+	<system>
+		<tab id="order_notification" sortOrder="999" translate="label">
+			<label>Order Notification Setting</label>
+		</tab>
+		<section id="order_notification_section" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label">
+			<label>Order Notification Setting</label>
+			<tab>order_notification</tab>
+			<resource>Ueg_OrderNotification::config_ueg_ordernotification</resource>
+			<group id="ordernotification_general" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label">
+				<label>Order Notification Settings</label>
+				<field id="ordernotification_enable" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
+					<label>Order Notification</label>
+					<comment/>
+					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+				</field>
+
+
+				
+				<field id="ordernotification_virtual_product" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
+					<label>Include Virtual product type</label>
+					<comment/>
+					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+				</field>
+
+
+				
+				<field id="ordernotification_enable_mobile" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
+					<label>Enable in Mobile and Tablet View	</label>
+					<comment/>
+					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+				</field>
+
+
+				
+				<field id="ordernotification_position" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
+					<label>Notification Display Position</label>
+					<comment/>
+					 <source_model>Ueg\OrderNotification\Model\Config\Source\Position</source_model>
+				</field>
+
+				
+				<field id="ordernotification_msg_template" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="textarea">
+					<label>Notification message template</label>
+					<comment>You can update/add notification text. Short code:  [city] - Order Shipping City  [region] - Order Shipping Region/State  [country] - Order Shipping Country  [product_link] - Ordered Product Link  [item_price] - Ordered item price  [ordered_time] - Time when order was placed.</comment>
+				</field>
+
+				
+				<field id="ordernotification_time_delay" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="text">
+					<label>Check For New Orders</label>
+					<comment>In Milliseconds - System will check for any new order so to show popup again.</comment>
+				</field>
+
+
+				<field id="ordernotification_first_page_load" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="text">
+					<label>Duration To Show Notification After First Time Page load</label>
+					<comment>In Milliseconds - Notification will appear after x time on first time page load.‎</comment>
+				</field>
+
+				<field id="ordernotification_reappear_after_close" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="text">
+					<label>Waiting time after user close action</label>
+					<comment>Milliseconds - Next notification will appear after x time when user close popup‎</comment>
+				</field>
+
+
+				<field id="ordernotification_select_order_status" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
+					<label>Select order status</label>
+					<comment/>
+					<source_model>Ueg\OrderNotification\Model\Config\Source\OrderStatus</source_model>
+				</field>
+			</group>
+
+			<group id="ordernotification_set_colors" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label">
+				<label>Frontend Color Settings</label>
+				
+
+				
+				<field id="ordernotification_background_colour" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="text">
+					<label>Background Colour</label>
+					<frontend_model>Ueg\OrderNotification\Block\Color</frontend_model>
+				</field>
+
+
+				<field id="ordernotification_border_colour" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="text">
+					<label>Border Colour</label>
+					<frontend_model>Ueg\OrderNotification\Block\Color</frontend_model>
+				</field>
+
+				<field id="ordernotification_text_colour" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="text">
+					<label>Text Colour</label>
+					<frontend_model>Ueg\OrderNotification\Block\Color</frontend_model>
+				</field>
+
+				<field id="ordernotification_link_colour" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="text">
+					<label>Link Colour</label>
+					<frontend_model>Ueg\OrderNotification\Block\Color</frontend_model>
+				</field>
+
+				<field id="ordernotification_link_hover_colour" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="text">
+					<label>Link Hover Colour</label>
+					<frontend_model>Ueg\OrderNotification\Block\Color</frontend_model>
+				</field>
+
+				<!-- <field id="ordernotification_reappear_after_close" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="text">
+					<label>Waiting time after user close action</label>
+					<frontend_model>Ueg\OrderNotification\Block\Color</frontend_model>
+				</field> -->
+			</group>
+		</section>
+	</system>
+</config>
