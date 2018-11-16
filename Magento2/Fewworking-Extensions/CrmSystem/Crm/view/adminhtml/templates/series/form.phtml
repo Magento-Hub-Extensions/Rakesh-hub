@@ -1,0 +1,355 @@
+<div class="entry-edit">
+	<div id="top_panel">
+        <span>
+	        <select name="series_search" id="series_options" class="select-box">
+                <option value=""></option>
+		        <?php $series = $this->getAllSeriesList(); ?>
+		        <?php foreach ($series as $id => $_series) { ?>
+			        <?php
+			        $selected = "";
+			        $series = $this->getRequest()->getParam('series');
+			        if(isset($series) && !empty($series)) {
+				        if($series == $id) {
+					        $selected = "selected='selected'";
+				        }
+			        }
+			        ?>
+			        <option value="<?php echo $id ?>" <?php echo $selected ?>><?php echo $_series ?></option>
+		        <?php } ?>
+            </select>
+        </span>
+		<span>&nbsp;|&nbsp;</span>
+		<span><input type="button" id="trigger_series_search" value="Search"/></span>
+        <span>&nbsp;|&nbsp;</span>
+        <span><input type="button" id="trigger_series_search" value="Clear" onclick="javascript:location.href = '<?php echo $this->getUrl("crm/series/index")?>';"/></span>
+        <span>&nbsp;|&nbsp;</span>
+        <span><a id="collection-trigger-modal" href="javascript:void(0)">Create a New Series</a></span>
+		<span>&nbsp;|&nbsp;</span>
+		<span><a id="collection-remove-trigger" href="javascript:void(0)">Remove a Series</a></span>
+	</div>
+</div>
+<div id="collection-remove-box" style="display: none;">
+	<form name="series_remove_form" method="post" action="<?php echo $this->getUrl("crm/series/seriesremove") ?>">
+		<input type="hidden" name="form_key" value="<?php echo $block->getFormKey();?>"/>
+		<span>
+			<select name="remove_series" class="select-box">
+                <option value=""></option>
+				<?php $series = $block->getAllSeriesList(); ?>
+				<?php foreach ($series as $id => $_series) { ?>
+					<option value="<?php echo $id ?>"><?php echo $_series ?></option>
+				<?php } ?>
+            </select>
+        </span>
+		<span>&nbsp;|&nbsp;</span>
+		<span><input type="submit" class="input-button" value="Remove"/></span>
+	</form>
+</div>
+<div style="height:20px; clear:both;"></div>
+
+<!-- The Modal -->
+<?php $coinOptions = $block->getCoinOptions(); ?>
+<div id="collection-modal-window" class="collection-modal entry-edit" style="display: none;">
+    <!-- Modal content -->
+    <div class="collection-modal-content">
+        <div class="collection-modal-body">
+            <fieldset id="collection-form">
+                <legend>Add a New Series</legend>
+                <table id="collection-form-table">
+                    <tbody>
+                    <tr class="head">
+                        <th>
+                            <label for="media">Series Name:
+                                <span class="required">*</span>
+                            </label><br>
+                        </th>
+                        <th>
+                            <label for="denom">Denomination:</label><br>
+                        </th>
+                        <th>
+                            <label for="type">Type:</label><br>
+                        </th>
+                        <th>
+                            <label for="metal">Metal:</label><br>
+                        </th>
+                        <th>
+                            <label for="user_defaults">User Defaults:</label><br>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" name="series_name" list="series" class="text-box input-text"/>
+							<?php $seriesList = $this->getAllSeriesList(); ?>
+                            <datalist id="series">
+								<?php foreach($seriesList as $_series) { ?>
+                                <option value="<?php echo $_series ?>">
+									<?php } ?>
+                            </datalist>
+                        </td>
+                        <td>
+							<?php $denom = $coinOptions->getDenomOptions(); ?>
+                            <select name="denom" class="select-box">
+								<?php foreach ($denom as $_denom) { ?>
+                                    <option value="<?php echo $_denom ?>"><?php echo $_denom ?></option>
+								<?php } ?>
+                            </select>
+                        </td>
+                        <td>
+							<?php $type = $coinOptions->getTypeOptions(); ?>
+                            <select name="type" class="select-box">
+								<?php foreach ($type as $_type) { ?>
+                                    <option value="<?php echo $_type ?>"><?php echo $_type ?></option>
+								<?php } ?>
+                            </select>
+                        </td>
+                        <td>
+							<?php $metal = $coinOptions->getMetalOptions(); ?>
+                            <select name="metal" class="select-box">
+								<?php foreach ($metal as $_metal) { ?>
+                                    <option value="<?php echo $_metal ?>"><?php echo $_metal ?></option>
+								<?php } ?>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="user_defaults" class="select-box">
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class="body">
+                        <th>
+                            <label for="pcgs">PCGS#</label><br>
+                        </th>
+                        <th>
+                            <label for="year">Year</label><br>
+                        </th>
+                        <th>
+                            <label for="mint">Mint</label><br>
+                        </th>
+                        <th>
+                            <label for="variety">Variety</label><br>
+                        </th>
+                        <th>
+                            <label for="desig">Desig</label><br>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" name="collection[1][pcgs]" class="text-box"/>
+                        </td>
+                        <td>
+                            <input type="text" name="collection[1][year]" class="text-box"/>
+                        </td>
+                        <td>
+							<?php $mints = $coinOptions->getMintOptions(); ?>
+                            <select name="collection[1][mint]" class="select-box">
+								<?php foreach ($mints as $_mint) { ?>
+                                    <option value="<?php echo $_mint ?>"><?php echo $_mint ?></option>
+								<?php } ?>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" name="collection[1][variety]" class="text-box"/>
+                        </td>
+                        <td>
+							<?php $desig = $coinOptions->getDesigOptions(); ?>
+                            <select name="collection[1][desig]" class="select-box">
+								<?php foreach ($desig as $_desig) { ?>
+                                    <option value="<?php echo $_desig ?>"><?php echo $_desig ?></option>
+								<?php } ?>
+                            </select>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tfoot class="placeholder" style="display: none;">
+                    <tr>
+                        <td>
+                            <input type="text" name="collection[{{i}}][pcgs]" class="text-box"/>
+                        </td>
+                        <td>
+                            <input type="text" name="collection[{{i}}][year]" class="text-box"/>
+                        </td>
+                        <td>
+							<?php $mints = $coinOptions->getMintOptions(); ?>
+                            <select name="collection[{{i}}][mint]" class="select-box">
+								<?php foreach ($mints as $_mint) { ?>
+                                    <option value="<?php echo $_mint ?>"><?php echo $_mint ?></option>
+								<?php } ?>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" name="collection[{{i}}][variety]" class="text-box"/>
+                        </td>
+                        <td>
+							<?php $desig = $coinOptions->getDesigOptions(); ?>
+                            <select name="collection[{{i}}][desig]" class="select-box">
+								<?php foreach ($desig as $_desig) { ?>
+                                    <option value="<?php echo $_desig ?>"><?php echo $_desig ?></option>
+								<?php } ?>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="button" class="collection-remove-row" value="&#10005;" style="cursor: pointer;"/>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+                <div class="collection-button-section">
+                    <input type="button" id="add-collection-row" value="Add Row"/>
+                    <input type="button" id="submit-collection" value="Submit"/>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* form css */
+    #collection-form #collection-form-table tr.head th {
+        text-align: left;
+        padding: 5px 4px;
+    }
+    #collection-form #collection-form-table tr.body th {
+        text-align: center;
+        padding: 5px 4px;
+    }
+    #collection-form #collection-form-table td {
+        
+        text-align: center;
+        vertical-align: middle;
+        padding: 5px 4px;
+    }
+    #collection-form legend {
+        display: block;
+        font-size: 14px;
+        font-weight:600;
+        padding: 0 10px;
+    }
+    #collection-form input.text-box,
+    #series_info_panel_table input.text-box {
+        width: 200px;
+        height: 25px;
+    }
+    #collection-form select.select-box,
+    #series_info_panel_table select.select-box {
+        width: 200px;
+        height: 30px;
+    }
+    #series_info_panel_table textarea.textarea-box {
+        width: 350px;
+        height: 80px;
+    }
+    .collection-button-section {
+        text-align: right;
+        margin-top: 20px;
+    }
+    .collection-button-section input {
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+
+	.content-header {
+		display: none;
+	}
+	#collection-remove-box {
+		margin-top: 10px;
+	}
+	#top_panel select.select-box,
+	#collection-remove-box select.select-box {
+		width: 200px;
+		height: 30px;
+	}
+	#trigger_series_search, .input-button {
+		padding: 5px 10px;
+		cursor: pointer;
+	}
+</style>
+<script type="text/javascript">
+   
+    require(
+        [
+            'jquery',
+            'Magento_Ui/js/modal/modal'
+        ],
+        function(
+            $,
+            modal
+        ) {
+            var options = {
+                type: 'popup',
+                responsive: true,
+                innerScroll: true,
+                buttons: [{
+                    text: $.mage.__('Continue'),
+                    class: 'trigger-modal',
+                    click: function () {
+                        this.closeModal();
+                    }
+                }],
+                opened: function($Event) {
+                    $(".modal-footer").hide();
+                }
+            };
+
+            var popup = modal(options, $('#collection-modal-window'));
+            $("#collection-trigger-modal").on('click',function(){
+                $("#collection-modal-window").modal("openModal");
+            });
+
+    $j = $;
+
+
+    $j(document).ready(function() {
+
+        $j("#trigger_series_search").click(function () {
+            var series = $j("#series_options").val();
+            if(series) {
+                window.location.href = "<?php echo $this->getUrl("crm/series/index")?>?series="+ series;
+            } else {
+                window.location.href = "<?php echo $this->getUrl("crm/series/index")?>";
+            }
+        });
+
+        $j("#collection-remove-trigger").click(function(){
+            $j("#collection-remove-box").slideToggle();
+        });
+    });
+
+
+    var rowCount = 1;
+    $j(document).ready(function() {
+        $j("#add-collection-row").click(function() {
+            rowCount = rowCount + 1;
+            var markup = $j("#collection-form-table tfoot.placeholder").html();
+            markup = markup.replace(/{{i}}/g, rowCount);
+            $j("#collection-form-table tbody").append(markup);
+        });
+
+        $j("#submit-collection").click(function () {
+            var form_var = $j("input, textarea, select",$j("#collection-form-table tbody")).serialize();
+            var data = {};
+            data.form_key = window.FORM_KEY;
+            data.form_var = form_var;
+            $j.ajax({
+                url: '<?php echo $this->getUrl("crm/series/ajaxsubmit") ?>',
+                type: 'POST',
+                data: data,
+                showLoader: true,
+                success: function (data, status, xhr) {
+                    window.location.reload();
+                },
+                error: function (jqXhr, textStatus, errorMessage) {
+                    window.location.reload();
+                }
+            });
+        });
+
+        $j(document).on( "click", "input.collection-remove-row", function() {
+            $j(this).parent().parent().remove();
+        });
+
+        });
+
+});
+
+</script>

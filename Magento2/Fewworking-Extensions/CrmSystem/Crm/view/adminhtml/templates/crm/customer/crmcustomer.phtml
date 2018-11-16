@@ -1,0 +1,605 @@
+<?php 
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
+
+$data = $this->getRequest()->getParams();
+$customer = $block->getCustomerById($data['id']);
+
+$admin_only = $customer->getAdminOnly();
+
+$created_at = $customer->getCreatedAt();
+$created_at_Ar = explode(' ', $created_at);
+$created_at = $created_at_Ar[0];
+
+$updated_at = $customer->getUpdatedAt();
+$updated_at_Ar = explode(' ', $created_at);
+$updated_at = $updated_at_Ar[0];
+
+$last_con = $customer->getLastContacted();
+$last_con_Ar = explode(' ', $last_con);
+$last_con = $last_con_Ar[0];
+
+$last_com = $customer->getLastCommunication();
+$last_com_Ar = explode(' ', $last_com);
+$last_com = $last_com_Ar[0];
+
+ // get the customer default billing address
+$billingAddressId = $customer->getDefaultBilling();
+$billingAddress = $block->getCustomerAddressById($billingAddressId);
+
+$billCountryId = $billingAddress->getCountryId();
+$billCity = $billingAddress->getCity();
+$billRegionId = $billingAddress->getRegionId();
+$billRegion = $billingAddress->getRegion();
+$billstreet = $billingAddress->getData('street');
+$billcompany = $billingAddress->getData('company');
+$billpostcode = $billingAddress->getData('postcode');
+$billtelephone = $billingAddress->getData('telephone');
+
+
+
+$shippingAddressId = $customer->getDefaultShipping();
+$shippingAddress = $block->getCustomerAddressById($shippingAddressId);
+$shipCountryId = $billingAddress->getCountryId();
+
+$shipCity = $billingAddress->getCity();
+$shipRegionId = $billingAddress->getRegionId();
+$shipRegion = $billingAddress->getRegion();
+$shipstreet = $billingAddress->getData('street');
+$shipcompany = $billingAddress->getData('company');
+$shippostcode = $billingAddress->getData('postcode');
+$shiptelephone = $billingAddress->getData('telephone');
+
+$phone = ($billtelephone)? $billtelephone:$shiptelephone;
+$additional_phone = ($shiptelephone)? $shiptelephone:$billtelephone;
+$company = ($billcompany)? $billcompany:$shipcompany;
+$countryId = ($billCountryId)? $billCountryId:$shipCountryId;
+//Get regions of USA
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$country = $objectManager->create('\Magento\Directory\Model\CountryFactory');
+$statearray =$country->create()->setId(
+                    $countryId
+                )->getLoadedRegionCollection()->toOptionArray();
+
+//Getting data from table ueg_customer_appointment
+ $objectManager =   \Magento\Framework\App\ObjectManager::getInstance();
+ $connection = $objectManager->get('Magento\Framework\App\ResourceConnection')->getConnection('\Magento\Framework\App\ResourceConnection::DEFAULT_CONNECTION'); 
+ $result1 = $connection->fetchAll("SELECT * FROM ueg_customer_appointment WHERE customer_id=".$customer->getId());
+ foreach ($result1 as $value) {
+    $note = $value['note'];
+ }
+ $phone_typeObj = $objectManager->create('Ueg\Crm\Model\Customer\Attribute\Source\Customeroptions15242422066');
+ $phone_types = $phone_typeObj->getAllOptions();
+ 
+$hotClientObj = $objectManager->create('Magento\Eav\Model\Entity\Attribute\Source\Boolean');
+ $hotClients = $hotClientObj->getAllOptions();
+
+ $assigned_toObj = $objectManager->create('Ueg\Crm\Model\Customer\Attribute\Source\CustomCustomerAssignedToOptions');
+ $assigned_tos = $assigned_toObj->getAllOptions();
+
+ $preferred_contact_methodObj = $objectManager->create('Ueg\Crm\Model\Customer\Attribute\Source\Customeroptions15242422063');
+ $preferred_contact_methods = $preferred_contact_methodObj->getAllOptions();
+
+ $source_saleObj = $objectManager->create('Ueg\Crm\Model\Customer\Attribute\Source\Customeroptions15242422064');
+ $source_sales = $source_saleObj->getAllOptions();
+
+ $preferred_paymentObj = $objectManager->create('Ueg\Crm\Model\Customer\Attribute\Source\Customeroptions15242422065');
+ $preferred_payments = $preferred_paymentObj->getAllOptions();
+
+?>
+<div class="top_section_wrapper">
+   <div class="top_form_section left">
+      <div id="customer_info_tabs_account_content">
+         <div class="entry-edit">
+            <form class="edit_form" action="<?php echo $block->getUrl('crm/crmcustomer/save'); ?>" method="post">
+               <div class="no-display">
+                  <input name="form_key" type="hidden" value="<?php echo $block->getFormKey();?>">
+                  <input type="hidden" name="account[id]" value="<?php echo $customer->getId(); ?>">
+               </div>
+               <div class="entry-edit-head">
+                  <h4 class="icon-head head-edit-form fieldset-legend">Overview</h4>
+                  <div class="form-buttons">
+                     <button type="submit"><span>Save</span></button>
+                  </div>
+               </div>
+               <div class="fieldset" id="_accountbase_fieldset">
+                  <div class="hor-scroll">
+                     <table cellspacing="0" class="form-list crm-customer-form">
+                        <tbody>
+                           <tr>
+                              <td class="element">
+                                 <span class="label">First Name:</span>
+                                 <span class="value">
+                                    <input id="_accountfirstname" name="account[firstname]" value="<?php echo $customer->getFirstname(); ?>" class="input-text required-entry" type="text" required>
+                                    
+                                 </span>
+                              </td>
+                              <td class="element">
+                                 <span class="label">Last Name:</span>
+                                 <span class="value">
+                                    <input id="_accountlastname" name="account[lastname]" value="<?php echo $customer->getLastname(); ?>" class="input-text required-entry" type="text" required>
+                                    
+                                 </span>
+                              </td>
+                              <td class="element">
+                                 <span class="label">Phone:</span>
+                                 <span class="value">
+                                    <input id="_accountphone" name="account[telephone]" value="<?php echo $phone; ?>" class="input-text" type="text">
+                                    
+                                 </span>
+                              </td>
+                              <td class="element">
+                                 <span class="label">Phone Type:</span>
+                                 <span class="value">
+                                    <select id="_accountphonetype" name="account[phone_type]" class=" select">
+                                       <?php 
+                                       foreach ($phone_types as $phone_type) {
+                                           
+                                           if($phone_type['value']==$customer->getPhoneType()){
+                                                echo "<option value=".$phone_type['value']." selected>" . $phone_type['label'] . "</option>";
+                                             }else{
+                                                echo "<option value=".$phone_type['value'].">" . $phone_type['label'] . "</option>";
+                                             }
+                                        }
+                                        ?>
+                                    </select>
+                                    
+                                 </span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td class="element">
+                                 <span class="label">Company:</span>
+                                 <span class="value">
+                                    <input id="_accountcompany" name="account[company]" value="<?php echo $company; ?>" class="input-text" type="text">
+                                    
+                                 </span>
+                              </td>
+                              <td class="element">
+                                 <span class="label">Email:</span>
+                                 <span class="value">
+                                    <input id="_accountemail" name="account[email]" value="<?php echo $customer->getEmail(); ?>" class="input-text required-entry" type="text" required>
+                                   
+                                 </span>
+                              </td>
+                              <td class="element">
+                                 <span class="label">Additional Phone:</span>
+                                 <span class="value">
+                                    <input id="_accountaddtionalphone" name="account[additional_telephone]" value="<?php echo $additional_phone; ?>" class="input-text" type="text" >
+                                    
+                                 </span>
+                              </td>
+                              <td class="element">
+                                 <span class="label">Phone Type:</span>
+                                 <span class="value">
+                                    <select id="_accountaddtionalphonetype" name="account[additional_phone_type]" class=" select">
+                                       <?php 
+                                       foreach ($phone_types as $phone_type) {
+                                           
+                                           if($phone_type['value']==$customer->getPhoneType()){
+                                                echo "<option value=".$phone_type['value']." selected>" . $phone_type['label'] . "</option>";
+                                             }else{
+                                                echo "<option value=".$phone_type['value'].">" . $phone_type['label'] . "</option>";
+                                             }
+                                        }
+                                        ?>
+                                    </select>
+                                    
+                                 </span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td class="element">
+                                 <span class="label">eBay ID:</span>
+                                 <span class="value">
+                                    <input id="_accountebayid" name="account[ebay_id]" value="<?php echo $customer->getEbayId(); ?>" class="input-text" type="text">
+                                    
+                                 </span>
+                              </td>
+                              <td class="element">
+                                 <span class="label">Client Code:</span>
+                                 <span class="value">
+                                    <input id="_accountclientcode" name="account[client_code]" value="<?php echo $customer->getClientCode(); ?>" class="input-text" type="text">
+                                    
+                                 </span>
+                              </td>
+                              <td class="element">
+                                 <span class="label">Hot Client:</span>
+                                 <span class="value">
+                                    <select id="_accounthotclient" name="account[hot_client]" class=" select">
+                                        <?php 
+                                       foreach ($hotClients as $hotClient) {
+                                           
+                                           if($hotClient['value']==$customer->getHotClient()){
+                                                echo "<option value=".$hotClient['value']." selected>" . $hotClient['label'] . "</option>";
+                                             }else{
+                                                echo "<option value=".$hotClient['value'].">" . $hotClient['label'] . "</option>";
+                                             }
+                                        }
+                                        ?>
+                                    </select>
+                                    
+                                 </span>
+                              </td>
+                              <td class="element">
+                                 <span class="label">Assigned To:</span>
+                                 <span class="value">
+                                    <select id="_accountassignedto" name="account[assigned_to][]" class=" select multiselect" multiple="multiple">
+                                       <option value=""></option>
+                                       
+                                       <?php 
+                                       foreach ($assigned_tos as $assigned_to) {
+                                           
+                                           if($assigned_to['value']==$customer->getAssignedTo()){
+                                                echo "<option value=".$assigned_to['value']." selected>" . $assigned_to['label'] . "</option>";
+                                             }else{
+                                                echo "<option value=".$assigned_to['value'].">" . $assigned_to['label'] . "</option>";
+                                             }
+                                        }
+                                        ?>
+                                       
+                                    </select>
+                                    
+                                 </span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td class="element">
+                                 <span class="label">Preferred Contact Time:</span>
+                                 <span class="value">
+                                    <input id="_accountpreferredcontacttime" name="account[preferred_contact_time]" value="<?php echo $customer->getPreferredContactTime(); ?>" class="input-text" type="text">
+                                 </span>
+                              </td>
+                              <td></td>
+                              <td class="element">
+                                 <span class="label">Preferred Contact Method:</span>
+                                 <span class="value">
+                                    <select id="_accountpreferredcontactmethod" name="account[preferred_contact_method]" class=" select">
+                                       <?php 
+                                       foreach ($preferred_contact_methods as $preferred_contact_method) {
+                                           
+                                           if($preferred_contact_method['value']==$customer->getPreferredContactMethod()){
+                                                echo "<option value=".$preferred_contact_method['value']." selected>" . $preferred_contact_method['label'] . "</option>";
+                                             }else{
+                                                echo "<option value=".$preferred_contact_method['value'].">" . $preferred_contact_method['label'] . "</option>";
+                                             }
+                                        }
+                                        ?>
+                                    </select>
+                                    
+                                 </span>
+                              </td>
+                              <td></td>
+                           </tr>
+                           <tr>
+                              <td class="element">
+                                 <span class="label">Source of Sale:</span>
+                                 <span class="value">
+                                    <select id="_accountsourcesale" name="account[source_sale]" class=" select">
+                                       <?php 
+                                       foreach ($source_sales as $source_sale) {
+                                           
+                                           if($source_sale['value']==$customer->getSourceSale()){
+                                                echo "<option value=".$source_sale['value']." selected>" . $source_sale['label'] . "</option>";
+                                             }else{
+                                                echo "<option value=".$source_sale['value'].">" . $source_sale['label'] . "</option>";
+                                             }
+                                        }
+                                        ?>
+                                      
+                                    </select>
+                                    
+                                 </span>
+                              </td>
+                              <td></td>
+                              <td class="element">
+                                 <span class="label">Preferred Payment Method:</span>
+                                 <span class="value">
+                                    <select id="_accountpreferredpayment" name="account[preferred_payment]" class=" select">
+                                       <?php 
+                                       foreach ($preferred_payments as $preferred_payment) {
+                                           
+                                           if($preferred_payment['value']==$customer->getPreferredPayment()){
+                                                echo "<option value=".$preferred_payment['value']." selected>" . $preferred_payment['label'] . "</option>";
+                                             }else{
+                                                echo "<option value=".$preferred_payment['value'].">" . $preferred_payment['label'] . "</option>";
+                                             }
+                                        }
+                                        ?>
+                                    </select>
+                                    
+                                 </span>
+                              </td>
+                              <td class="element">
+                                 <span class="label">Administrator Only:</span>
+                                 <span class="value">
+                                    <select id="_accountadminonly" name="account[admin_only]" class=" select">
+                                       <?php if($admin_only == 0){ ?>
+                                       <option value="0" selected="selected">No</option>
+                                       <?php }else{ ?>
+                                       <option value="0">No</option>
+                                       <?php } ?>
+                                       <?php if($admin_only == 1){ ?>
+                                       <option value="1" selected="selected">Yes</option>
+                                       <?php }else{ ?>
+                                       <option value="1">Yes</option>
+                                       <?php } ?>
+                                    </select>
+                                    
+                                 </span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td class="element">
+                                 <span class="label">Mailing List:</span>
+                                 <span class="value">
+                                    <select id="_accountmailinglist" name="account[mailing_list][]" class=" select multiselect" multiple="multiple">
+                                    </select>
+                                    
+                                 </span>
+                              </td>
+                              <td></td>
+                              <td class="element" colspan="2">
+                                 <span class="label" style="vertical-align: top;">Notes:</span>
+                                 <span class="value">
+                                    <textarea name="account[customer_notes]" style="width:300px; height: 100px;"><?php echo $customer->getCustomerNotes(); ?></textarea>
+                                    
+                                 </span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td class="element" colspan="2">
+                                 <fieldset class="address_area">
+                                    <legend>Billing Address:</legend>
+                                    <div class="address_wrapper">
+                                       <span class="wide_box value">
+                                          <input type="text" name="account[billing_street]" value="<?php  echo $billstreet; ?>">
+                                       </span>
+                                       <br>
+                                       <span class="small_box value">
+                                          <input type="text" name="account[billing_city]" value="<?php  echo $billCity; ?>">
+                                       </span>
+                                       <span class="small_box value">
+                                          <select name="account[billing_region_id]">
+                                          <option value="">Please Select</option>
+                                             <?php 
+                                                foreach ($statearray as $_state) {
+                                                    if($_state['value']){
+                                                         if($_state['value']==$billRegionId){
+                                                            echo "<option value=".$_state['value']." selected>" . $_state['label'] . "</option>";
+                                                         }else{
+                                                            echo "<option value=".$_state['value'].">" . $_state['label'] . "</option>";
+                                                         }
+                                                        
+                                                }
+                                               }
+                                              ?>
+                                          </select>
+                                          
+                                       </span>
+                                       <span class="small_box value">
+                                          <input type="text" name="account[billing_postcode]" value="<?php  echo $billpostcode; ?>">
+                                       </span>
+                                    </div>
+                                 </fieldset>
+                              </td>
+                              <td class="element" colspan="2">
+                                 <fieldset class="address_area">
+                                    <legend>Shipping Address:</legend>
+                                    <div class="address_wrapper">
+                                       <span class="wide_box value">
+                                          <input type="text" name="account[shipping_street]" value="<?php  echo $shipstreet; ?>">
+                                          
+                                       </span>
+                                       <br>
+                                       <span class="small_box value">
+                                          <input type="text" name="account[shipping_city]" value="<?php  echo $shipCity; ?>">                                          
+                                       </span>
+                                       <span class="small_box value">
+                                          <select name="account[shipping_region_id]">
+                                          <option value="">Please Select</option>
+                                             <?php 
+                                                foreach ($statearray as $_state) {
+                                                    if($_state['value']){
+                                                         if($_state['value']==$shipRegionId){
+                                                            echo "<option value=".$_state['value']." selected>" . $_state['label'] . "</option>";
+                                                         }else{
+                                                            echo "<option value=".$_state['value'].">" . $_state['label'] . "</option>";
+                                                         }
+                                                        
+                                                }
+                                               }
+                                              ?>
+                                          </select>
+                                          
+                                       </span>
+                                       <span class="small_box value">
+                                          <input type="text" name="account[shipping_postcode]" value="<?php  echo $shippostcode; ?>">                                        
+                                       </span>
+                                    </div>
+                                 </fieldset>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td class="element">
+                                 <span class="label">Date Modified:</span>
+                                 <span class="value"><?php echo $created_at; ?></span>
+                              </td>
+                              <td class="element">
+                                 <span class="label">Date Created:</span>
+                                 <span class="value"><?php echo $updated_at; ?></span>
+                              </td>
+                              <td class="element">
+                                 <span class="label">Last Contact:</span>
+                                 <span class="value">
+                                    <input name="account[last_contacted]" id="_accountlast_contacted" value="<?php echo $last_con; ?>" class=" input-text" type="text">
+                                    
+                                 </span>
+                              </td>
+                              <td class="element">
+                                 <span class="label">Last Communication:</span>
+                                 <span class="value">
+                                    <input name="account[last_communication]" id="_accountlast_communication" value="<?php echo $last_com; ?>" class=" input-text" type="text">
+                                 </span>
+                              </td>
+                           </tr>
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+            </form>
+         </div>
+      </div>
+      <style>
+         fieldset.address_area {
+         width: 400px;
+         }
+         fieldset.address_area legend {
+         display: block;
+         padding: 5px;
+         font-weight: 600;
+         }
+         fieldset.address_area .wide_box input {
+         width: 315px;
+         margin: 5px 0;
+         }
+         fieldset.address_area .small_box input,
+         fieldset.address_area .small_box select {
+         width: 100px;
+         }
+         .crm-customer-form span.value {
+         position: relative;
+         display: inline-block;
+         }
+      </style>
+                 
+   </div>
+   <div class="top_log_section right">
+      <div class="comment_section">
+         <div id="customer_info_tabs_account_comment">
+            <div class="entry-edit">
+               <div class="hor-scroll">
+                  <form class="edit_form" action="#" method="post">
+                     <div class="no-display">
+                        <input name="form_key" type="hidden" value="4c9QC4pbFIzV6Goi">
+                        <input type="hidden" name="customer_id" value="5959">
+                     </div>
+                     <table>
+                        <tbody>
+                           <tr>
+                              <td>
+                                 <label class="label">Comments:</label>
+                              </td>
+                              <td>
+                                 <div class="value">
+                                    <textarea name="comment" placeholder="Enter Comment Here..."></textarea>
+                                 </div>
+                              </td>
+                              <td>
+                                 <div class="buttons">
+                                    <input type="submit" value="Submit">
+                                 </div>
+                              </td>
+                           </tr>
+                        </tbody>
+                     </table>
+                  </form>
+                  <hr>
+                  <div class="log_list_section">
+                     <div class="log_box">
+                        <ul>
+                           <li>
+                              <span class="created_at"><strong>2018-05-07 22:59:45</strong></span> -
+                              <span class="user">dialer</span> -
+                              <spam>New Account Comment:</spam>
+                              <br>
+                              <span class="comment">testing</span>
+                           </li>
+                        </ul>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <hr>
+      <style>
+         #customer_info_tabs_account_comment label {
+         font-size: 16px;
+         font-weight: 600;
+         }
+         .comment_section div.value {
+         margin-left: 20px;
+         }
+         .comment_section div.buttons {
+         margin-left: 20px;
+         }
+         .comment_section div.buttons input {
+         padding: 5px 10px;
+         }
+         .log_list_section {
+         margin: 10px 0;
+         }
+         #customer_info_tabs_account_comment .log_box {
+         height: 200px;
+         overflow-y: scroll;
+         }
+         .log_box ul li {
+         font-size: 14px;
+         padding: 5px;
+         }
+      </style>
+      <div class="comment_section">
+         <div id="customer_info_tabs_account_log">
+            <div class="entry-edit">
+               <div class="hor-scroll">
+                  <table>
+                     <tbody>
+                        <tr>
+                           <td>
+                              <label class="label">Log:</label>
+                           </td>
+                        </tr>
+                     </tbody>
+                  </table>
+                  <hr>
+                  <div class="log_list_section">
+                     <div class="log_box">
+                        <ul>
+                           <li>
+                              <span class="created_at"><strong>2018-09-24 13:54:30</strong></span> -
+                              <span class="user">devs</span> -
+                              <spam>Account Accessed</spam>
+                              <br>
+                              <span class="comment"></span>
+                           </li>
+                        </ul>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <style>
+         #customer_info_tabs_account_log label {
+         font-size: 16px;
+         font-weight: 600;
+         margin: 20px 0 10px 0;
+         display: block;
+         }
+         .log_list_section {
+         margin: 10px 0;
+         }
+         #customer_info_tabs_account_log .log_box {
+         height: 400px;
+         overflow-y: scroll;
+         }
+         .log_box ul li {
+         font-size: 14px;
+         padding: 5px;
+         }
+      </style>
+   </div>
+   <div style="clear:both;"></div>
+</div>

@@ -1,0 +1,138 @@
+<?php
+$readConnection  = $block->getResource()->getConnection();
+
+$crmInvoice     = $block->getResource()->getTableName( 'ueg_crm_invoice' );
+$crmInvoiceItem = $block->getResource()->getTableName( 'ueg_crm_invoice_item' );
+$customerEntityText = $block->getResource()->getTableName( 'customer_entity_text' );
+?>
+<?php
+$params = $this->getRequest()->getParams();
+$page = $params['page'];
+$limit = $params['limit'];
+
+// filter
+$whereClauseItems = array();
+$whereClauseItems[] = "secondary_status = 'ASR Reps'";
+$whereIClauseItems = array();
+$joinClause = "";
+$havingClasueItems = array();
+$selectColumns = array("$crmInvoice.*");
+
+$admin_user_session = $block->getBackendSession();
+$adminuserId = $block->getauthSession()->getUser()->getUserId();
+$role_ids = $block->getRoleId();
+if(!in_array(6, $role_ids)) {
+    $assignedToAttribute = $block->getEavAttr()->getAttribute('customer', 'assigned_to');
+    if(isset($assignedToAttribute)) {
+        $assignedToAttributeId = $assignedToAttribute->getId();
+        if(isset($assignedToAttributeId)) {
+            $joinClause = "LEFT JOIN $customerEntityText ON $crmInvoice.magento_customer_id = $customerEntityText.entity_id AND $customerEntityText.attribute_id = $assignedToAttributeId";
+            $havingClasueItems[] = "find_in_set($adminuserId, assigned_to) <> 0 OR find_in_set($adminuserId, assigned_user_id) <> 0";
+            $selectColumns[] = "$customerEntityText.value AS assigned_to";
+        }
+    }
+}
+
+$filterVar = $params['filter_var'];
+parse_str( $filterVar, $formParams );
+if(isset($formParams)) {
+	foreach ($formParams as $code => $_filter) {
+		if($code == "item") {
+			foreach ($_filter as $itemCode => $value) {
+				if(isset($value) && !empty($value)) {
+					foreach(explode(" ", $value) as $keyword) {
+						if(isset($keyword) && !empty($keyword)) {
+							$whereIClauseItems[] = "($itemCode LIKE '%$keyword%' OR $itemCode LIKE '%$keyword' OR $itemCode LIKE '$keyword%')";
+						}
+					}
+				}
+			}
+		} elseif($code == "created_at") {
+			foreach ($_filter as $range => $date) {
+				if(isset($date) && !empty($date)) {
+					if ( $range == "from" ) {
+						$date = date("Y-m-d", strtotime($date)) . " 00:00:00";
+						$date = $block->getGmtDate()->gmtDate("Y-m-d H:i:s", strtotime($date));
+						$whereClauseItems[] = "$code >= '$date'";
+					} elseif ( $range == "to" ) {
+						$date = date("Y-m-d", strtotime($date)) . " 23:59:59";
+						$date = $block->getGmtDate()->gmtDate("Y-m-d H:i:s", strtotime($date));
+						$whereClauseItems[] = "$code <= '$date'";
+					}
+				}
+			}
+		} elseif(isset($_filter) && !empty($_filter)) {
+			$whereClauseItems[] = "($code LIKE '%$_filter%' OR $code LIKE '%$_filter' OR $code LIKE '$_filter%')";
+		}
+	}
+}
+$whereIClause = "";
+if(isset($whereIClauseItems) && !empty($whereIClauseItems) && count($whereIClauseItems) > 0) {
+	$whereIClause = implode(' AND ', $whereIClauseItems);
+	$whereIClause = "WHERE ". $whereIClause;
+}
+if(isset($whereIClause) && !empty($whereIClause)) {
+	$invoiceItemFilterSql = "SELECT parent_id from $crmInvoiceItem $whereIClause";
+	//echo $invoiceItemFilterSql;
+	$invoiceItemResult    = $readConnection->fetchCol( $invoiceItemFilterSql );
+	$invoiceItemResult = array_unique($invoiceItemResult);
+	//echo "<pre>"; print_r( $invoiceItemResult ); echo "</pre>";
+
+	if(isset($invoiceItemResult) && !empty($invoiceItemResult) && count($invoiceItemResult) > 0) {
+		$inIds = implode(',', $invoiceItemResult);
+		$whereClauseItems[] = "invoice_id IN ($inIds)";
+	} else {
+		$whereClauseItems[] = "invoice_id = 0";
+	}
+}
+
+$whereClause = "";
+if(isset($whereClauseItems) && !empty($whereClauseItems) && count($whereClauseItems) > 0) {
+	$whereClause = implode(' AND ', $whereClauseItems);
+	$whereClause = "WHERE ". $whereClause;
+}
+$havingClause = "";
+if(isset($havingClasueItems) && !empty($havingClasueItems) && count($havingClasueItems) > 0) {
+	$havingClause = implode(' AND ', $havingClasueItems);
+	$havingClause = "HAVING ". $havingClause;
+}
+$selectColumnsClause = implode(",", $selectColumns);
+
+$invoiceCountSql = "SELECT $selectColumnsClause FROM $crmInvoice $joinClause $whereClause $havingClause";
+//echo $invoiceCountSql;
+$countResult = $readConnection->fetchAll($invoiceCountSql);
+//echo "<pre>"; print_r($countResult); echo "</pre>";
+$totalCount = count($countResult);
+$totalPage = ceil($totalCount / $limit);
+$page = ($page <= $totalPage) ? $page : $totalPage;
+?>
+<div class="pagination-wrapper">
+<div class="total-records-pagination">
+<?php echo $totalCount ?> records found
+</div>
+<select name="limit" id="limitchange">
+	<option value="10" <?php if($limit == 10) { echo 'selected="selected"'; } ?>>10</option>
+	<option value="20" <?php if($limit == 20) { echo 'selected="selected"'; } ?>>20</option>
+	<option value="30" <?php if($limit == 30) { echo 'selected="selected"'; } ?>>30</option>
+	<option value="50" <?php if($limit == 50) { echo 'selected="selected"'; } ?>>50</option>
+	<option value="100" <?php if($limit == 100) { echo 'selected="selected"'; } ?>>100</option>
+	<option value="200" <?php if($limit == 200) { echo 'selected="selected"'; } ?>>200</option>
+	<option value="500" <?php if($limit == 500) { echo 'selected="selected"'; } ?>>500</option>
+</select>
+&nbsp;per page
+<?php if($page > 1) { ?>
+	<a href="#" title="Previous page" data-id="pre" data-page="<?php echo $page - 1 ?>" data-limit="<?php echo $limit ?>" class="action-previous act-btn invoiceSetPage"><img src="<?php echo $this->getViewFileUrl('Ueg_Crm::images/pager_arrow_left.gif') ?>" alt="Go to Previous page" class="arrow"/></a>
+<?php } else { ?>
+	<a class="action-previous act-btn disabled"><img src="<?php echo $this->getViewFileUrl('Ueg_Crm::images/pager_arrow_left_off.gif') ?>" alt="Go to Previous page" class="arrow"/></a>
+
+<?php } ?>
+<a class="action-input"><input type="text" name="page" value="<?php echo $page ?>" class="input-text page" data-limit="<?php echo $limit ?>" data-totalpage="<?php echo $totalPage ?>" id="invoiceInputPage" /></a>
+&nbsp;of <?php echo $totalPage ?>
+
+<?php if($page < $totalPage) { ?>
+	<a class="action-next act-btn invoiceSetPage" href="#" title="Next page" data-id="next" data-limit="<?php echo $limit ?>" data-page="<?php echo $page + 1 ?>"><img src="<?php echo $this->getViewFileUrl('Ueg_Crm::images/pager_arrow_right.gif') ?>" alt="Go to Next page" class="arrow"/></a>
+<?php } else { ?>
+	<a  class="action-next act-btn disabled" href="#" ><img src="<?php echo $this->getViewFileUrl('Ueg_Crm::images/pager_arrow_right_off.gif') ?>" alt="Go to Next page" class="arrow"/></a>
+<?php } ?>
+
+</div>

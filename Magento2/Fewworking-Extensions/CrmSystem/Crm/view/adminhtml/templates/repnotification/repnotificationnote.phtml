@@ -1,0 +1,51 @@
+<script type="text/javascript">
+
+
+require(['jquery'], function($){
+    $j = $;
+	
+    $j(document).ready(function() {
+        var classname = $j( "td.col-action " ).find( "div.action" ).attr('class');
+        $j( "td.col-action " ).each(function( index ) {
+            var classname = $j( this ).find( "div.action" ).attr('class');
+            $j(this).parent().addClass(classname);
+        });
+
+
+    });
+
+    $('.save_note').on('click',function(){
+
+        var $parent = $j(this).parent();
+        var id = $j(this).attr('data-id');
+        var note = $j('textarea', $parent).val();
+          //alert(note);
+        var data = {};
+        data.form_key = window.FORM_KEY;
+        data.id = id;
+        data.note = note;
+        $j.ajax({
+            url: '<?php echo $this->getUrl("crm/repnotification/savenote") ?>',
+            type: 'POST',
+            showLoader: true,
+            data: data,
+            success: function (data, status, xhr) {
+                window.location.reload();
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                window.location.reload();
+            }
+        });
+    });
+
+});
+
+
+
+
+
+</script>
+<style>
+    tr.cunread { font-weight: bold; }
+    tr.cflag td, tr.on-mouse.cflag td { background-color: #00FF00 !important; }
+</style>

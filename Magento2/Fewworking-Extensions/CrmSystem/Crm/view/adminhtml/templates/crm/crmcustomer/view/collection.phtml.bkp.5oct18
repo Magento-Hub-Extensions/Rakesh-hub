@@ -1,0 +1,408 @@
+<?php
+/**
+ * Coins Collection tab template
+ */
+?>
+<div class="entry-edit">
+    <h2>Collections</h2>
+    <div id="top_panel">
+        <span>
+            <?php $series = $block->getSeriesList(); ?>
+            <select name="series_search" id="series_options" class="select-box">
+                <option value=""></option>
+                <?php foreach ($series as $id => $_series) { ?>
+                    <?php
+	                $selected = "";
+                    $series = $this->getRequest()->getParam('series');
+                    if(isset($series) && !empty($series)) {
+                        if($series == $id) {
+	                        $selected = "selected='selected'";
+                        }
+                    }
+                    ?>
+                    <option value="<?php echo $id ?>" <?php echo $selected ?>><?php echo $_series ?></option>
+                <?php } ?>
+            </select>
+        </span>
+        <span>&nbsp;|&nbsp;</span>
+        <span><input type="button" id="trigger_series_search" value="Search"/></span>
+        <span>&nbsp;|&nbsp;</span>
+        <span><a id="collection-trigger-modal" href="javascript:void(0)">Create a New Series</a></span>
+        <span>&nbsp;|&nbsp;</span>
+        <span><a id="collection-remove-trigger" href="javascript:void(0)">Remove a Series</a></span>
+        <span>&nbsp;|&nbsp;</span>
+        <span><a id="collection-add-trigger" href="javascript:void(0)">Add a Series</a></span>
+    </div>
+	<?php $coinOptions =$block->getCoinoptionsModel(); ?>
+</div>
+<?php $series = $this->getRequest()->getParam('series'); ?>
+<?php if(isset($series) && !empty($series)) { ?>
+    <?php $seriesInfo = $block->getSeriesInfo($series); ?>
+    <div class="series_info_panel">
+        <form name="series_info_form" method="post" action="<?php echo $this->getUrl("crm/collection/seriesupdate") ?>?page=crm">
+            <input type="hidden" name="form_key" value="<?php echo $block->getFormKey();?>"/>
+            <fieldset id="series_info_panel">
+                <legend>Series Information:</legend>
+                <table id="series_info_panel_table">
+                    <tr>
+                        <td>
+                            <label for="name">Registry Name:</label>
+                            <input type="text" name="registry_name" class="text-box" value="<?php echo $seriesInfo['registry_name']?>"/>
+                            <input type="hidden" name="customer_id" value="<?php echo $this->getRequest()->getParam('id') ?>"/>
+                            <input type="hidden" name="series_id" value="<?php echo $seriesInfo['series_id']?>"/>
+                            <input type="hidden" name="series_info_id" value="<?php echo $seriesInfo['series_info_id']?>"/>
+                        </td>
+                        <td rowspan="3">
+                            <label for="series_note" style="display: inherit;">Series Notes:</label>
+                            <textarea name="series_note" class="textarea-box"><?php echo $seriesInfo['series_note']?></textarea>
+                        </td>
+                        <td rowspan="3" class="collection-button-section">
+                            <input type="submit" value="Save"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="service_prefered">Service Prefered:</label>
+                            <?php $service = $coinOptions->getServiceOptions(); ?>
+                            <select name="service_prefered" class="select-box">
+                                <option value=""></option>
+		                        <?php foreach ($service as $_service) { ?>
+			                        <?php
+			                        $selected = "";
+			                        if(isset($seriesInfo['service_prefered']) && !empty($seriesInfo['service_prefered'])) {
+				                        if($seriesInfo['service_prefered'] == $_service) {
+					                        $selected = "selected='selected'";
+				                        }
+			                        }
+			                        ?>
+                                    <option value="<?php echo $_service ?>" <?php echo $selected ?>><?php echo $_service ?></option>
+		                        <?php } ?>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="website">Website:</label>
+                            <?php $website = ($seriesInfo['website']) ? $seriesInfo['website'] : 0; ?>
+                            <select name="website" class="select-box">
+                                <option value="0" <?php if($website == 0) { echo "selected='selected'"; } ?>>No</option>
+                                <option value="1" <?php if($website == 1) { echo "selected='selected'"; } ?>>Yes</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+        </form>
+    </div>
+<?php } ?>
+<div id="collection-remove-box" style="display: none;">
+    <form name="series_remove_form" method="post" action="<?php echo $this->getUrl("crm/collection/seriesremove") ?>?page=crm">
+        <input type="hidden" name="form_key" value="<?php echo $block->getFormKey();?>"/>
+        <input type="hidden" name="customer_id" value="<?php echo $this->getRequest()->getParam('id') ?>"/>
+        <span>
+            <?php $series = $block->getSeriesList(); ?>
+            <select name="remove_series" class="select-box">
+                <option value=""></option>
+                <?php foreach ($series as $id => $_series) { ?>
+                    <option value="<?php echo $id ?>"><?php echo $_series ?></option>
+                <?php } ?>
+            </select>
+        </span>
+        <span>&nbsp;|&nbsp;</span>
+        <span><input type="submit" class="input-button" value="Remove"/></span>
+    </form>
+</div>
+<div id="collection-add-box" style="display: none;">
+    <form name="series_add_form" method="post" action="<?php echo $this->getUrl("crm/collection/seriesadd") ?>?page=crm">
+        <input type="hidden" name="form_key" value="<?php echo $block->getFormKey();?>"/>
+        <input type="hidden" name="customer_id" value="<?php echo $this->getRequest()->getParam('id') ?>"/>
+        <span>
+            <?php $series = $block->getAllSeriesList(); ?>
+            <select name="add_series" class="select-box">
+                <option value=""></option>
+                <?php foreach ($series as $id => $_series) { ?>
+                    <option value="<?php echo $id ?>"><?php echo $_series ?></option>
+                <?php } ?>
+            </select>
+        </span>
+        <span>&nbsp;|&nbsp;</span>
+        <span><input type="submit" class="input-button" value="Add"/></span>
+    </form>
+</div>
+<div style="height:20px; clear:both;"></div>
+
+<!-- The Modal -->
+<div id="collection-modal-window" class="collection-modal" style="display: none;">
+    <!-- Modal content -->
+    <div class="collection-modal-content">
+        <div class="collection-modal-header">
+            <span class="collection-close">&times;</span>
+        </div>
+        <div class="collection-modal-body">
+            <fieldset id="collection-form">
+                <legend>Add a New Series</legend>
+                <table id="collection-form-table">
+                    <tbody>
+                    <tr class="head">
+                        <th>
+                            <label for="media">Series Name:
+                                <span class="required">*</span>
+                            </label><br>
+                        </th>
+                        <th>
+                            <label for="denom">Denomination:</label><br>
+                        </th>
+                        <th>
+                            <label for="type">Type:</label><br>
+                        </th>
+                        <th>
+                            <label for="metal">Metal:</label><br>
+                        </th>
+                        <th>
+                            <label for="user_defaults">User Defaults:</label><br>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" name="series_name" list="series" class="text-box input-text"/>
+	                        <?php $seriesList = $block->getSeriesList(); ?>
+                            <datalist id="series">
+		                        <?php foreach($seriesList as $_series) { ?>
+                                <option value="<?php echo $_series ?>">
+			                        <?php } ?>
+                            </datalist>
+                        </td>
+                        <td>
+                            <?php $denom = $coinOptions->getDenomOptions(); ?>
+                            <select name="denom" class="select-box">
+                                <?php foreach ($denom as $_denom) { ?>
+                                    <option value="<?php echo $_denom ?>"><?php echo $_denom ?></option>
+                                <?php } ?>
+                            </select>
+                        </td>
+                        <td>
+                            <?php $type = $coinOptions->getTypeOptions(); ?>
+                            <select name="type" class="select-box">
+                                <?php foreach ($type as $_type) { ?>
+                                    <option value="<?php echo $_type ?>"><?php echo $_type ?></option>
+                                <?php } ?>
+                            </select>
+                        </td>
+                        <td>
+                            <?php $metal = $coinOptions->getMetalOptions(); ?>
+                            <select name="metal" class="select-box">
+                                <?php foreach ($metal as $_metal) { ?>
+                                    <option value="<?php echo $_metal ?>"><?php echo $_metal ?></option>
+                                <?php } ?>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="user_defaults" class="select-box">
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class="body">
+                        <th>
+                            <label for="pcgs">PCGS#</label><br>
+                        </th>
+                        <th>
+                            <label for="year">Year</label><br>
+                        </th>
+                        <th>
+                            <label for="mint">Mint</label><br>
+                        </th>
+                        <th>
+                            <label for="variety">Variety</label><br>
+                        </th>
+                        <th>
+                            <label for="desig">Desig</label><br>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" name="collection[1][pcgs]" class="text-box"/>
+                        </td>
+                        <td>
+                            <input type="text" name="collection[1][year]" class="text-box"/>
+                        </td>
+                        <td>
+                            <?php $mints = $coinOptions->getMintOptions(); ?>
+                            <select name="collection[1][mint]" class="select-box">
+                                <?php foreach ($mints as $_mint) { ?>
+                                    <option value="<?php echo $_mint ?>"><?php echo $_mint ?></option>
+                                <?php } ?>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" name="collection[1][variety]" class="text-box"/>
+                        </td>
+                        <td>
+                            <?php $desig = $coinOptions->getDesigOptions(); ?>
+                            <select name="collection[1][desig]" class="select-box">
+                                <?php foreach ($desig as $_desig) { ?>
+                                    <option value="<?php echo $_desig ?>"><?php echo $_desig ?></option>
+                                <?php } ?>
+                            </select>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tfoot class="placeholder" style="display: none;">
+                    <tr>
+                        <td>
+                            <input type="text" name="collection[{{i}}][pcgs]" class="text-box"/>
+                        </td>
+                        <td>
+                            <input type="text" name="collection[{{i}}][year]" class="text-box"/>
+                        </td>
+                        <td>
+                            <?php $mints = $coinOptions->getMintOptions(); ?>
+                            <select name="collection[{{i}}][mint]" class="select-box">
+                                <?php foreach ($mints as $_mint) { ?>
+                                    <option value="<?php echo $_mint ?>"><?php echo $_mint ?></option>
+                                <?php } ?>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" name="collection[{{i}}][variety]" class="text-box"/>
+                        </td>
+                        <td>
+                            <?php $desig = $coinOptions->getDesigOptions(); ?>
+                            <select name="collection[{{i}}][desig]" class="select-box">
+                                <?php foreach ($desig as $_desig) { ?>
+                                    <option value="<?php echo $_desig ?>"><?php echo $_desig ?></option>
+                                <?php } ?>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="button" class="collection-remove-row" value="&#10005;" style="cursor: pointer;"/>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+               <!--  <div class="collection-button-section">
+                    <input type="button" id="add-collection-row" value="Add Row"/>
+                    <input type="button" id="submit-collection" value="Submit"/>
+                </div> -->
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+<?php echo $this->getChildHtml('grid') ?>
+<div class="button-section">
+    <input type="button" id="save-collection" value="Save"/>
+</div>
+
+<script>
+    require(['jquery','Magento_Ui/js/modal/modal'],function($,modal) {
+            var options = {
+                type: 'popup',
+                responsive: true,
+                innerScroll: true,
+                title: 'popup modal title',
+                buttons: [{
+                    text: $.mage.__('Add Row'),
+                    class: 'add-row-collection-btn',
+                    click: function () {
+                        addCollectionRow($);
+                    }
+                },{
+                    text: $.mage.__('Submit'),
+                    class: 'collection-submit-btn',
+                    click: function () {
+                        submitCollection($);
+                    }
+                }]
+            };
+            var popup = modal(options, $('#collection-modal-window'));
+            $("#collection-trigger-modal").on('click',function(){ 
+                $("#collection-modal-window").modal("openModal");
+            });
+
+            // colelction code added
+
+            $("#save-collection").click(function () {
+            $('body').trigger('processStart');
+            //var form_var = $("input, textarea, select",$("#collectionGrid_table tbody")).serializeArray();
+            var form_var = $("input, textarea, select",$("#collectionGrid_table tbody")).serialize();
+            //console.log(form_var);
+            var data = {};
+            data.form_key = window.FORM_KEY;
+            data.customer_id = "<?php echo $this->getRequest()->getParam('id') ?>";
+            data.form_var = form_var;
+            $.ajax({
+                url: '<?php echo $this->getUrl("crm/collection/ajaxsave") ?>?isAjax=true',
+                type: 'POST',  // http method
+                data: data,  // data to submit
+                //data: form_var,  // data to submit
+                success: function (data, status, xhr) {
+                    //$('p').append('status: ' + status + ', data: ' + data);
+                    window.location.href = "<?php echo $this->getUrl("crm/crmcustomer/view", array('id'=>$this->getRequest()->getParam('id')))?>";
+                },
+                error: function (jqXhr, textStatus, errorMessage) {
+                    //$('p').append('Error' + errorMessage);
+                    window.location.href = "<?php echo $this->getUrl("crm/crmcustomer/view", array('id'=>$this->getRequest()->getParam('id')))?>";
+                }
+            });
+        });
+
+        $(document).on( "click", "input.collection-remove-row", function() {
+            $(this).parent().parent().remove();
+        });
+
+        $("#trigger_series_search").click(function () {
+            var series = $("#series_options").val();
+            if(series) {
+                window.location.href = "<?php echo $this->getUrl("crm/crmcustomer/view", array('id'=>$this->getRequest()->getParam('id')))?>?series="+ series;
+            } else {
+                window.location.href = "<?php echo $this->getUrl("crm/crmcustomer/view", array('id'=>$this->getRequest()->getParam('id')))?>";
+            }
+        });
+
+        $("#collection-remove-trigger").click(function(){
+            $("#collection-remove-box").slideToggle();
+        });
+        $("#collection-add-trigger").click(function(){
+            $("#collection-add-box").slideToggle();
+        });
+
+    });
+
+
+
+    var rowCount = 1;
+    function addCollectionRow($j) {
+        rowCount = rowCount + 1;
+        var markup = $j("#collection-form-table tfoot.placeholder").html();
+        markup = markup.replace(/{{i}}/g, rowCount);
+        $j("#collection-form-table tbody").append(markup);
+    }
+
+    function submitCollection($j) {
+        $j("#loading-mask").show();
+        //var form_var = $j("input, textarea, select",$j("#form-table tbody")).serializeArray();
+        var form_var = $j("input, textarea, select",$j("#collection-form-table tbody")).serialize();
+        //console.log(form_var);
+        var data = {};
+        data.form_key = window.FORM_KEY;
+        data.customer_id = "<?php echo $this->getRequest()->getParam('id') ?>";
+        data.form_var = form_var;
+        $j.ajax({
+            url: '<?php echo $this->getUrl("crm/collection/ajaxsubmit") ?>?isAjax=true',
+            type: 'POST',  // http method
+            data: data,  // data to submit
+            //data: form_var,  // data to submit
+            success: function (data, status, xhr) {
+                //$('p').append('status: ' + status + ', data: ' + data);
+                window.location.href = "<?php echo $this->getUrl("crm/crmcustomer/view", array('id'=>$this->getRequest()->getParam('id')))?>";
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                //$('p').append('Error' + errorMessage);
+                window.location.href = "<?php echo $this->getUrl("crm/crmcustomer/view", array('id'=>$this->getRequest()->getParam('id')))?>";
+            }
+        });
+    }
+
+</script>

@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="backend_auth_user_login_success">
+        <observer name="afterLoginSuccess" instance="Ueg\Crm\Observer\AfterLoginSuccess"/>
+    </event>
+
+     <event name="controller_action_predispatch_admin_auth_logout">
+        <observer name="beforeLogout" instance="Ueg\Crm\Observer\BeforeLogout" />
+    </event>
+
+
+    <event name="controller_action_predispatch_crm_crmcustomer_view">
+        <observer name="setLeadSource" instance="Ueg\Crm\Observer\SetLeadSource" />
+    </event>
+
+     <event name="customer_crm_appointment_create_after">
+        <observer name="releaseLead" instance="Ueg\Crm\Observer\ReleaseLead" />
+    </event>
+
+</config>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left"
+    xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
+    <body>
+           <referenceBlock name="customer_form">
+             <block class="Ueg\Crm\Block\Adminhtml\Customer\Edit\Tab\Appointment2" name="customer_edit_tab_appointment">
+              <action method="setTabLabel">
+                  <argument name="label" xsi:type="string">Client Appointment</argument>
+              </action>
+            </block>
+          </referenceBlock>
+    </body>
+</page>

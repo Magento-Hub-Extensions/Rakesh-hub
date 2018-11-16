@@ -1,0 +1,85 @@
+<?php 
+$registryObj=$block->getRegistry();
+$customer = $registryObj->registry('current_customer');
+$customerId = $customer->getId(); 
+
+ ?>
+
+<div class="comment_section">
+	<div id="customer_info_tabs_account_comment">
+		<div class="entry-edit">
+			<div class="hor-scroll">
+				<form class="edit_form" action="<?php echo $this->getUrl("crm/crmcustomer/commentsave") ?>" method="post">
+					<div class="no-display">
+						<input name="form_key" type="hidden" value="<?php echo $block->getFormKey() ?>"/>
+						<input type="hidden" name="customer_id" value="<?php echo $customerId ?>"/>
+					</div>
+					<table>
+						<tr>
+							<td>
+								<label class="label">Comments:</label>
+							</td>
+							<td>
+								<div class="value">
+			                        <textarea name="comment"  placeholder="Enter Comment Here..."></textarea>
+			                    </div>
+							</td>
+							<td>
+								<div class="buttons">
+									<input type="submit" value="Submit"/>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</form>
+				<div class="log_list_section">
+					<?php
+					$collection = $block->getCrmcuscommentCollection($customerId)
+					
+					//echo "<pre>"; print_r($collection->getData()); echo "</pre>";
+					?>
+					<div class="log_box">
+						<ul>
+							<?php foreach ($collection as $item) { ?>
+								<li>
+									<span class="created_at"><strong><?php echo $item->getData('created_at') ?></strong></span> -
+									<?php $admin = $block->getAdminUser()->load($item->getData('user_id')); ?>
+									<span class="user"><?php echo $admin->getUsername() ?></span> -
+									<spam>New Account Comment:</spam>
+									<br>
+									<span class="comment"><?php echo nl2br($item->getData('comment')) ?></span>
+								</li>
+							<?php } ?>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<style>
+	#customer_info_tabs_account_comment label {
+		font-size: 16px;
+		font-weight: 600;
+	}
+	.comment_section div.value {
+		margin-left: 20px;
+	}
+	.comment_section div.buttons {
+		margin-left: 20px;
+	}
+	.comment_section div.buttons input {
+		padding: 5px 10px;
+	}
+	.log_list_section {
+		margin: 10px 0;
+	}
+	#customer_info_tabs_account_comment .log_box {
+		height: 200px;
+		overflow-y: scroll;
+	}
+	.log_box ul li {
+		font-size: 14px;
+		padding: 5px;
+	}
+</style>

@@ -1,0 +1,360 @@
+<?php
+/**
+ * Individual Coins tab template
+ */
+?>
+<div class="entry-edit">
+    <h2>Individual Coins</h2>
+    <p><a id="trigger-modal" href="javascript:void(0)">Add Individual Coin</a></p>
+</div>
+<div style="height:20px; clear:both;"></div>
+<?php echo $block->getChildHtml('grid') ?>
+<div class="button-section">
+    <input type="button" id="save-coin" value="Save"/>
+</div>
+
+<!-- The Modal -->
+<?php $coinOptions = $block->getCoinoptionsModel(); ?>
+<div id="modal-window" class="modal appointment-modal-content" style="display: none">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-body">
+            <fieldset id="coin-form">
+                <legend>Add Individual Coin</legend>
+                <table id="form-table">
+                    <thead>
+                        <tr>
+                            <th>PCGS#</th>
+                            <th>Year</th>
+                            <th>Mint</th>
+                            <th>Variety</th>
+                            <th>Desig</th>
+                            <th>Service</th>
+                            <th>Min Grade</th>
+                            <th>Max Grade</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                            <th>Denom</th>
+                            <th>Type</th>
+                            <th>Metal</th>
+                            <th>Autofil</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <input type="text" name="coin[1][pcgs]" class="text-box"/>
+                            </td>
+                            <td>
+                                <input type="text" name="coin[1][year]" class="text-box"/>
+                            </td>
+                            <td>
+                                <?php $mints = $coinOptions->getMintOptions(); ?>
+                                <select name="coin[1][mint]" class="select-box">
+                                    <?php foreach ($mints as $_mint) { ?>
+                                        <option value="<?php echo $_mint ?>"><?php echo $_mint ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" name="coin[1][variety]" class="text-box"/>
+                            </td>
+                            <td>
+                                <?php $desig = $coinOptions->getDesigOptions(); ?>
+                                <select name="coin[1][desig]" class="select-box">
+                                    <?php foreach ($desig as $_desig) { ?>
+                                        <option value="<?php echo $_desig ?>"><?php echo $_desig ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                            <td>
+                                <?php $service = $coinOptions->getServiceOptions(); ?>
+                                <select name="coin[1][service]" class="select-box">
+                                    <option value=""></option>
+                                    <?php foreach ($service as $_service) { ?>
+                                        <option value="<?php echo $_service ?>"><?php echo $_service ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                            <td>
+                                <?php $grade = $coinOptions->getGradeOptions(); ?>
+                                <select name="coin[1][min_grade]" class="select-box">
+                                    <option value=""></option>
+                                    <?php foreach ($grade as $_grade) { ?>
+                                        <option value="<?php echo $_grade ?>"><?php echo $_grade ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="coin[1][max_grade]" class="select-box">
+                                    <option value=""></option>
+                                    <?php foreach ($grade as $_grade) { ?>
+                                        <option value="<?php echo $_grade ?>"><?php echo $_grade ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                            <td>
+                                <?php $status = $coinOptions->getStatusOptions(); ?>
+                                <select name="coin[1][status]" class="select-box">
+                                    <?php foreach ($status as $_status) { ?>
+                                        <option value="<?php echo $_status ?>"><?php echo $_status ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                            <td>
+                                <textarea name="coin[1][note]" class="textarea-box"></textarea>
+                            </td>
+                            <td>
+                                <?php $denom = $coinOptions->getDenomOptions(); ?>
+                                <select name="coin[1][denom]" class="select-box">
+                                    <?php foreach ($denom as $_denom) { ?>
+                                        <option value="<?php echo $_denom ?>"><?php echo $_denom ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                            <td>
+                                <?php $type = $coinOptions->getTypeOptions(); ?>
+                                <select name="coin[1][type]" class="select-box">
+                                    <?php foreach ($type as $_type) { ?>
+                                        <option value="<?php echo $_type ?>"><?php echo $_type ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                            <td>
+                                <?php $metal = $coinOptions->getMetalOptions(); ?>
+                                <select name="coin[1][metal]" class="select-box">
+                                    <?php foreach ($metal as $_metal) { ?>
+                                        <option value="<?php echo $_metal ?>"><?php echo $_metal ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="checkbox" value="1" name="coin[1][autofil]" class="check-box"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot class="placeholder" style="display: none;">
+                        <tr>
+                            <td>
+                                <input type="text" name="coin[{{i}}][pcgs]" class="text-box"/>
+                            </td>
+                            <td>
+                                <input type="text" name="coin[{{i}}][year]" class="text-box"/>
+                            </td>
+                            <td>
+                                <?php $mints = $coinOptions->getMintOptions(); ?>
+                                <select name="coin[{{i}}][mint]" class="select-box">
+                                    <?php foreach ($mints as $_mint) { ?>
+                                        <option value="<?php echo $_mint ?>"><?php echo $_mint ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" name="coin[{{i}}][variety]" class="text-box"/>
+                            </td>
+                            <td>
+                                <?php $desig = $coinOptions->getDesigOptions(); ?>
+                                <select name="coin[{{i}}][desig]" class="select-box">
+                                    <?php foreach ($desig as $_desig) { ?>
+                                        <option value="<?php echo $_desig ?>"><?php echo $_desig ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                            <td>
+                                <?php $service = $coinOptions->getServiceOptions(); ?>
+                                <select name="coin[{{i}}][service]" class="select-box">
+                                    <option value=""></option>
+                                    <?php foreach ($service as $_service) { ?>
+                                        <option value="<?php echo $_service ?>"><?php echo $_service ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                            <td>
+                                <?php $grade = $coinOptions->getGradeOptions(); ?>
+                                <select name="coin[{{i}}][min_grade]" class="select-box">
+                                    <option value=""></option>
+                                    <?php foreach ($grade as $_grade) { ?>
+                                        <option value="<?php echo $_grade ?>"><?php echo $_grade ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="coin[{{i}}][max_grade]" class="select-box">
+                                    <option value=""></option>
+                                    <?php foreach ($grade as $_grade) { ?>
+                                        <option value="<?php echo $_grade ?>"><?php echo $_grade ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                            <td>
+                                <?php $status = $coinOptions->getStatusOptions(); ?>
+                                <select name="coin[{{i}}][status]" class="select-box">
+                                    <?php foreach ($status as $_status) { ?>
+                                        <option value="<?php echo $_status ?>"><?php echo $_status ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                            <td>
+                                <textarea name="coin[{{i}}][note]" class="textarea-box"></textarea>
+                            </td>
+                            <td>
+                                <?php $denom = $coinOptions->getDenomOptions(); ?>
+                                <select name="coin[{{i}}][denom]" class="select-box">
+                                    <?php foreach ($denom as $_denom) { ?>
+                                        <option value="<?php echo $_denom ?>"><?php echo $_denom ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                            <td>
+                                <?php $type = $coinOptions->getTypeOptions(); ?>
+                                <select name="coin[{{i}}][type]" class="select-box">
+                                    <?php foreach ($type as $_type) { ?>
+                                        <option value="<?php echo $_type ?>"><?php echo $_type ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                            <td>
+                                <?php $metal = $coinOptions->getMetalOptions(); ?>
+                                <select name="coin[{{i}}][metal]" class="select-box">
+                                    <?php foreach ($metal as $_metal) { ?>
+                                        <option value="<?php echo $_metal ?>"><?php echo $_metal ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="button" class="remove-row" value="&#10005;" style="cursor: pointer;"/>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <!--                <div class="button-section">
+                                    <input type="button" id="add-row" value="Add Row"/>
+                                    <input type="button" id="submit-coin" value="Submit"/>
+                                </div>-->
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    require(['jquery', 'Magento_Ui/js/modal/modal'], function ($, modal) {
+        var options = {
+            type: 'popup',
+            responsive: true,
+            innerScroll: true,
+            buttons: [{
+                    text: $.mage.__('Add Row'),
+                    class: 'add-row',
+                    id: 'add-row',
+                    click: function () {
+                        addCoinRow($);
+                    }
+                },
+                {
+                    text: $.mage.__('Submit'),
+                    class: 'mymodal1',
+                    id: 'submit-coin',
+                    click: function () {
+//                        this.closeModal();
+                        submitCoinForm($);
+                    }
+                }]
+        };
+
+        var popup_ = modal(options, $('#modal-window'));
+        $("#trigger-modal").on('click', function () {
+            $("#modal-window").modal("openModal");
+        });
+
+//        additiona onclick events code
+        $("#save-coin").click(function () {
+            
+            $('body').trigger('processStart');
+            //var form_var = $("input, textarea, select",$("#coinGrid_table tbody")).serializeArray();
+//            var form_var = $("input, textarea, select", $("#coinGrid_table tbody")).serialize();
+            var form_var = $('#crmcustomer-view-coin-grid').find('input,textarea,select',$("#coinGrid_table tbody")).serialize();
+            //console.log(form_var);
+            var data = {};
+            data.form_key = window.FORM_KEY;
+            data.customer_id = "<?php echo $this->getRequest()->getParam('id') ?>";
+            data.form_var = form_var;
+            
+            $(this).attr('disabled','disabled');
+            $.ajax({
+                url: '<?php echo $this->getUrl("crm/coin/ajaxsave") ?>?isAjax=true',
+                type: 'POST', // http method
+                data: data, // data to submit
+                //data: form_var,  // data to submit
+                success: function (data, status, xhr) {
+                    //$('p').append('status: ' + status + ', data: ' + data);
+                    console.log(data);
+                      window.location.href = "<?php echo $this->getUrl("crm/crmcustomer/view", array('id' => $this->getRequest()->getParam('id'))) ?>";
+                      
+                },
+                error: function (jqXhr, textStatus, errorMessage) {
+//                    $('p').append('Error' + errorMessage);
+                    console.log(errorMessage);
+                    window.location.href = "<?php echo $this->getUrl("crm/crmcustomer/view", array('id' => $this->getRequest()->getParam('id'))) ?>";
+                }
+            });
+        });
+
+        $(document).on("click", "input.remove-row", function () {
+            $(this).parent().parent().remove();
+        });
+
+    });
+
+    var rowCount = 1;
+//    $j(document).ready(function () {
+    function addCoinRow($j) {
+        rowCount = rowCount + 1;
+        var markup = $j("#form-table tfoot.placeholder").html();
+        markup = markup.replace(/{{i}}/g, rowCount);
+        $j("#form-table tbody").append(markup);
+
+        if ($j("input[name='coin[1][autofil]']").is(":checked")) {
+            $j("input[name='coin[" + rowCount + "][year]']").val($j("input[name='coin[1][year]']").val());
+            $j("select[name='coin[" + rowCount + "][desig]']").val($j("select[name='coin[1][desig]']").val());
+            $j("select[name='coin[" + rowCount + "][denom]']").val($j("select[name='coin[1][denom]']").val());
+            $j("select[name='coin[" + rowCount + "][type]']").val($j("select[name='coin[1][type]']").val());
+            $j("select[name='coin[" + rowCount + "][metal]']").val($j("select[name='coin[1][metal]']").val());
+        }
+    }
+
+
+    function submitCoinForm($j) {
+        $j('body').trigger('processStart');
+        //var form_var = $j("input, textarea, select",$j("#form-table tbody")).serializeArray();
+        var form_var = $j("input, textarea, select", $j("#form-table tbody")).serialize();
+        //console.log(form_var);
+        var data = {};
+        data.form_key = window.FORM_KEY;
+        data.customer_id = "<?php echo $this->getRequest()->getParam('id') ?>";
+        data.form_var = form_var;
+        $j(this).attr('disabled','disabled');
+        $j.ajax({
+            url: '<?php echo $this->getUrl("crm/coin/ajaxsubmit") ?>?isAjax=true',
+            type: 'POST', // http method
+            data: data, // data to submit
+            //data: form_var,  // data to submit
+            success: function (data, status, xhr) {
+                console.log(data);
+                //$('p').append('status: ' + status + ', data: ' + data);
+                $j(this).attr('disabled','disabled');
+                window.location.href = "<?php echo $this->getUrl("crm/crmcustomer/view", array('id' => $this->getRequest()->getParam('id'))) ?>";
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                console.log(errorMessage);
+                //$('p').append('Error' + errorMessage);
+                $j(this).attr('disabled','disabled');
+                window.location.href = "<?php echo $this->getUrl("crm/crmcustomer/view", array('id' => $this->getRequest()->getParam('id'))) ?>";
+            }
+        });
+    }
+
+
+</script>
+
+

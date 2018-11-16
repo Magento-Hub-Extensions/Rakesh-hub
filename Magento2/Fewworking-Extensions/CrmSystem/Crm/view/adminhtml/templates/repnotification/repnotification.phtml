@@ -1,0 +1,25 @@
+
+<?php echo $block->getGridHtml() ?>
+<script type="text/javascript">
+
+
+require(['jquery'], function($){
+    $j = $;
+	
+    $j(document).ready(function() {
+        var classname = $j( "td.col-action " ).find( "div.action" ).attr('class');
+        $j( "td.col-action " ).each(function( index ) {
+            var classname = $j( this ).find( "div.action" ).attr('class');
+            $j(this).parent().addClass(classname);
+        });
+
+
+    });
+
+});
+
+
+
+
+
+</script>

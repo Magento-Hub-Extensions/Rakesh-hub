@@ -1,0 +1,197 @@
+<?php
+$resource = $block->getCoreResource();
+$readConnection = $resource->getConnection();
+
+$crmInvoice = $resource->getTableName('ueg_crm_invoice');
+$crmInvoiceItem = $resource->getTableName('ueg_crm_invoice_item');
+
+$currencyHelperObj=$this->helper('Magento\Framework\Pricing\Helper\Data');
+?>
+<?php
+$params = $this->getRequest()->getParams();
+$customerId = $params['customer_id'];
+$page = $params['page'];
+$limit = $params['limit'];
+
+// filter
+$whereClauseItems = array("magento_customer_id = $customerId");
+$whereIClauseItems = array();
+$filterVar = $params['filter_var'];
+parse_str($filterVar, $formParams);
+if (isset($formParams)) {
+    //echo "<pre>"; print_r($formParams); echo "</pre>";
+    foreach ($formParams as $code => $_filter) {
+        if ($code == "item") {
+            foreach ($_filter as $itemCode => $value) {
+                if (isset($value) && !empty($value)) {
+                    foreach (explode(" ", $value) as $keyword) {
+                        if (isset($keyword) && !empty($keyword)) {
+                            $whereIClauseItems[] = "($itemCode LIKE '%$keyword%' OR $itemCode LIKE '%$keyword' OR $itemCode LIKE '$keyword%')";
+                        }
+                    }
+                }
+            }
+        } elseif ($code == "created_at") {
+            foreach ($_filter as $range => $date) {
+                if (isset($date) && !empty($date)) {
+                    if ($range == "from") {
+                        $date = date("Y-m-d", strtotime($date)) . " 00:00:00";
+                        $date = $this->helper('Ueg\Crm\Helper\Data')->getGmt()->gmtDate("Y-m-d H:i:s", strtotime($date));
+                        $whereClauseItems[] = "$code >= '$date'";
+                    } elseif ($range == "to") {
+                        $date = date("Y-m-d", strtotime($date)) . " 23:59:59";
+                        $date = $this->helper('Ueg\Crm\Helper\Data')->getGmt()->gmtDate("Y-m-d H:i:s", strtotime($date));
+                        $whereClauseItems[] = "$code <= '$date'";
+                    }
+                }
+            }
+        } elseif (isset($_filter) && !empty($_filter)) {
+            $whereClauseItems[] = "($code LIKE '%$_filter%' OR $code LIKE '%$_filter' OR $code LIKE '$_filter%')";
+        }
+    }
+}
+$whereIClause = "";
+if (isset($whereIClauseItems) && !empty($whereIClauseItems) && count($whereIClauseItems) > 0) {
+    $whereIClause = implode(' AND ', $whereIClauseItems);
+    $whereIClause = "WHERE " . $whereIClause;
+}
+if (isset($whereIClause) && !empty($whereIClause)) {
+    $invoiceItemFilterSql = "SELECT parent_id from $crmInvoiceItem $whereIClause";
+    //echo $invoiceItemFilterSql;
+    $invoiceItemResult = $readConnection->fetchCol($invoiceItemFilterSql);
+    $invoiceItemResult = array_unique($invoiceItemResult);
+    //echo "<pre>"; print_r( $invoiceItemResult ); echo "</pre>";
+
+    if (isset($invoiceItemResult) && !empty($invoiceItemResult) && count($invoiceItemResult) > 0) {
+        $inIds = implode(',', $invoiceItemResult);
+        $whereClauseItems[] = "invoice_id IN ($inIds)";
+    } else {
+        $whereClauseItems[] = "invoice_id = 0";
+    }
+}
+
+$whereClause = "";
+if (isset($whereClauseItems) && !empty($whereClauseItems) && count($whereClauseItems) > 0) {
+    $whereClause = implode(' AND ', $whereClauseItems);
+    $whereClause = "WHERE " . $whereClause;
+}
+
+$invoiceCountSql = "SELECT count(invoice_id) as total_count FROM $crmInvoice $whereClause";
+//echo $invoiceCountSql;
+$totalCount = $readConnection->fetchOne($invoiceCountSql);
+$totalPage = ceil($totalCount / $limit);
+$page = ($page <= $totalPage) ? $page : $totalPage;
+
+$sessionVars = array(
+    'page' => $page,
+    'limit' => $limit,
+);
+$block->getAdminSessionModel()->setSessionVars($sessionVars);
+
+$offset = (($page - 1) * $limit);
+$visibleCount = ($page * $limit);
+$count = ($visibleCount <= $totalCount) ? $limit : ($limit - ($visibleCount - $totalCount));
+
+if (isset($totalCount) && $totalCount > 0) {
+    $invoiceSql = "SELECT * FROM $crmInvoice $whereClause ORDER BY created_at DESC LIMIT $offset, $count";
+} else {
+    $invoiceSql = "SELECT * FROM $crmInvoice $whereClause ORDER BY created_at DESC";
+}
+//echo $invoiceSql;
+$invoiceResult = $readConnection->fetchAll($invoiceSql);
+
+$adminUserList = $block->getAppointmentoptionsModel()->getAdminUserList();
+?>
+<?php if (isset($invoiceResult) && count($invoiceResult) > 0) { ?>
+    <?php $i = 2; ?>
+    <?php foreach ($invoiceResult as $_result) { ?>
+        <?php
+        $class = ($i % 2 == 0) ? " even" : " odd";
+        $invoiceId = $_result['invoice_id'];
+        $invoiceItemSql = "SELECT * FROM $crmInvoiceItem WHERE parent_id = $invoiceId";
+        $items = $readConnection->fetchAll($invoiceItemSql);
+        $firstItem = array_shift($items);
+        ?>
+        <tr class="<?php echo $class ?>">
+            <td class="align-center">
+                <input type="checkbox" name="update_invoice[<?php echo $invoiceId ?>]" value="1"/>
+            </td>
+            <td class="align-center"><?php echo date("m-d-Y", strtotime($_result['created_at'])) ?></td>
+            <td><strong>Order #<?php echo $_result['order_number'] ?></strong></td>
+            <td><?php echo $_result['customer_name'] ?></td>
+            <td class="align-center"><?php echo $firstItem['qty'] ?></td>
+            <td><?php echo $firstItem['item_sku'] ?></td>
+            <td><?php echo $firstItem['item_name'] ?></td>
+            <td class="align-right"><?php echo $currencyHelperObj->currency($firstItem['unit_price'], true, false) ?></td>
+            <td class="align-right"><?php echo $currencyHelperObj->currency($firstItem['total'], true, false) ?></td>
+            <td>
+                <?php
+                $assignedUsers = array();
+                if (isset($_result['assigned_user_id']) && !empty($_result['assigned_user_id'])) {
+                    $assignedUsers = explode(',', $_result['assigned_user_id']);
+                }
+                ?>
+                <select name="assigned_user_id[<?php echo $invoiceId ?>][]" multiple="multiple" style="height:50px;">
+                    <?php foreach ($adminUserList as $id => $_user) { ?>
+                        <option value="<?php echo $id ?>" <?php
+                        if (in_array($id, $assignedUsers)) {
+                            echo "selected='selected'";
+                        }
+                        ?>><?php echo $_user ?></option>
+                            <?php } ?>
+                </select>
+            </td>
+            <td><a href="<?php echo $this->getUrl("crm/crminvoice/view", array('id' => $_result['invoice_id'])) ?>" target="_blank">View Order</a></td>
+        </tr>
+        <?php if (isset($items) && count($items) > 0) { ?>
+            <?php foreach ($items as $_item) { ?>
+                <tr class="<?php echo $class ?>">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="align-center"><?php echo $_item['qty'] ?></td>
+                    <td><?php echo $_item['item_sku'] ?></td>
+                    <td><?php echo $_item['item_name'] ?></td>
+                    <td class="align-right"><?php echo $currencyHelperObj->currency($_item['unit_price'], true, false) ?></td>
+                    <td class="align-right"><?php echo $currencyHelperObj->currency($_item['total'], true, false) ?></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            <?php } ?>
+        <?php } ?>
+        <tr class="<?php echo $class ?>">
+            <td colspan="6"></td>
+            <td class="align-right">Tax Amount:</td>
+            <td class="align-right" colspan="2"><?php echo $currencyHelperObj->currency($_result['tax_amount'], true, false) ?></td>
+            <td colspan="2"></td>
+        </tr>
+        <tr class="<?php echo $class ?>">
+            <td colspan="6"></td>
+            <td class="align-right">Shipping Amount:</td>
+            <td class="align-right" colspan="2"><?php echo $currencyHelperObj->currency($_result['shipping_amount'], true, false) ?></td>
+            <td colspan="2"></td>
+        </tr>
+        <tr class="<?php echo $class ?>">
+            <td colspan="6"></td>
+            <td class="align-right">Discount Amount:</td>
+            <td class="align-right color-red" colspan="2"><?php
+                if ($_result['discount_amount'] > 0) {
+                    echo "-";
+                }
+                ?><?php echo $currencyHelperObj->currency($_result['discount_amount'], true, false) ?></td>
+            <td colspan="2"></td>
+        </tr>
+        <tr class="<?php echo $class ?>">
+            <td colspan="6"></td>
+            <td class="align-right"><strong>Total:</strong></td>
+            <td class="align-right" colspan="2"><strong><?php echo $currencyHelperObj->currency($_result['grand_total'], true, false) ?></strong></td>
+            <td colspan="2"></td>
+        </tr>
+        <?php $i++; ?>
+    <?php } ?>
+<?php } else { ?>
+    <tr class="even">
+        <td class="empty-text a-center" colspan="11">No records found.</td>
+    </tr>
+<?php } ?>

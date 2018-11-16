@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+        	<block class="Ueg\Crm\Block\Adminhtml\Series\Form" name="crm_adminhtml_series_form" template="Ueg_Crm::series/form.phtml"/>
+			<block class="Ueg\Crm\Block\Adminhtml\Series" name="crm_series_listing" />
+        </referenceContainer>
+    </body>
+</page>

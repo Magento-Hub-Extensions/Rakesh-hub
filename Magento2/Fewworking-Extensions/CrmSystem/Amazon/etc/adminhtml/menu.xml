@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+    	<!-- parent menu CRM -->
+        <add id="Ueg_Amazon::parent" title="Amazon" module="Ueg_Amazon" sortOrder="42" resource="Ueg_Amazon::parent"/>
+
+       
+        <add id="Ueg_Amazon::newinv" title="New Inventory" module="Ueg_Amazon" sortOrder="10" action="amazon/amazon" resource="Ueg_Amazon::newinv" parent="Ueg_Amazon::parent"/>
+       
+        
+       <!-- <add id="Ueg_Amazon::amazonqty" title="Amazon Inventory QTY" module="Ueg_Amazon" sortOrder="30" action="amazon/amazonform" resource="Ueg_Amazon::amazonqty" parent="Ueg_Amazon::parent"/> -->
+
+       
+       <add id="Ueg_Amazon::amazonsaleslog" title="Amazon Sales Log" module="Ueg_Amazon" sortOrder="40" action="crm/amazon" resource="Ueg_Amazon::amazonsaleslog" parent="Ueg_Amazon::parent"/>
+
+    </menu>
+</config>

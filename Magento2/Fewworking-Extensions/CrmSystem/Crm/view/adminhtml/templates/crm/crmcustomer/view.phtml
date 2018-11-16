@@ -1,0 +1,47 @@
+<?php $customer = $block->getRegistry()->registry('current_customer'); ?>
+<?php
+$admin_user_session = $block->getAuthSession();
+$adminuserId = $admin_user_session->getUser()->getUserId();
+$role_id = $block->getAdminUser()->load($adminuserId)->getRole()->getData('role_id');
+$model = $block->getCrmadminaclModel()->load($role_id, "role_id");
+?>
+<?php if ($model->getId()) { ?>
+    <?php $account_view = $model->getData('account_view'); ?>
+    <?php $account_log_view = $model->getData('account_logview'); ?>
+    <?php if ($customer->getData('admin_only') == 1 && (!isset($account_view) || $account_view != 1)) { ?>
+        <div id="black-modal-window" class="black-modal">
+            <div class="black-modal-content">
+                <div class="black-modal-body">
+                    <p class="red-notice">This is an Admin Only Account</p>
+                    <p class="home-url"><a href="<?php echo $block->goHome(); ?>">Go Home</a></p>
+                </div>
+            </div>
+        </div>
+    <?php } else { ?>
+        <div class="content-header">
+            <h3 class="icon-head head-customer"><?php echo $customer->getName() ?></h3>
+        </div>
+        <div class="top_section_wrapper">
+            <div class="top_form_section left">
+                <?php echo $this->getChildHtml('crmcustomer_view_form') ?>
+            </div>
+            <div class="top_log_section right">
+                <?php echo $this->getChildHtml('crmcustomer_view_comment') ?>
+                <?php if (isset($account_log_view) && $account_log_view == 1) { ?>
+                    <?php echo $this->getChildHtml('crmcustomer_view_log') ?>
+                <?php } ?>
+            </div>
+            <div style="clear:both;"></div>
+        </div>
+        <div style="height:20px; clear:both;"></div>
+        <?php echo $this->getChildHtml('crmcustomer_view_appointment') ?>
+        <div style="height:20px; clear:both;"></div>
+        <?php echo $this->getChildHtml('crmcustomer_view_collection_invoice') ?>
+        <div style="height:20px; clear:both;"></div>
+        <?php echo $this->getChildHtml('crmcustomer_view_coin') ?>
+        <div style="height:20px; clear:both;"></div>
+        <?php echo $this->getChildHtml('crmcustomer_view_collection') ?>
+    <?php } ?>
+
+
+<?php } ?>

@@ -1,0 +1,279 @@
+<?php
+$sessionVars = $block->getBackendSession()->getSessionVars();
+$page = ($sessionVars['page']) ? $sessionVars['page'] : 1;
+$limit = ($sessionVars['limit']) ? $sessionVars['limit'] : 20;
+$totalPage = '';
+?>
+<div id="invoicesGrid">
+    <input id="total_page" name="total_page" type="hidden" value="<?php echo $totalPage ?>"/>
+    <table cellspacing="0" class="actions custom-pagination">
+        <tbody>
+        <tr>
+           <td class="filter-actions a-left">
+                <button type="button" class="scalable" id="reset"><span>Reset Filter</span></button>
+                <button type="button" class="scalable task" id="search"><span>Search</span></button>
+                <button type="button" class="scalable save" id="submit"><span>Submit</span></button>
+            </td>
+            <td class="pager a-right"></td>
+        </tr>
+        </tbody>
+    </table>
+	<div class="grid">
+		<div class="hor-scroll">
+			<table cellspacing="0" class="data" id="invoicesGrid_table">
+				<colgroup>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+				</colgroup>
+				<thead>
+					<tr class="headings">
+						<th><span class="nobr"></span></th>
+						<th><span class="nobr">Order Date</span></th>
+						<th><span class="nobr">Order #</span></th>
+						<th><span class="nobr">Name</span></th>
+						<th><span class="nobr">Qty</span></th>
+						<th><span class="nobr">SKU</span></th>
+						<th><span class="nobr">Items</span></th>
+						<th><span class="nobr">Unit Price</span></th>
+						<th><span class="nobr">Totals</span></th>
+						<th><span class="nobr">Status</span></th>
+                        <th><span class="nobr">Assign to</span></th>
+						<th><span class="nobr">Action</span></th>
+					</tr>
+					<tr class="filter">
+						<th></th>
+						<th>
+                            <div class="range">
+                                <div class="range-line date">
+                                    <!-- <span class="label">From:</span> -->
+                                    <input placeholder="From:" type="text" name="created_at[from]" id="filter_invoice_created_at_from" value="" class="input-text no-changes allfieldfilter"/>
+                                    
+                                </div>
+                                <div class="range-line date">
+                                    <!-- <span class="label">To:</span> -->
+                                    <input placeholder="To:" type="text" name="created_at[to]" id="filter_invoice_created_at_to" value="" class="input-text no-changes allfieldfilter"/>
+                                   
+                                </div>
+                            </div>
+                             <script type="text/javascript">
+                                require([
+                                    "jquery",
+                                    "mage/calendar"
+                            ], function($,calendar){
+                                 $("#filter_invoice_created_at_from").calendar({
+                                          dateFormat: "M/d/yy",
+                                          showsTime: false,
+                                          timeFormat: "HH:mm:ss",
+                                          sideBySide: true,
+                                          closeText: "Done",
+                                          selectOtherMonths: true,
+                                          onClose: function( selectedDate ) {
+                                            $( "#filter_invoice_created_at_to" ).datepicker( "option", "minDate", selectedDate );
+                                          }
+                                       });
+
+                                        $("#filter_invoice_created_at_to").calendar({
+                                          dateFormat: "M/d/yy",
+                                          showsTime: false,
+                                          timeFormat: "HH:mm:ss",
+                                          sideBySide: true,
+                                          closeText: "Done",
+                                          selectOtherMonths: true, 
+                                          onClose: function( selectedDate ) {
+                                            $( "#filter_invoice_created_at_from" ).datepicker( "option", "maxDate", selectedDate );
+                                          }
+                                       });
+                            });
+                            </script>
+                        </th>
+						<th>
+                            <div class="field-100">
+                                <input type="text" name="order_number" id="filter_order_number" value="" class="input-text no-changes allfieldfilter" />
+                            </div>
+                        </th>
+						<th>
+                            <div class="field-100">
+                                <input type="text" name="customer_name" id="filter_customer_name" value="" class="input-text no-changes allfieldfilter" />
+                            </div>
+                        </th>
+                        <th></th>
+						<th>
+                            <div class="field-100">
+                                <input type="text" name="item[item_sku]" id="filter_item_sku" value="" class="input-text no-changes allfieldfilter" />
+                            </div>
+                        </th>
+						<th>
+                            <div class="field-100">
+                                <input type="text" name="item[item_name]" id="filter_item_name" value="" class="input-text no-changes allfieldfilter" />
+                            </div>
+                        </th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th><div class="actionwidth-100area"></div></th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<style>
+    #invoicesGrid_table tbody tr td.align-left {
+        text-align: left;
+    }
+    #invoicesGrid_table tbody tr td.align-center {
+        text-align: center;
+    }
+    #invoicesGrid_table tbody tr td.align-right {
+        text-align: right;
+    }
+    #invoicesGrid_table tbody tr td.color-red {
+        color: red;
+    }
+</style>
+<script type="text/javascript">
+
+    require([ 'jquery'],function($){
+     $j = $;
+    $j(document).ready(function() {
+        ajaxCall('<?php echo $page ?>', '<?php echo $limit ?>');
+    });
+
+     $('#invoicesGrid').on('click','.invoiceSetPage',function(){
+        var pageNum="";
+        var limit="";
+        if($(this).data('id') == 'pre')
+        {
+            pageNum = $(this).data('page');
+            limit = $(this).data('limit');
+        }
+
+        if($(this).data('id') == 'next')
+        {
+            pageNum = $(this).data('page');
+            limit = $(this).data('limit');
+        }
+        ajaxCall(pageNum, limit);
+        $j("#invoicesGrid table.actions input.input-text.page").val(pageNum);
+    });
+
+
+    $('#invoicesGrid').on('keypress','#invoiceInputPage',function(event){
+        console.log('invoicesGrid');
+        var limit = $(this).data('limit');
+        var totalPage = $(this).data('totalpage');
+
+        console.log(limit);
+        console.log(totalPage);
+
+        var keyCode = event.keyCode || event.which;
+        var pageNum = 1;
+        totalPage = parseInt(totalPage);
+        if(keyCode==Event.KEY_RETURN){
+            pageNum = parseInt($(this).val());
+            if(pageNum < 1) {
+                pageNum = 1;
+            } else if(pageNum > totalPage) {
+                pageNum = totalPage;
+            }
+
+            if(isNaN(pageNum)) {
+                pageNum = 1;
+            }
+            ajaxCall(pageNum, limit);
+            //$j("#invoicesGrid table.actions input.input-text.page").val(pageNum);
+        }
+
+        return false;
+
+    });
+    
+    $j('#invoicesGrid').on('change','#invoiceChangeLimit',function(){
+        var pageNum = 1;
+        var limit = $(this).val();
+        ajaxCall(pageNum, limit);
+        $j("#invoicesGrid table.actions input.input-text.page").val(pageNum);
+
+    });
+    
+
+     $('#reset').on('click',function(){
+        $j("input, textarea, select", $j("#invoicesGrid_table thead tr.filter")).val('');
+        ajaxCall('<?php echo $page ?>', '<?php echo $limit ?>');
+      });
+
+
+     $('#search').on('click',function(){
+        ajaxCall('<?php echo $page ?>', '<?php echo $limit ?>');
+      });
+
+
+    $('.allfieldfilter').on('keypress',function(event){
+        console.log(event.keyCode);
+        var keyCode = event.keyCode || event.which;
+        //if(keyCode==Event.KEY_RETURN) {
+        if(keyCode==Event.KEY_RETURN) {
+            ajaxCall('<?php echo $page ?>', '<?php echo $limit ?>');
+        }
+
+    });
+
+    function ajaxCall(page, limit) {
+        var filter_var = $j("input, textarea, select",$j("#invoicesGrid_table thead tr.filter")).serialize();
+        var data = {};
+        data.page = page;
+        data.limit = limit;
+        data.filter_var = filter_var;
+        data.form_key = window.FORM_KEY;
+        $j.ajax({
+            url: '<?php echo $this->getUrl("crm/crmasrorder/ajaxlistall") ?>',
+            type: 'POST',  // http method
+            data: data,  // data to submit
+            showLoader: true,
+            success: function (data, status, xhr) {
+                var $parsedData = JSON.parse(data);
+                $j('#invoicesGrid_table tbody').html($parsedData.list);
+                $j('#invoicesGrid table.actions tbody tr td.pager').html($parsedData.pagination);
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                console.log('Error' + errorMessage);
+            }
+        });
+    }
+
+   $('#submit').on('click',function(){
+        var form_var = $j("input, select",$j("#invoicesGrid_table tbody")).serialize();
+        var data = {};
+        data.form_var = form_var;
+        data.form_key = window.FORM_KEY;
+        $j.ajax({
+            url: '<?php echo $this->getUrl("crm/crmasrorder/ajaxupdate") ?>',
+            type: 'POST',  // http method
+            data: data,  // data to submit
+            showLoader: true,
+            success: function (data, status, xhr) {
+                window.location.reload();
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                
+                console.log('Error' + errorMessage);
+                window.location.reload();
+            }
+        });
+    });
+
+});
+</script>

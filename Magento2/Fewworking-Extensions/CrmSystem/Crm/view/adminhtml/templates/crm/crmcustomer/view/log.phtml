@@ -1,0 +1,63 @@
+<?php 
+$registryObj=$block->getRegistry();
+$customer = $registryObj->registry('current_customer');
+$customerId = $customer->getId();
+
+
+ ?>
+
+
+<div class="comment_section">
+    <div id="customer_info_tabs_account_log">
+        <div class="entry-edit">
+            <div class="hor-scroll">
+                    <table>
+                        <tr>
+                            <td>
+                                <label class="label">Log:</label>
+                            </td>
+                        </tr>
+                    </table>
+                <div class="log_list_section">
+					<?php
+					$collection = $block->getCrmcuslogCollection($customerId);
+					//echo "<pre>"; print_r($collection->getData()); echo "</pre>";
+					?>
+                    <div class="log_box">
+                        <ul>
+							<?php foreach ($collection as $item) { ?>
+                                <li>
+                                    <span class="created_at"><strong><?php echo $item->getData('created_at') ?></strong></span> -
+									<?php $admin = $block->getAdminUser()->load($item->getData('user_id')); ?>
+                                    <span class="user"><?php echo $admin->getUsername() ?></span> -
+                                    <spam><?php echo $item->getData('event_name') ?></spam>
+                                    <br>
+                                    <span class="comment"><?php echo nl2br($item->getData('updated_data')) ?></span>
+                                </li>
+							<?php } ?>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    #customer_info_tabs_account_log label {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 20px 0 10px 0;
+        display: block;
+    }
+    .log_list_section {
+        margin: 10px 0;
+    }
+    #customer_info_tabs_account_log .log_box {
+        height: 400px;
+        overflow-y: scroll;
+    }
+    .log_box ul li {
+        font-size: 14px;
+        padding: 5px;
+    }
+</style>

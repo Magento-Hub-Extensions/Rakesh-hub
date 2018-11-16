@@ -1,0 +1,170 @@
+<div style="clear:both; height: 20px;"></div>
+<?php
+$maxMonth = date('m') + 1;
+
+$readConnection  = $block->getConnection();
+$salesLog     =$block->getsaleslogTable();
+
+$currency = $this->helper('Magento\Framework\Pricing\Helper\Data');
+?>
+<div id="saleslogTotalGrid">
+	<div class="grid">
+		<div class="hor-scroll">
+			<table cellspacing="0" class="data">
+					<colgroup>
+						<col>
+						<col>
+						<col>
+						<col>
+						<col>
+						<col>
+						<col>
+						<col>
+						<col>
+						<col>
+					</colgroup>
+					<thead>
+					<tr class="headings">
+						<th><span></span></th>
+						<th><span>Store Numismatic</span></th>
+						<th><span>eBay Bullion</span></th>
+						<th><span>eBay Numismatic</span></th>
+						<th><span>Semi 2%</span></th>
+						<th><span>Comm/Fee</span></th>
+						<th><span>2% Bullion</span></th>
+						<th><span>Monthly Total</span></th>
+						<th><span>Rare Coins/Comm Totals</span></th>
+						<th><span>% Numis</span></th>
+					</tr>
+					</thead>
+					<tbody>
+						<?php for($mon = 1; $mon <= $maxMonth; $mon++) { ?>
+							<?php
+							$minDate = date('Y-m-d', mktime(0, 0, 0, $mon, 1));
+							$maxDate = date('Y-m-d', mktime(0, 0, 0, $mon, date('t', mktime(0, 0, 0, $mon, 10))));
+							$sql = "SELECT 
+										SUM(store_numis) AS store_numis, 
+										SUM(ebay_bullion) AS ebay_bullion, 
+										SUM(ebay_numis) AS ebay_numis, 
+										SUM(store_bullion) AS store_bullion 
+									FROM $salesLog 
+									WHERE order_date >= '$minDate' AND order_date <= '$maxDate'";
+							$result = $readConnection->fetchRow($sql);
+							//echo "<pre>"; print_r($result); echo "</pre>";
+							$monthlyTotal = (float)($result['store_numis'] + $result['ebay_bullion'] + $result['ebay_numis'] + $result['store_bullion']);
+							$commTotal = (float)($result['store_numis'] + $result['ebay_numis']);
+
+							if($monthlyTotal != 0)
+							{
+								$percentageNumis = (float)(($commTotal/$monthlyTotal)*100);
+							}
+							else
+							{
+								$percentageNumis = 0.00;
+							}
+							
+							?>
+							<?php $class = ($mon%2==0) ? " even" : " odd"; ?>
+							<tr class="<?php echo $class ?>">
+								<td class="align-right"><strong><?php echo $monthName = date('F Y', mktime(0, 0, 0, $mon, 10)); ?></strong></td>
+								<td><?php echo $currency->currency($result['store_numis'], true, false) ?></td>
+								<td><?php echo $currency->currency($result['ebay_bullion'], true, false) ?></td>
+								<td><?php echo $currency->currency($result['ebay_numis'], true, false) ?></td>
+								<td><?php echo $currency->currency(0, true, false) ?></td>
+								<td><?php echo $currency->currency(0, true, false) ?></td>
+								<td><?php echo $currency->currency($result['store_bullion'], true, false) ?></td>
+								<td><?php echo $currency->currency($monthlyTotal, true, false) ?></td>
+								<td><?php echo $currency->currency($commTotal, true, false) ?></td>
+								<td><?php echo number_format($percentageNumis, 2) ?></td>
+							</tr>
+						<?php } ?>
+					<tr>
+						<td colspan="10"><p style="height: 12px;"></p></td>
+						<?php for($year = 2008; $year <= date("Y"); $year++) { ?>
+						<?php
+						$minDate = date('Y-m-d', mktime(0, 0, 0, 1, 1, $year));
+						$maxDate = date('Y-m-d', mktime(0, 0, 0, 12, date('t', mktime(0, 0, 0, 12, 10)), $year));
+						$sql = "SELECT 
+										SUM(store_numis) AS store_numis, 
+										SUM(ebay_bullion) AS ebay_bullion, 
+										SUM(ebay_numis) AS ebay_numis, 
+										SUM(store_bullion) AS store_bullion 
+									FROM $salesLog 
+									WHERE order_date >= '$minDate' AND order_date <= '$maxDate'";
+						$result = $readConnection->fetchRow($sql);
+						//echo "<pre>"; print_r($result); echo "</pre>";
+						$monthlyTotal = (float)($result['store_numis'] + $result['ebay_bullion'] + $result['ebay_numis'] + $result['store_bullion']);
+						$commTotal = (float)($result['store_numis'] + $result['ebay_numis']);
+
+
+						if($monthlyTotal != 0)
+						{
+							$percentageNumis = (float)(($commTotal/$monthlyTotal)*100);
+						}
+						else
+						{
+							$percentageNumis = 0.00;
+						}
+						
+						?>
+						<?php $class = ($year%2==0) ? " even" : " odd"; ?>
+							<tr class="<?php echo $class ?>">
+								<td class="align-right"><strong><?php echo $year ?></strong></td>
+								<td><?php echo $currency->currency($result['store_numis'], true, false) ?></td>
+								<td><?php echo $currency->currency($result['ebay_bullion'], true, false) ?></td>
+								<td><?php echo $currency->currency($result['ebay_numis'], true, false) ?></td>
+								<td><?php echo $currency->currency(0, true, false) ?></td>
+								<td><?php echo $currency->currency(0, true, false) ?></td>
+								<td><?php echo $currency->currency($result['store_bullion'], true, false) ?></td>
+								<td><?php echo $currency->currency($monthlyTotal, true, false) ?></td>
+								<td><?php echo $currency->currency($commTotal, true, false) ?></td>
+								<td><?php echo number_format($percentageNumis, 2) ?></td>
+							</tr>
+						<?php } ?>
+					</tr>
+					</tbody>
+				</table>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+
+	require(['jquery'],function($){
+
+				$j = $;
+				$('.savesaleslog').on('click',function(){
+
+			        var form_var = $j("input, textarea, select",$j("#SaleslogGrid_table tbody")).serialize();
+			        //console.log(form_var);
+			        var data = {};
+			        data.form_key = window.FORM_KEY;
+			        data.form_var = form_var;
+			        $j.ajax({
+			            url: '<?php echo $this->getUrl("crm/saleslog/ajaxsave") ?>',
+			            type: 'POST',  // http method
+			            data: data,  // data to submit
+			            showLoader: true,
+			            success: function (data, status, xhr) {
+			                window.location.reload();
+			            },
+			            error: function (jqXhr, textStatus, errorMessage) {
+			                window.location.reload();
+			            }
+			        });
+			    });
+
+			    $j(document).ready(function () {
+			        $j(".column-value").click(function() {
+			            $parent = $j(this).parent();
+			            $j(".column-input", $parent).prop("disabled", false).show();
+			            $j(".ui-datepicker-trigger", $parent).show();
+			        });
+			    });
+
+
+	});
+    
+</script>
+<style type="text/css">
+	#SaleslogGrid_table tbody .ui-datepicker-trigger{display: none;}
+</style>

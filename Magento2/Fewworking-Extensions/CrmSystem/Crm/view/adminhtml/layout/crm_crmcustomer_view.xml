@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Ueg_Crm::css/boxses.css" />
+    </head>
+    <body>
+        <referenceBlock name="page.title" remove="true" />
+        <referenceContainer name="content">
+            <block class="Ueg\Crm\Block\Adminhtml\Crmcustomer\View" name="crm_cust_view" template="crm/crmcustomer/view.phtml">
+                <block class="Ueg\Crm\Block\Adminhtml\Crmcustomer\View" name="crmcustomer_view_form" template="crm/crmcustomer/view/form.phtml"/> 
+                <block class="Ueg\Crm\Block\Adminhtml\Crmcustomer\View" name="crmcustomer_view_comment" template="crm/crmcustomer/view/comment.phtml"/>
+                <block class="Ueg\Crm\Block\Adminhtml\Crmcustomer\View" name="crmcustomer_view_log" template="crm/crmcustomer/view/log.phtml"/>
+                <block class="Ueg\Crm\Block\Adminhtml\Crmcustomer\View\Appointment" name="crmcustomer_view_appointment" template="crm/crmcustomer/view/appointment.phtml">
+                    <!-- edit and view popups-->
+                    <block class="Magento\Backend\Block\Template" name="crm_admin_appointment_helper" template="Ueg_Crm::crm/appointment_helper.phtml"/>
+                    <block class="Magento\Backend\Block\Template" name="crm_admin_appointment_helper_viewonly" template="Ueg_Crm::crm/appointment_helper_viewonly.phtml"/>
+                </block>
+                <block class="Ueg\Crm\Block\Adminhtml\Crmcustomer\View\Coin" name="crmcustomer_view_coin" template="crm/crmcustomer/view/coin.phtml"/>  
+                <block class="Ueg\Crm\Block\Adminhtml\Crmcustomer\View\Collection" name="crmcustomer_view_collection" template="crm/crmcustomer/view/collection.phtml"/>
+                <block class="Ueg\Crm\Block\Adminhtml\Crmcustomer\View\Invoice" name="crmcustomer_view_collection_invoice" template="crm/crmcustomer/view/invoice.phtml"/> 
+            </block>
+            <block class="Magento\Backend\Block\Template" name="crm_admin_appointment_helper_js" template="Ueg_Crm::crm/appointment_helper_js.phtml" after="-"/>
+        </referenceContainer>
+    </body>
+</page>

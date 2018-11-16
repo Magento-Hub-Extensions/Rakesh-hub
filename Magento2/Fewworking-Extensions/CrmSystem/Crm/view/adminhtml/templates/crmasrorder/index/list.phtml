@@ -1,0 +1,236 @@
+<?php
+$currencyChange = $this->helper('Magento\Framework\Pricing\Helper\Data');
+$readConnection  = $block->getResource()->getConnection();
+
+$crmInvoice     = $block->getResource()->getTableName( 'ueg_crm_invoice' );
+$crmInvoiceItem = $block->getResource()->getTableName( 'ueg_crm_invoice_item' );
+$customerEntityText = $block->getResource()->getTableName( 'customer_entity_text' );
+?>
+<?php
+$params = $this->getRequest()->getParams();
+$page = $params['page'];
+$limit = $params['limit'];
+
+// filter
+$whereClauseItems = array();
+$whereClauseItems[] = "secondary_status = 'ASR Reps'";
+$whereIClauseItems = array();
+$joinClause = "";
+$havingClasueItems = array();
+$selectColumns = array("$crmInvoice.*");
+
+$adminuserId = $block->getauthSession()->getUser()->getUserId();
+$role_ids = $block->getRoleId();
+if(!in_array(6, $role_ids)) {
+    $assignedToAttribute = $block->getEavAttr()->getAttribute('customer', 'assigned_to');
+    if(isset($assignedToAttribute)) {
+        $assignedToAttributeId = $assignedToAttribute->getId();
+        if(isset($assignedToAttributeId)) {
+            $joinClause = "LEFT JOIN $customerEntityText ON $crmInvoice.magento_customer_id = $customerEntityText.entity_id AND $customerEntityText.attribute_id = $assignedToAttributeId";
+            $havingClasueItems[] = "find_in_set($adminuserId, assigned_to) <> 0 OR find_in_set($adminuserId, assigned_user_id) <> 0";
+
+            //showing no data
+            $selectColumns[] = "$customerEntityText.value AS assigned_to";
+        }
+    }
+}
+
+$filterVar = $params['filter_var'];
+parse_str( $filterVar, $formParams );
+if(isset($formParams)) {
+	//echo "<pre>"; print_r($formParams); echo "</pre>";
+	foreach ($formParams as $code => $_filter) {
+		if($code == "item") {
+			foreach ($_filter as $itemCode => $value) {
+				if(isset($value) && !empty($value)) {
+					foreach(explode(" ", $value) as $keyword) {
+						if(isset($keyword) && !empty($keyword)) {
+							$whereIClauseItems[] = "($itemCode LIKE '%$keyword%' OR $itemCode LIKE '%$keyword' OR $itemCode LIKE '$keyword%')";
+						}
+					}
+				}
+			}
+	    } elseif($code == "created_at") {
+			foreach ($_filter as $range => $date) {
+				if(isset($date) && !empty($date)) {
+					if ( $range == "from" ) {
+						$date = date("Y-m-d", strtotime($date)) . " 00:00:00";
+						$date = $block->getGmtDate()->gmtDate("Y-m-d H:i:s", strtotime($date));
+						$whereClauseItems[] = "$code >= '$date'";
+					} elseif ( $range == "to" ) {
+						$date = date("Y-m-d", strtotime($date)) . " 23:59:59";
+						$date = $block->getGmtDate()->gmtDate("Y-m-d H:i:s", strtotime($date));
+						$whereClauseItems[] = "$code <= '$date'";
+					}
+				}
+			}
+		} elseif(isset($_filter) && !empty($_filter)) {
+			$whereClauseItems[] = "($code LIKE '%$_filter%' OR $code LIKE '%$_filter' OR $code LIKE '$_filter%')";
+		}
+	}
+}
+$whereIClause = "";
+if(isset($whereIClauseItems) && !empty($whereIClauseItems) && count($whereIClauseItems) > 0) {
+	$whereIClause = implode(' AND ', $whereIClauseItems);
+	$whereIClause = "WHERE ". $whereIClause;
+}
+if(isset($whereIClause) && !empty($whereIClause)) {
+	$invoiceItemFilterSql = "SELECT parent_id from $crmInvoiceItem $whereIClause";
+	//echo $invoiceItemFilterSql;
+	$invoiceItemResult    = $readConnection->fetchCol( $invoiceItemFilterSql );
+	$invoiceItemResult = array_unique($invoiceItemResult);
+	//echo "<pre>"; print_r( $invoiceItemResult ); echo "</pre>";
+
+	if(isset($invoiceItemResult) && !empty($invoiceItemResult) && count($invoiceItemResult) > 0) {
+		$inIds = implode(',', $invoiceItemResult);
+		$whereClauseItems[] = "invoice_id IN ($inIds)";
+	} else {
+		$whereClauseItems[] = "invoice_id = 0";
+    }
+}
+
+$whereClause = "";
+if(isset($whereClauseItems) && !empty($whereClauseItems) && count($whereClauseItems) > 0) {
+	$whereClause = implode(' AND ', $whereClauseItems);
+	$whereClause = "WHERE ". $whereClause;
+}
+$havingClause = "";
+if(isset($havingClasueItems) && !empty($havingClasueItems) && count($havingClasueItems) > 0) {
+	$havingClause = implode(' AND ', $havingClasueItems);
+	$havingClause = "HAVING ". $havingClause;
+}
+$selectColumnsClause = implode(",", $selectColumns);
+
+$invoiceCountSql = "SELECT $selectColumnsClause FROM $crmInvoice $joinClause $whereClause $havingClause";
+//echo $invoiceCountSql;
+$countResult = $readConnection->fetchAll($invoiceCountSql);
+//echo "<pre>"; print_r($countResult); echo "</pre>";
+$totalCount = count($countResult);
+$totalPage = ceil($totalCount / $limit);
+$page = ($page <= $totalPage) ? $page : $totalPage;
+
+$sessionVars = array(
+	'page' => $page,
+	'limit' => $limit,
+);
+$block->getBackendSession()->setSessionVars($sessionVars);
+
+$offset = (($page - 1) * $limit);
+$visibleCount = ($page * $limit);
+$count = ($visibleCount <= $totalCount) ? $limit : ($limit - ($visibleCount - $totalCount));
+
+if(isset($totalCount) && $totalCount > 0) {
+	$invoiceSql = "SELECT $selectColumnsClause FROM $crmInvoice $joinClause $whereClause $havingClause ORDER BY created_at DESC LIMIT $offset, $count";
+} else {
+	$invoiceSql = "SELECT $selectColumnsClause FROM $crmInvoice $joinClause $whereClause $havingClause ORDER BY created_at DESC";
+}
+//echo $invoiceSql;
+$invoiceResult = $readConnection->fetchAll($invoiceSql);
+//echo "<pre>"; print_r($invoiceResult); echo "</pre>";
+
+$adminUserList =$block->getAdminUserList();
+?>
+<?php if(isset($invoiceResult) && count($invoiceResult) > 0) { ?>
+    <?php $i = 2; ?>
+	<?php foreach ($invoiceResult as $_result) { ?>
+		<?php
+        $class = ($i%2==0) ? " even" : " odd";
+		$invoiceId = $_result['invoice_id'];
+		$invoiceItemSql = "SELECT * FROM $crmInvoiceItem WHERE parent_id = $invoiceId";
+		$items = $readConnection->fetchAll($invoiceItemSql);
+		$firstItem = array_shift($items);
+		?>
+		<tr class="<?php echo $class?>">
+			<td class="align-center">
+                <input type="checkbox" name="update_invoice[<?php echo $invoiceId ?>]" value="1"/>
+            </td>
+			<td class="align-center"><?php echo date("m-d-Y", strtotime($_result['created_at'])) ?></td>
+			<td><strong>Order #<?php echo $_result['order_number'] ?></strong></td>
+			<td><?php echo $_result['customer_name'] ?></td>
+			<td class="align-center"><?php echo $firstItem['qty'] ?></td>
+			<td><?php echo $firstItem['item_sku'] ?></td>
+			<td><?php echo $firstItem['item_name'] ?></td>
+			<td class="align-right"><?php echo $currencyChange->currency($firstItem['unit_price'], true, false) ?></td>
+			<td class="align-right"><?php echo $currencyChange->currency($firstItem['total'], true, false) ?></td>
+			<td>
+                <?php $secondaryStatus = $block->getCrmOrderSecondaryStatusOptions(); ?>
+                <select name="secondary_status[<?php echo $invoiceId ?>]">
+                    <option value="ASR Reps" <?php if($_result['secondary_status'] == "ASR Reps") { echo "selected='selected'"; } ?>>ASR Reps</option>
+                    <option value="Completed" <?php if($_result['secondary_status'] == "Completed") { echo "selected='selected'"; } ?>>Completed</option>
+                </select>
+            </td>
+            <td>
+				<?php
+				$assignedUsers = array();
+				if(isset($_result['assigned_user_id']) && !empty($_result['assigned_user_id'])) {
+					$assignedUsers = explode(',', $_result['assigned_user_id']);
+				}
+				$assignToList = array();
+                foreach ($adminUserList as $id => $_user) {
+	                if(in_array($id, $assignedUsers)) {
+	                    $assignToList[] = $_user;
+	                }
+                }
+				?>
+                <span><?php echo implode(", ", $assignToList) ?></span>
+            </td>
+			<td>
+                <a href="<?php echo $this->getUrl("crm/crminvoice/view", array('id'=>$_result['invoice_id'])) ?>" target="_blank">View Order</a><br>
+				<?php if(isset($_result['magento_customer_id']) && !empty($_result['magento_customer_id'])) { ?>
+                    <a href="<?php echo $this->getUrl("crm/crmcustomer/view", array('id'=>$_result['magento_customer_id'])) ?>" target="_blank">View Account</a>
+				<?php } ?>
+            </td>
+		</tr>
+		<?php if(isset($items) && count($items) > 0) { ?>
+			<?php foreach ($items as $_item) { ?>
+				<tr class="<?php echo $class?>">
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td class="align-center"><?php echo $_item['qty'] ?></td>
+					<td><?php echo $_item['item_sku'] ?></td>
+					<td><?php echo $_item['item_name'] ?></td>
+					<td class="align-right"><?php echo $currencyChange->currency($_item['unit_price'], true, false) ?></td>
+					<td class="align-right"><?php echo $currencyChange->currency($_item['total'], true, false) ?></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+			<?php } ?>
+		<?php } ?>
+		<tr class="<?php echo $class?>">
+			<td colspan="6"></td>
+			<td class="align-right">Tax Amount:</td>
+			<td class="align-right" colspan="2"><?php echo $currencyChange->currency($_result['tax_amount'], true, false) ?></td>
+            <td class="align-center" colspan="3">
+                <span><strong>MSG Status:</strong> <?php echo $_result['status'] ?></span>
+            </td>
+		</tr>
+		<tr class="<?php echo $class?>">
+			<td colspan="6"></td>
+			<td class="align-right">Shipping Amount:</td>
+			<td class="align-right" colspan="2"><?php echo $currencyChange->currency($_result['shipping_amount'], true, false) ?></td>
+            <td class="align-center" colspan="3">
+                <span><strong>MSG Order Rep:</strong> <?php echo $_result['rep'] ?></span>
+            </td>
+		</tr>
+		<tr class="<?php echo $class?>">
+			<td colspan="6"></td>
+			<td class="align-right">Discount Amount:</td>
+			<td class="align-right color-red" colspan="2"><?php if($_result['discount_amount'] > 0) { echo "-"; } ?><?php echo $currencyChange->currency($_result['discount_amount'], true, false) ?></td>
+			<td colspan="3"></td>
+		</tr>
+		<tr class="<?php echo $class?>">
+			<td colspan="6"></td>
+			<td class="align-right"><strong>Total:</strong></td>
+			<td class="align-right" colspan="2"><strong><?php echo $currencyChange->currency($_result['grand_total'], true, false) ?></strong></td>
+			<td colspan="3"></td>
+		</tr>
+        <?php $i++; ?>
+	<?php } ?>
+<?php } else { ?>
+    <tr class="even">
+        <td class="empty-text a-center" colspan="12">No records found.</td>
+    </tr>
+<?php } ?>

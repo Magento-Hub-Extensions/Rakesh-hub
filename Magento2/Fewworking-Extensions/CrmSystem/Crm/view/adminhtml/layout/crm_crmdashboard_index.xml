@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Ueg_Crm::css/boxses.css" />
+   </head>
+    <body>
+        <referenceContainer name="content">
+
+        	<container name="custom-content1" as="custom-content1" label="CrmInventory" htmlTag="div" htmlClass="crm-leftarea">
+				<block class="Ueg\Crm\Block\Adminhtml\Crmdashboard\Inventory" name="crm_crmdashboard_inventory"/>
+			</container>
+
+            <container name="custom-content2" as="custom-content2" label="CrmAccount" htmlTag="div" htmlClass="crm-rightarea">
+            	<block class="Ueg\Crm\Block\Adminhtml\Crmdashboard\Account" name="crm_crmdashboard_account" />
+        	</container>
+        	
+            <!-- for appointment grid and its edit link popup-->
+            <block class="Ueg\Crm\Block\Adminhtml\Appointment" name="crm_crmdashboard_appointment" />
+            <block class="Magento\Backend\Block\Template" name="crm_admin_appointment_helper" template="Ueg_Crm::crm/appointment_helper.phtml"/>
+
+        </referenceContainer>
+    </body>
+</page>

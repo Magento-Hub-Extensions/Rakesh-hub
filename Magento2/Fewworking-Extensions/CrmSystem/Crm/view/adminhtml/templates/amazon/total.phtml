@@ -1,0 +1,221 @@
+<div style="clear:both; height: 20px;"></div>
+<?php
+$maxMonth = date('m');
+$readConnection  =  $block->getConnection();
+$amazonLog     = $block->getamazonlogTable();
+$currency = $this->helper('Magento\Framework\Pricing\Helper\Data');
+?>
+<div id="saleslogTotalGrid">
+	<div class="grid">
+		<div class="hor-scroll">
+            <table>
+                <colgroup>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                </colgroup>
+                <tbody>
+                <?php
+                // today
+                $minDate = date('Y-m-d');
+                $maxDate = date('Y-m-d');
+                $sql = "SELECT 
+                                            SUM(price) AS price, 
+                                            SUM(cost) AS cost, 
+                                            SUM(amazon_fee) AS amazon_fee, 
+                                            SUM(net_profit_dollar) AS net_profit_dollar, 
+                                            SUM(net_profit_percentage) AS net_profit_percentage 
+                                        FROM $amazonLog 
+                                        WHERE date >= '$minDate' AND date <= '$maxDate' AND status != 'Cancelled'";
+                $today_result = $readConnection->fetchRow($sql);
+                //echo "<pre>"; print_r($result); echo "</pre>";
+
+                // 7 days
+                $minDate = date('Y-m-d', strtotime('-7 days'));
+                $maxDate = date('Y-m-d');
+                $sql = "SELECT 
+                                            SUM(price) AS price, 
+                                            SUM(cost) AS cost, 
+                                            SUM(amazon_fee) AS amazon_fee, 
+                                            SUM(net_profit_dollar) AS net_profit_dollar, 
+                                            SUM(net_profit_percentage) AS net_profit_percentage 
+                                        FROM $amazonLog 
+                                        WHERE date >= '$minDate' AND date <= '$maxDate' AND status != 'Cancelled'";
+                $day7_result = $readConnection->fetchRow($sql);
+                //echo "<pre>"; print_r($result); echo "</pre>";
+
+                // 15 days
+                $minDate = date('Y-m-d', strtotime('-15 days'));
+                $maxDate = date('Y-m-d');
+                $sql = "SELECT 
+                                            SUM(price) AS price, 
+                                            SUM(cost) AS cost, 
+                                            SUM(amazon_fee) AS amazon_fee, 
+                                            SUM(net_profit_dollar) AS net_profit_dollar, 
+                                            SUM(net_profit_percentage) AS net_profit_percentage 
+                                        FROM $amazonLog 
+                                        WHERE date >= '$minDate' AND date <= '$maxDate' AND status != 'Cancelled'";
+                $day15_result = $readConnection->fetchRow($sql);
+                //echo "<pre>"; print_r($result); echo "</pre>";
+
+                // 30 days
+                $minDate = date('Y-m-d', strtotime('-30 days'));
+                $maxDate = date('Y-m-d');
+                $sql = "SELECT 
+                                            SUM(price) AS price, 
+                                            SUM(cost) AS cost, 
+                                            SUM(amazon_fee) AS amazon_fee, 
+                                            SUM(net_profit_dollar) AS net_profit_dollar, 
+                                            SUM(net_profit_percentage) AS net_profit_percentage 
+                                        FROM $amazonLog 
+                                        WHERE date >= '$minDate' AND date <= '$maxDate' AND status != 'Cancelled'";
+                $day30_result = $readConnection->fetchRow($sql);
+                //echo "<pre>"; print_r($result); echo "</pre>";
+                ?>
+                <?php $class = " even"; ?>
+                <tr class="<?php echo $class ?>">
+                    <td class="align-right"><strong>Totals: </strong></td>
+                    <td class="align-right"><strong>Today</strong></td>
+                    <td><?php echo $currency->currency($today_result['price'], true, false) ?></td>
+                    <td class="align-right"><strong>7 Days</strong></td>
+                    <td><?php echo $currency->currency($day7_result['price'], true, false) ?></td>
+                    <td class="align-right"><strong>15 Days</strong></td>
+                    <td><?php echo $currency->currency($day15_result['price'], true, false) ?></td>
+                    <td class="align-right"><strong>30 Days</strong></td>
+                    <td><?php echo $currency->currency($day30_result['price'], true, false) ?></td>
+                </tr>
+                <tr><td colspan="10"><p style="height: 12px;"></p></td></tr>
+                </tbody>
+            </table>
+			<table cellspacing="0" class="data">
+					<colgroup>
+						<col>
+						<col>
+						<col>
+						<col>
+						<col>
+					</colgroup>
+					<thead>
+					<tr class="headings">
+						<th><span></span></th>
+						<th><span>Price</span></th>
+						<th><span>Cost</span></th>
+						<th><span>Amazon Fee</span></th>
+						<th><span>Net Profit ($)</span></th>
+						<th><span>Net Profit (%)</span></th>
+					</tr>
+					</thead>
+					<tbody>
+						<?php for($mon = 1; $mon <= $maxMonth; $mon++) { ?>
+							<?php
+							$minDate = date('Y-m-d', mktime(0, 0, 0, $mon, 1));
+							$maxDate = date('Y-m-d', mktime(0, 0, 0, $mon, date('t', mktime(0, 0, 0, $mon, 10))));
+							$sql = "SELECT 
+										SUM(price) AS price, 
+										SUM(cost) AS cost, 
+										SUM(amazon_fee) AS amazon_fee, 
+										SUM(net_profit_dollar) AS net_profit_dollar, 
+										SUM(net_profit_percentage) AS net_profit_percentage 
+									FROM $amazonLog 
+									WHERE date >= '$minDate' AND date <= '$maxDate' AND status != 'Cancelled'";
+							$result = $readConnection->fetchRow($sql);
+							//echo "<pre>"; print_r($result); echo "</pre>";
+							?>
+							<?php $class = ($mon%2==0) ? " odd" : " even"; ?>
+							<tr class="<?php echo $class ?>">
+								<td class="align-right"><strong><?php echo $monthName = date('F Y', mktime(0, 0, 0, $mon, 10)); ?></strong></td>
+								<td><?php echo $currency->currency($result['price'], true, false) ?></td>
+								<td><?php echo $currency->currency($result['cost'], true, false) ?></td>
+								<td><?php echo $currency->currency($result['amazon_fee'], true, false) ?></td>
+								<td><?php echo $currency->currency($result['net_profit_dollar'], true, false) ?></td>
+								<td><?php echo number_format($result['net_profit_percentage'], 2) ?></td>
+							</tr>
+						<?php } ?>
+					    <tr><td colspan="10"><p style="height: 12px;"></p></td></tr>
+						<?php for($year = 2018; $year <= date("Y"); $year++) { ?>
+						<?php
+						$minDate = date('Y-m-d', mktime(0, 0, 0, 1, 1, $year));
+						$maxDate = date('Y-m-d', mktime(0, 0, 0, 12, date('t', mktime(0, 0, 0, 12, 10)), $year));
+						$sql = "SELECT 
+										SUM(price) AS price, 
+										SUM(cost) AS cost, 
+										SUM(net_profit_dollar) AS net_profit_dollar, 
+										SUM(net_profit_percentage) AS net_profit_percentage 
+									FROM $amazonLog 
+									WHERE date >= '$minDate' AND date <= '$maxDate' AND status != 'Cancelled'";
+						$result = $readConnection->fetchRow($sql);
+						//echo "<pre>"; print_r($result); echo "</pre>";
+						?>
+						<?php $class = ($year%2==0) ? " even" : " odd"; ?>
+							<tr class="<?php echo $class ?>">
+								<td class="align-right"><strong><?php echo $year ?></strong></td>
+                            <td><?php echo $currency->currency($result['price'], true, false) ?></td>
+                            <td><?php echo $currency->currency($result['cost'], true, false) ?></td>
+                            <td><?php if(isset($result['amazon_fee'])): echo $currency->currency($result['amazon_fee'], true, false); endif ?></td>
+                            <td><?php echo $currency->currency($result['net_profit_dollar'], true, false) ?></td>
+                            <td><?php echo number_format($result['net_profit_percentage'], 2) ?></td>
+							</tr>
+						<?php } ?>
+
+					</tbody>
+				</table>
+		</div>
+	</div>
+</div>
+<style>
+	#saleslogTotalGrid table td.align-right { text-align: right; }
+	#saleslogTotalGrid table td.align-left { text-align: left; }
+	#saleslogTotalGrid table td.align-center { text-align: center; }
+    .version_green_icon_span { float: left; margin-top: 0px; }
+    #AmazonSaleslogGrid .column-value{float: right;}
+</style>
+<script type="text/javascript">
+   require(['jquery'],function($){
+   	$j = $;
+    $('.amazonlog').on('click',function(){
+        var form_var = $j("input, textarea, select",$j("#AmazonSaleslogGrid_table tbody")).serialize();
+        var data = {};
+        data.form_key = window.FORM_KEY;
+        data.form_var = form_var;
+        $j.ajax({
+            url: '<?php echo $this->getUrl("crm/amazon/ajaxsave") ?>',
+            type: 'POST',  // http method
+            data: data,  // data to submit
+            showLoader: true,
+            success: function (data, status, xhr) {
+                window.location.reload();
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                window.location.reload();
+            }
+        });
+    });
+
+    $j(document).ready(function () {
+        $j(".column-value").click(function() {
+            $parent = $j(this).parent();
+            $j(".column-input", $parent).prop("disabled", false).show();
+        });
+
+        $j(".version_green_icon").click(function () {
+            $j( ".history_data_tr" ).each(function( index ) {
+                $j(this).remove();
+            });
+            $parent = $j(this).closest('td');
+            $tr = $j(this).closest('tr');
+            $html = $j(".history_data", $parent).html();
+            $j($tr).after("<tr class='history_data_tr'><td colspan='14'>"+ $html + "</td></tr>");
+        });
+        $j("body").on("click", '.version_close_icon', function(){
+            $tr = $j(this).closest('tr');
+            $j($tr).remove();
+        });
+    });
+});
+</script>

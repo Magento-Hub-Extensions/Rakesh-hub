@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
+
+	<head>
+	    <css src="Ueg_Crm::css/boxses.css" />
+   </head>
+    <body>
+        <referenceContainer name="content">
+			<block class="Ueg\Crm\Block\Adminhtml\Amazon" name="crm_amazon_listing" />
+			<block class="Ueg\Crm\Block\Adminhtml\Amazon\Total" name="amazon_total" template="Ueg_Crm::amazon/total.phtml"/>
+			<!-- <block class="Ueg\Crm\Block\Adminhtml\Saleslog\Total" name="saleslog_total" template="Ueg_Crm::saleslog/total.phtml"/> -->
+        </referenceContainer>
+    </body>
+</page>

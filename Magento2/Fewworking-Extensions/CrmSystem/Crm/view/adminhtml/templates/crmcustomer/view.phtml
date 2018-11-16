@@ -1,0 +1,234 @@
+<?php 
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
+
+$data = $this->getRequest()->getParams();
+$customer = $block->getCustomerById($data['id']);
+
+$admin_only = $customer->getAdminOnly();
+
+$created_at = $customer->getCreatedAt();
+$created_at_Ar = explode(' ', $created_at);
+$created_at = $created_at_Ar[0];
+
+$updated_at = $customer->getUpdatedAt();
+$updated_at_Ar = explode(' ', $created_at);
+$updated_at = $updated_at_Ar[0];
+
+$last_con = $customer->getLastContacted();
+$last_con_Ar = explode(' ', $last_con);
+$last_con = $last_con_Ar[0];
+
+$last_com = $customer->getLastCommunication();
+$last_com_Ar = explode(' ', $last_com);
+$last_com = $last_com_Ar[0];
+
+ // get the customer default billing address
+$billingAddressId = $customer->getDefaultBilling();
+//echo $billingAddressId;
+$billingAddress = $block->getCustomerAddressById($billingAddressId);
+
+$billCountryId = $billingAddress->getCountryId();
+$billCity = $billingAddress->getCity();
+$billRegionId = $billingAddress->getRegionId();
+$billRegion = $billingAddress->getRegion();
+$billstreet = $billingAddress->getData('street');
+$billcompany = $billingAddress->getData('company');
+$billpostcode = $billingAddress->getData('postcode');
+$billtelephone = $billingAddress->getData('telephone');
+
+
+
+$shippingAddressId = $customer->getDefaultShipping();
+//echo $shippingAddressId;
+$shippingAddress = $block->getCustomerAddressById($shippingAddressId);
+$shipCountryId = $shippingAddress->getCountryId();
+
+$shipCity = $shippingAddress->getCity();
+//echo $shipCity;
+$shipRegionId = $shippingAddress->getRegionId();
+$shipRegion = $shippingAddress->getRegion();
+$shipstreet = $shippingAddress->getData('street');
+$shipcompany = $shippingAddress->getData('company');
+$shippostcode = $shippingAddress->getData('postcode');
+$shiptelephone = $shippingAddress->getData('telephone');
+
+$phone = ($billtelephone)? $billtelephone:$shiptelephone;
+$additional_phone = ($shiptelephone)? $shiptelephone:$billtelephone;
+$company = ($billcompany)? $billcompany:$shipcompany;
+$countryId = ($billCountryId)? $billCountryId:$shipCountryId;
+//Get regions of USA
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$country = $objectManager->create('\Magento\Directory\Model\CountryFactory');
+$statearray =$country->create()->setId(
+                    $countryId
+                )->getLoadedRegionCollection()->toOptionArray();
+
+//Getting data from table ueg_customer_appointment
+ $objectManager =   \Magento\Framework\App\ObjectManager::getInstance();
+ $connection = $objectManager->get('Magento\Framework\App\ResourceConnection')->getConnection('\Magento\Framework\App\ResourceConnection::DEFAULT_CONNECTION'); 
+ $result1 = $connection->fetchAll("SELECT * FROM ueg_customer_appointment WHERE customer_id=".$customer->getId());
+ foreach ($result1 as $value) {
+    $note = $value['note'];
+ }
+ $phone_typeObj = $objectManager->create('Ueg\Crm\Model\Customer\Attribute\Source\Customeroptions15242422066');
+ $phone_types = $phone_typeObj->getAllOptions();
+
+ $aphone_typeObj = $objectManager->create('Ueg\Crm\Model\Customer\Attribute\Source\Customeroptions15242422067');
+ $aphone_types = $aphone_typeObj->getAllOptions();
+ 
+$hotClientObj = $objectManager->create('Magento\Eav\Model\Entity\Attribute\Source\Boolean');
+ $hotClients = $hotClientObj->getAllOptions();
+
+ $assigned_toObj = $objectManager->create('Ueg\Crm\Model\Customer\Attribute\Source\CustomCustomerAssignedToOptions');
+ $assigned_tos = $assigned_toObj->getAllOptions();
+
+ $preferred_contact_methodObj = $objectManager->create('Ueg\Crm\Model\Customer\Attribute\Source\Customeroptions15242422063');
+ $preferred_contact_methods = $preferred_contact_methodObj->getAllOptions();
+
+ $source_saleObj = $objectManager->create('Ueg\Crm\Model\Customer\Attribute\Source\Customeroptions15242422064');
+ $source_sales = $source_saleObj->getAllOptions();
+
+ $preferred_paymentObj = $objectManager->create('Ueg\Crm\Model\Customer\Attribute\Source\Customeroptions15242422065');
+ $preferred_payments = $preferred_paymentObj->getAllOptions();
+
+?>
+<div class="content-header">
+            <h3 class="icon-head head-customer"><?php echo $customer->getFirstname().' '.$customer->getLastname();?></h3>
+</div>
+<div class="top_section_wrapper">
+   <div class="top_form_section left">
+      <?php echo $block->getChildHtml('crmcustomer_view_form'); ?>
+      <style>
+         /*fieldset.address_area {
+         width: 400px;
+         }*/
+         fieldset.address_area legend {
+         display: block;
+         padding: 5px;
+         font-weight: 600;
+         }
+         fieldset.address_area .wide_box input {
+         width: 315px;
+         margin: 5px 0;
+         }
+         fieldset.address_area .small_box input,
+         fieldset.address_area .small_box select {
+         width: 100px;
+         }
+         .crm-customer-form span.value {
+         position: relative;
+         display: inline-block;
+         }
+      </style>
+                 
+   </div>
+   <div class="top_log_section right">
+      <?php echo $block->getChildHtml('crmcustomer_view_comment'); ?>
+      <?php echo $block->getChildHtml('crmcustomer_view_log'); ?>
+      </div>
+      <style>
+         #customer_info_tabs_account_comment label {
+         font-size: 16px;
+         font-weight: 600;
+         }
+         .comment_section div.value {
+         margin-left: 20px;
+         }
+         .comment_section div.buttons {
+         margin-left: 20px;
+         }
+         .comment_section div.buttons input {
+         padding: 5px 10px;
+         }
+         .log_list_section {
+         margin: 10px 0;
+         }
+         #customer_info_tabs_account_comment .log_box {
+         height: 200px;
+         overflow-y: scroll;
+         }
+         .log_box ul li {
+         font-size: 14px;
+         padding: 5px;
+         }
+      </style>
+      
+      <style>
+         #customer_info_tabs_account_log label {
+         font-size: 16px;
+         font-weight: 600;
+         margin: 20px 0 10px 0;
+         display: block;
+         }
+         .log_list_section {
+         margin: 10px 0;
+         }
+         #customer_info_tabs_account_log .log_box {
+         height: 400px;
+         overflow-y: scroll;
+         }
+         .log_box ul li {
+         font-size: 14px;
+         padding: 5px;
+         }
+      </style>
+   </div>
+   <div style="clear:both;"></div>
+</div>
+
+<!-- appointment grid -->
+<?php echo $block->getChildHtml('crmcustomer_view_appointment') ?>
+
+<!--invoice -->
+<?php echo $this->getChildHtml('crmcustomer_view_collection_invoice') ?>
+
+<!--coin grid-->
+<div id="crmcustomer-view-coin-grid"><?php echo $this->getChildHtml('crmcustomer_view_coin') ?></div>
+
+<!--collection grid-->
+<div id="crmcustomer-view-collection-grid"><?php echo $this->getChildHtml('crmcustomer_view_collection') ?></div>
+
+<script type="text/javascript">
+    require(["jquery"], function ($j) {
+//        $j = jQuery.noConflict();
+        $j(document).ready(function () {
+            var $layerHtml = '<div class="layer-div" style="position:absolute; left:0; right:0; top:0; bottom:0;"></div>';
+            $j("input, textarea, select", $j(".crm-customer-form")).prop('disabled', true).parent().append($layerHtml);
+
+            $j(".layer-div").click(function () {
+                $parent = $j(this).parent();
+                $j("input, textarea, select", $j($parent)).prop('disabled', false);
+                $j(this).hide();
+            });
+        });
+    });
+</script>
+
+
+<?php /******************* ?>
+<script type="text/javascript">
+ require([
+    "jquery",
+    "jquery/ui"
+], function($){
+  $("#customerform :input[type=text]").attr("readonly", true);
+  //$("#customerform :input[type=text]").css('cursor', 'not-allowed');
+  //$('#customerform select').css('cursor', 'not-allowed');
+  $('.input-text').click(function(){
+    // alert($(this).val());
+    $(this).attr("readonly", false);
+    $(this).css('cursor', 'pointer');
+  });
+  $('#customerform select').click(function(){
+    // alert($(this).val());
+    $(this).css('cursor', 'pointer');
+  });
+});
+// function showMessage(this) {
+//    alert($(this).val());
+// };
+</script>
+
+<?php ********************/ ?>

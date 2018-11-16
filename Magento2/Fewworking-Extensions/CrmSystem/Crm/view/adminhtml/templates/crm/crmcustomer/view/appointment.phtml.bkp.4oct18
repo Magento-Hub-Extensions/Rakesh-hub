@@ -1,0 +1,516 @@
+<div class="entry-edit">
+	<h2>Client Calendar</h2>
+	<p><a id="trigger-appointment-modal" href="javascript:void(0)">Add Appointment</a></p>
+</div>
+
+
+
+<div style="height:20px; clear:both;"></div>
+<?php echo $this->getChildHtml('grid') ?>
+<?php echo $this->getChildHtml('crm_admin_appointment_helper');  ?>
+<?php echo $this->getChildHtml('crm_admin_appointment_helper_viewonly');  ?>
+<!-- The Modal -->
+<?php //$coinOptions = Mage::getModel('crm/coinoptions'); ?>
+<div id="appointment-modal-window" class="appointment-modal appointment-modal-content">
+	<!-- Modal content -->
+	<div class="appointment-modal-content">
+		
+		<div class="appointment-modal-body">
+			<fieldset id="appointment-form">
+				<legend>Add Appointment</legend>
+				<table id="form-wrapper">
+					<tbody>
+						<tr>
+							<td>
+								<label for="media">Media:</label><br>
+								<?php $media = $block->getAppointmentoptionsModel()->getMediaOptions(); ?>
+								<select name="appointment[media]" class="select-box">
+									<?php foreach ($media as $_media) { ?>
+										<option value="<?php echo $_media ?>"><?php echo $_media ?></option>
+									<?php } ?>
+								</select>
+							</td>
+							<td>
+								<label for="rep">Rep:</label><br>
+								<?php $users = $block->getAppointmentoptionsModel()->getAdminUserList(); ?>
+								<select name="appointment[rep_user_id]" class="select-box">
+									<?php foreach ($users as $id => $user) { ?>
+										<option value="<?php echo $id ?>"><?php echo $user ?></option>
+									<?php } ?>
+								</select>
+							</td>
+							<td>
+								<label for="contact">Contact:</label><br>
+								<input type="text" list="contacts" name="appointment[contact]" class="text-box"/>
+                                <?php $contactList = $this->getContactList(); ?>
+                                <datalist id="contacts">
+                                    <?php foreach($contactList as $_contact) { ?>
+                                        <option value="<?php echo $_contact ?>">
+                                    <?php } ?>
+                                </datalist>
+							</td>
+						</tr>
+					<tr>
+						<td class="app-contcttime" colspan="2">
+							<label for="contact_time">Contact Time:</label><br>
+							<input id="contact-time-picker" type="text" name="appointment[appointment_time]" class="text-box double" />
+							<!-- <img style="margin: 0 0 0 5px;" title="Select Appointment Time" id="contact-time-trig" alt="" src="<?php echo $this->getViewFileUrl("images/grid-cal.gif") ?>"/> -->
+						</td>
+						<td class="app-status">
+							<label for="status">Status:</label><br>
+							<?php $status = $block->getAppointmentoptionsModel()->getStatusOptions(); ?>
+							<select name="appointment[status]" class="select-box">
+								<?php foreach ($status as $_status) { ?>
+									<option value="<?php echo $_status ?>"><?php echo $_status ?></option>
+								<?php } ?>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label for="subject">Subject:</label>
+						</td>
+						<td colspan="2">
+							<input type="text" name="appointment[subject]" class="text-box double"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label for="note">Notes:</label>
+						</td>
+						<td colspan="2">
+							<textarea name="appointment[note]" class="textarea-box"></textarea>
+						</td>
+					</tr>
+					<!-- <tr>
+						<td colspan="3" class="appointment-form-buttons">
+							<input type="button" id="submit-appointment" value="Save"/>
+							<input type="button" id="cancel-appointment" value="Cancel"/>
+						</td>
+					</tr> -->
+					</tbody>
+				</table>
+			</fieldset>
+		</div>
+	</div>
+</div>
+
+
+<script>
+    require(
+        [
+            'jquery',
+            'Magento_Ui/js/modal/modal',
+            'mage/calendar'
+        ],
+        function(
+            $,
+            modal
+        ) {
+            var options = {
+                type: 'popup',
+                responsive: true,
+                innerScroll: true,
+                // title: 'Add Appointment',
+                buttons: [{
+                    text: $.mage.__('Save'),
+                    class: 'save-btn-addappointment',
+                    click: function () {
+                        addAppointment($);
+                    }
+                },{
+                    text: $.mage.__('Cancel'),
+                    class: 'cancel-btn-addappointment',
+                    click: function () {
+                        this.closeModal();
+                    }
+                }]
+            };
+
+            var popup = modal(options, $('#appointment-modal-window'));
+
+            $("#contact-time-picker").datetimepicker({
+                  buttonText:"Select Date"
+             });
+
+            $("#trigger-appointment-modal").on('click',function(){ 
+                $("#appointment-modal-window").modal("openModal");
+            });
+
+        }
+    );
+
+    function addAppointment($) {
+       $('body').loader('show');
+        //var form_var = $("input, textarea, select",$("#ajax-form-wrapper tbody")).serializeArray();
+        var form_var = $('#appointment-modal-window').find('input,textarea,select').serialize();
+        //console.log(form_var);
+        var data = {};
+        data.form_key = window.FORM_KEY;
+        data.customer_id = 1;
+        data.form_var = form_var;
+        $.ajax({
+            url: '<?php echo $this->getUrl("crm/appointment/ajaxsubmit") ?>?isAjax=true',
+            type: 'POST', // http method
+            data: data, // data to submit
+            //data: form_var,  // data to submit
+            success: function (data, status, xhr) {
+                $('body').loader('hide');
+                $('p').append('status: ' + status + ', data: ' + data);
+                console.log(data);
+                if (data == 1) {
+                    alert("Data Save.");
+                    return;
+                }
+                alert(data);
+//                window.location.reload();
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                $('body').loader('hide');
+                console.log(jqXhr);
+                $('p').append('Error' + errorMessage);
+                
+//                window.location.reload();
+            }
+        });
+            
+        
+    }
+
+</script>
+
+
+
+
+
+
+
+<!-- empty modal for view/edit form -->
+<!-- <div id="ajax-modal-window" class="ajax-modal" style="display: none;">
+   
+    <div class="ajax-modal-content">
+        <div class="ajax-modal-header">
+            <span class="ajax-close">&times;</span>
+        </div>
+        <div class="ajax-modal-body">
+            <fieldset id="ajax-form">
+            </fieldset>
+        </div>
+    </div>
+</div> -->
+
+<!-- <style>
+	.appointment-modal,
+	.ajax-modal {
+		display: none; /* Hidden by default */
+		position: fixed; /* Stay in place */
+		z-index: 99; /* Sit on top */
+		padding-top: 100px; /* Location of the box */
+		left: 0;
+		top: 0;
+		width: 100%; /* Full width */
+		height: 100%; /* Full height */
+		overflow: auto; /* Enable scroll if needed */
+		background-color: rgb(0,0,0); /* Fallback color */
+		background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+	}
+
+	/* Modal Content */
+	.appointment-modal-content {
+		position: relative;
+		background-color: #fefefe;
+		margin: auto;
+		padding: 0;
+		border: 1px solid #888;
+		width: 40%;
+		box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+		-webkit-animation-name: modalanimatetop;
+		-webkit-animation-duration: 0.4s;
+		animation-name: modalanimatetop;
+		animation-duration: 0.4s
+	}
+
+	/* Add Animation */
+	@-webkit-keyframes modalanimatetop {
+		from {top:-300px; opacity:0}
+		to {top:0; opacity:1}
+	}
+
+	@keyframes modalanimatetop {
+		from {top:-300px; opacity:0}
+		to {top:0; opacity:1}
+	}
+
+	/* The Close Button */
+	.appointment-close,
+	.ajax-close {
+		color: #aaa;
+		float: right;
+		font-size: 28px;
+		font-weight: bold;
+		padding: 4px;
+	}
+
+	.appointment-close:hover,
+	.appointment-close:focus,
+	.ajax-close:hover,
+	.ajax-close:focus {
+		color: #000;
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+	.appointment-modal-header,
+	.ajax-modal-header {
+		min-height: 10px;
+	}
+
+	.appointment-modal-body,
+	.ajax-modal-body {
+		padding: 20px;
+	}
+
+    /* Modal Content */
+    .ajax-modal-content {
+        position: relative;
+        background-color: #fefefe;
+        margin: auto;
+        padding: 0;
+        border: 1px solid #888;
+        width: 40%;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+        -webkit-animation-name: ajaxanimatetop;
+        -webkit-animation-duration: 0.4s;
+        animation-name: ajaxanimatetop;
+        animation-duration: 0.4s
+    }
+
+    /* Add Animation */
+    @-webkit-keyframes ajaxanimatetop {
+        from {top:-300px; opacity:0}
+        to {top:0; opacity:1}
+    }
+
+    @keyframes ajaxanimatetop {
+        from {top:-300px; opacity:0}
+        to {top:0; opacity:1}
+    }
+
+	/** form css */
+	#appointment-form table#form-wrapper,
+	#ajax-form table#ajax-form-wrapper {
+		width: 100%;
+	}
+	#appointment-form legend,
+	#ajax-form legend {
+		display: block;
+		font-size: 16px;
+		padding: 0 10px;
+	}
+	#appointment-form table#form-wrapper td,
+	#ajax-form table#ajax-form-wrapper td {
+		width: 33%;
+		padding: 5px 0;
+		vertical-align: middle;
+	}
+	#appointment-form table#form-wrapper td label,
+	#ajax-form table#ajax-form-wrapper td label {
+		font-weight: 600;
+		font-size: 14px;
+	}
+	#appointment-form input.text-box,
+	#ajax-form input.text-box {
+		width: 90%;
+		height: 20px;
+		margin-top: 5px;
+	}
+	#appointment-form input.text-box.double,
+	#ajax-form input.text-box.double {
+		width: 95%;
+	}
+	#appointment-form textarea.textarea-box,
+	#ajax-form textarea.textarea-box {
+		width: 95%;
+		height: 200px;
+	}
+	#appointment-form select.select-box,
+	#ajax-form select.select-box {
+		width: 92%;
+		height: 25px;
+		margin-top: 5px;
+	}
+	.appointment-form-buttons,
+	.ajax-form-buttons {
+		text-align: center;
+	}
+	.appointment-form-buttons input,
+	.ajax-form-buttons input {
+		padding: 3px 12px;
+		margin: 0 10px;
+		cursor: pointer;
+	}
+</style> -->
+<!-- <script type="text/javascript">
+    // Get the modal
+    var appointmentModal = document.getElementById('appointment-modal-window');
+
+    // Get the button that opens the modal
+    var appointmentBtn = document.getElementById("trigger-appointment-modal");
+
+    // Get the <span> element that closes the modal
+    var appointmentSpan = document.getElementsByClassName("appointment-close")[0];
+
+    // When the user clicks on the button, open the modal
+    appointmentBtn.onclick = function() {
+        appointmentModal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    appointmentSpan.onclick = function() {
+        appointmentModal.style.display = "none";
+    }
+
+    // Get the modal
+    var ajaxModal = document.getElementById('ajax-modal-window');
+
+    // Get the <span> element that closes the modal
+    var ajaxSpan = document.getElementsByClassName("ajax-close")[0];
+
+    // When the user clicks on <span> (x), close the modal
+    ajaxSpan.onclick = function() {
+        ajaxModal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+        if (event.target == appointmentModal) {
+            appointmentModal.style.display = "none";
+        }
+        if (event.target == ajaxModal) {
+            ajaxModal.style.display = "none";
+        }
+        if (event.target == collectionModal) {
+            collectionModal.style.display = "none";
+        }
+    }
+
+ /*   Calendar.setup({
+        inputField : "contact-time-picker",
+        ifFormat : "%m/%e/%y %H:%M:%S",
+        button : "contact-time-trig",
+        showsTime: true,
+        align : "Bl",
+        singleClick : true
+    });
+*/
+    $j = jQuery.noConflict();
+    $j(document).ready(function() {
+        $j("#cancel-appointment").click(function() {
+            $j("#loading-mask").show();
+            window.location.href = "<?php echo $this->getUrl("crm/crmcustomer/view", array('id'=>$this->getRequest()->getParam('id')))?>";
+        });
+
+        $j("#submit-appointment").click(function () {
+            $j("#loading-mask").show();
+            //var form_var = $j("input, textarea, select",$j("#fform-wrapper tbody")).serializeArray();
+            var form_var = $j("input, textarea, select",$j("#form-wrapper tbody")).serialize();
+            //console.log(form_var);
+            var data = {};
+            data.form_key = window.FORM_KEY;
+            data.customer_id = "<?php echo $this->getRequest()->getParam('id') ?>";
+            data.form_var = form_var;
+            $j.ajax({
+                url: '<?php echo $this->getUrl("crm/appointment/ajaxsubmit") ?>?isAjax=true',
+                type: 'POST',  // http method
+                data: data,  // data to submit
+                //data: form_var,  // data to submit
+                success: function (data, status, xhr) {
+                    //$('p').append('status: ' + status + ', data: ' + data);
+                    window.location.href = "<?php echo $this->getUrl("crm/crmcustomer/view", array('id'=>$this->getRequest()->getParam('id')))?>";
+                },
+                error: function (jqXhr, textStatus, errorMessage) {
+                    //$('p').append('Error' + errorMessage);
+                    window.location.href = "<?php echo $this->getUrl("crm/crmcustomer/view", array('id'=>$this->getRequest()->getParam('id')))?>";
+                }
+            });
+        });
+
+        $j("#appointmentGrid_table input[name='appointment_time[from]']").val('<?php echo date('m/d/y', time()) ?>');
+
+        $j(document).on( "click", "a.grid-preview", function() {
+            $j("#loading-mask").show();
+            var url = $j(this).attr('data-url');
+            var data = {};
+            data.form_key = window.FORM_KEY;
+            $j.ajax({
+                url: url,
+                type: 'POST',  // http method
+                data: data,  // data to submit
+                //data: form_var,  // data to submit
+                success: function (data, status, xhr) {
+                    $j('#ajax-form').html(data);
+                    $j('#ajax-modal-window').css('display', 'block');
+                    $j("#loading-mask").hide();
+                },
+                error: function (jqXhr, textStatus, errorMessage) {
+                    console.log('Error' + errorMessage);
+                    $j("#loading-mask").hide();
+                }
+            });
+        });
+        $j(document).on( "click", "a.grid-edit", function() {
+            $j("#loading-mask").show();
+            var url = $j(this).attr('data-url');
+            var data = {};
+            data.form_key = window.FORM_KEY;
+            $j.ajax({
+                url: url,
+                type: 'POST',  // http method
+                data: data,  // data to submit
+                //data: form_var,  // data to submit
+                success: function (data, status, xhr) {
+                    $j('#ajax-form').html(data);
+                    $j('#ajax-modal-window').css('display', 'block');
+                    $j("#loading-mask").hide();
+                },
+                error: function (jqXhr, textStatus, errorMessage) {
+                    console.log('Error' + errorMessage);
+                    $j("#loading-mask").hide();
+                }
+            });
+        });
+
+        $j(document).on( "click", "#ajax-cancel-appointment", function() {
+            $j("#loading-mask").show();
+            window.location.href = "<?php echo $this->getUrl("V", array('id'=>$this->getRequest()->getParam('id')))?>";
+        });
+
+        $j(document).on( "click", "#ajax-submit-appointment", function() {
+            $j("#loading-mask").show();
+            //var form_var = $j("input, textarea, select",$j("#ajax-form-wrapper tbody")).serializeArray();
+            var form_var = $j("input, textarea, select",$j("#ajax-form-wrapper tbody")).serialize();
+            //console.log(form_var);
+            var data = {};
+            data.form_key = window.FORM_KEY;
+            data.customer_id = "<?php echo $this->getRequest()->getParam('id') ?>";
+            data.form_var = form_var;
+            $j.ajax({
+                url: '<?php echo $this->getUrl("crm/appointment/ajaxsave") ?>?isAjax=true',
+                type: 'POST',  // http method
+                data: data,  // data to submit
+                //data: form_var,  // data to submit
+                success: function (data, status, xhr) {
+                    //$('p').append('status: ' + status + ', data: ' + data);
+                    window.location.href = "<?php echo $this->getUrl("crm/crmcustomer/view", array('id'=>$this->getRequest()->getParam('id')))?>";
+                },
+                error: function (jqXhr, textStatus, errorMessage) {
+                    //$('p').append('Error' + errorMessage);
+                    window.location.href = "<?php echo $this->getUrl("crm/crmcustomer/view", array('id'=>$this->getRequest()->getParam('id')))?>";
+                }
+            });
+        });
+    });
+</script> -->

@@ -1,0 +1,68 @@
+<!-- empty modal for view/edit form -->
+<div id="ajax-modal3-window" class="ajax-modal3 appointment-modal appointment-modal-content">
+    <!-- Modal content -->
+    <div class="ajax-modal3-content">
+
+        <div class="ajax-modal3-body">
+            <div id="ajax-modal3">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    require(
+            [
+                'jquery',
+                'Magento_Ui/js/modal/modal'
+            ],
+            function (
+                    $,
+                    modal
+                    ) {
+                var options = {
+                    type: 'popup',
+                    responsive: true,
+                    innerScroll: true
+                    
+                };
+
+                var popup = modal(options, $('#ajax-modal3-window'));
+
+                $('#appointmentGrid_table .action a.grid-preview').text('View');
+
+               $(document).on('click','#appointmentGrid_table .action a.grid-preview',function(e) {
+//                
+                    $('body').loader('show');
+                    e.preventDefault();
+
+                    var url = $(this).closest('.action').find('.grid-edit').attr('data-url');
+                    var data = {form_key: window.FORM_KEY};
+
+                    $.ajax({
+                        url: url,
+                        type: 'POST', // http method
+                        data: data, // data to submit
+                        //data: form_var,  // data to submit
+                        success: function (data, status, xhr) {
+                            $('#ajax-modal3').html(data);
+                            $('#ajax-modal3').trigger('contentUpdated');
+                            $('#ajax-modal3').find('input,textarea,select').attr('disabled','disabled');
+                            
+                            $("#ajax-modal3-window").modal("openModal");
+                            $('body').loader('hide');
+                        },
+                        error: function (jqXhr, textStatus, errorMessage) {
+                            console.log('Error' + errorMessage);
+                            $('body').loader('hide');
+                        }
+                    });
+
+                    return false;
+                });
+            }
+    );
+
+
+</script>

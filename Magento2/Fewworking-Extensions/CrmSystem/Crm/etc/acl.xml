@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Ueg_Crm::parent" title="CRM" sortOrder="51">
+                    <resource id="Ueg_Crm::crmadminacl" title="CRM ACL Role" sortOrder="10"/>
+                    <resource id="Ueg_Crm::crmdashboard" title="CRM Dashboard" sortOrder="40" />
+                    <resource id="Ueg_Crm::crmcustomer" title="CRM Customer" sortOrder="21" />
+                    <resource id="Ueg_Crm::crmproduct" title="CRM Product" sortOrder="22" />
+                    <resource id="Ueg_Crm::crminvoice" title="CRM Invoice" sortOrder="23" />
+                    <resource id="Ueg_Crm::dialer" title="Dialer Dashboard" sortOrder="30" />
+                    <resource id="Ueg_Crm::asr" title="ASR Dashboard" sortOrder="20" />
+                    <resource id="Ueg_Crm::crm" title="Inventory" sortOrder="50" />
+                    <resource id="Ueg_Crm::appointment" title="Calendar" sortOrder="59" />
+                    <resource id="Ueg_Crm::account_client" title="Accounts" sortOrder="60" />
+                    <resource id="Ueg_Crm::ordersearch" title="Order Search" sortOrder="61" />
+                    <resource id="Ueg_Crm::crmorderreview" title="Order Review" sortOrder="62" />
+                    <resource id="Ueg_Crm::crmorderresearch" title="Order Research" sortOrder="63" />
+                    <resource id="Ueg_Crm::crmasrorder" title="ASR Orders" sortOrder="64" />
+                    <resource id="Ueg_Crm::hot_client" title="Hot Clients" sortOrder="65" />
+                    <resource id="Ueg_Crm::overdue" title="Overdue Tasks" sortOrder="80" />
+                    <resource id="Ueg_Crm::repnotification" title="Rep Notification" sortOrder="81" />
+                    <resource id="Ueg_Crm::series" title="Series View" sortOrder="82" />
+                    <resource id="Ueg_Crm::master" title="Master Client" sortOrder="83" />
+                    <resource id="Ueg_Crm::masterinv" title="Client Master Inventory" sortOrder="84" />
+                </resource>
+               <!--  <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="Ueg_Crm::parent_config" title="Hello World"/>
+                        </resource>
+                    </resource>
+                </resource> -->
+            </resource>
+        </resources>
+    </acl>
+</config>

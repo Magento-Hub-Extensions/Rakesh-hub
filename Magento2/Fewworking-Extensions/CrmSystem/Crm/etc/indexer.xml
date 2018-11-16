@@ -1,0 +1,10 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Indexer/etc/indexer.xsd">
+    <indexer id="customer_grid">
+        <fieldset name="customer">
+            <field name="hot_client" xsi:type="filterable" dataType="int"/>
+            <field name="asr_pool" xsi:type="filterable" dataType="int"/>
+            <field name="dialer_pool" xsi:type="filterable" dataType="int"/>
+            <field name="admin_only" xsi:type="filterable" dataType="int"/>
+        </fieldset>
+    </indexer>
+</config>

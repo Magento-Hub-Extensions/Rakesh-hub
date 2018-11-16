@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+	<head>
+	    <css src="Ueg_Crm::css/notify.css" />
+   </head>
+    <body>
+        <referenceContainer name="notifications">
+            <block class="Ueg\Crm\Block\Adminhtml\Overdue\Notification" name="overdue_notification" template="crm/overdue/notification.phtml"/>
+
+             <block class="Ueg\Crm\Block\Adminhtml\Repnotification\Notification" name="repnotification_notification" template="repnotification/notification.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

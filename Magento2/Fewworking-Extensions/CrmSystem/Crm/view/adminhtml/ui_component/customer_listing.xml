@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">customer_listing.customer_listing_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="add">
+                <url path="*/*/new"/>
+                <class>primary</class>
+                <label translate="true">Add New Customer</label>
+            </button>
+        </buttons>
+        <spinner>customer_columns</spinner>
+        <deps>
+            <dep>customer_listing.customer_listing_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="customer_listing_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Magento_Customer::manage</aclResource>
+        <dataProvider class="Magento\Customer\Ui\Component\DataProvider" name="customer_listing_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>entity_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <settings>
+            <sticky>true</sticky>
+        </settings>
+        <bookmark name="bookmarks"/>
+        <columnsControls name="columns_controls"/>
+        <exportButton name="export_button"/>
+        <filterSearch name="fulltext"/>
+        <filters name="listing_filters"/>
+        <massaction name="listing_massaction" component="Magento_Ui/js/grid/tree-massactions">
+
+             <action name="hot_client">
+                <settings>
+                    <type>hot_client</type>
+                    <label translate="true">Set Hot Client</label>
+                    <actions>
+                        <action name="0">
+                            <type>no</type>
+                            <label translate="true">No</label>
+                            <url path="crm/customer/masshotclient">
+                                <param name="hot_client">0</param>
+                            </url>
+                        </action>
+
+                        <action name="1">
+                            <type>yes</type>
+                            <label translate="true">Yes</label>
+                            <url path="crm/customer/masshotclient">
+                                <param name="hot_client">1</param>
+                            </url>
+                        </action>
+                    </actions>
+                </settings>
+              </action>
+
+           <action name="asr_pool">
+                    <settings>
+                    <type>asr_pool</type>
+                    <label translate="true">Set Asr Pool</label>
+                    <actions>
+
+                         <action name="0">
+                            <type>no</type>
+                            <label translate="true">No</label>
+                            <url path="crm/customer/setasrpool">
+                                <param name="asr_pool">0</param>
+                            </url>
+                        </action>
+
+                        <action name="1">
+                            <type>yes</type>
+                            <label translate="true">Yes</label>
+                            <url path="crm/customer/setasrpool">
+                                <param name="asr_pool">1</param>
+                            </url>
+                        </action>
+                       
+
+                        <action name="2">
+                            <type>hold</type>
+                            <label translate="true">Hold</label>
+                            <url path="crm/customer/setasrpool">
+                                <param name="asr_pool">2</param>
+                            </url>
+                        </action>
+                    </actions>
+                </settings>
+            </action>
+ 
+
+              <action name="dialer_pool">
+                    <settings>
+                    <type>dialer_pool</type>
+                    <label translate="true">Set Dialer Pool</label>
+                    <actions>
+
+                        <action name="0">
+                            <type>no</type>
+                            <label translate="true">No</label>
+                            <url path="crm/customer/setdialerpool">
+                                <param name="dialer_pool">0</param>
+                            </url>
+                        </action>
+
+                        <action name="1">
+                            <type>yes</type>
+                            <label translate="true">Yes</label>
+                            <url path="crm/customer/setdialerpool">
+                                <param name="dialer_pool">1</param>
+                            </url>
+                        </action>
+                        
+                        <action name="2">
+                            <type>hold</type>
+                            <label translate="true">Hold</label>
+                            <url path="crm/customer/setdialerpool">
+                                <param name="dialer_pool">2</param>
+                            </url>
+                        </action>
+                    </actions>
+                </settings>
+            </action>
+
+             <action name="admin_only">
+                <settings>
+                    <type>admin_only</type>
+                    <label translate="true">Set Admin Only</label>
+                    <actions>
+                        <action name="0">
+                            <type>no</type>
+                            <label translate="true">No</label>
+                            <url path="crm/customer/setadminonly">
+                                <param name="admin_only">0</param>
+                            </url>
+                        </action>
+
+                        <action name="1">
+                            <type>yes</type>
+                            <label translate="true">Yes</label>
+                            <url path="crm/customer/setadminonly">
+                                <param name="admin_only">1</param>
+                            </url>
+                        </action>
+                    </actions>
+                </settings>
+              </action>
+
+
+          
+
+   
+        </massaction>
+        <paging name="listing_paging"/>
+    </listingToolbar>
+
+    <columns name="customer_columns" class="Magento\Customer\Ui\Component\Listing\Columns">
+        <column name="hot_client">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="filter" xsi:type="string">select</item>
+                    <item name="editor" xsi:type="string">select</item>
+                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/select</item>
+                    <item name="dataType" xsi:type="string">select</item>
+                    <item name="label" xsi:type="string" translate="true">Hot Client</item>
+                    <item name="sortOrder" xsi:type="number">51</item>
+                </item>
+            </argument>
+        </column>
+
+        <column name="asr_pool">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="filter" xsi:type="string">select</item>
+                    <item name="editor" xsi:type="string">select</item>
+                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/select</item>
+                    <item name="dataType" xsi:type="string">select</item>
+                    <item name="label" xsi:type="string" translate="true">Asr Pool</item>
+                    <item name="sortOrder" xsi:type="number">51</item>
+                </item>
+            </argument>
+        </column>
+
+
+        <column name="dialer_pool">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="filter" xsi:type="string">select</item>
+                    <item name="editor" xsi:type="string">select</item>
+                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/select</item>
+                    <item name="dataType" xsi:type="string">select</item>
+                    <item name="label" xsi:type="string" translate="true">Dialer Pool</item>
+                    <item name="sortOrder" xsi:type="number">51</item>
+                </item>
+            </argument>
+        </column>
+
+      <column name="admin_only">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="filter" xsi:type="string">select</item>
+                    <item name="editor" xsi:type="string">select</item>
+                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/select</item>
+                    <item name="dataType" xsi:type="string">select</item>
+                    <item name="label" xsi:type="string" translate="true">Admin Only</item>
+                    <item name="sortOrder" xsi:type="number">51</item>
+                </item>
+            </argument>
+        </column>
+    </columns>
+</listing>

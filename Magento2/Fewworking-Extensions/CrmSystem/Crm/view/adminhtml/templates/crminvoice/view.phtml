@@ -1,0 +1,175 @@
+<?php 
+
+$currencyChange = $this->helper('Magento\Framework\Pricing\Helper\Data');
+$invoiceId = $this->getRequest()->getParam('id');
+
+
+$adminuserId = $block->getauthSession()->getUser()->getUserId();
+
+
+$role_id = $block->getRoleId();
+$model = $block->getAclFactory()->create()->load($role_id, "role_id");
+$order_street_view = $model->getData('order_street_view');
+?>
+<?php if(isset($invoiceId) && !empty($invoiceId)) { ?>
+	<?php
+	$crmInvoice = $block->getCrmInvoice()->create()->load($invoiceId);
+	
+	$crmItems = $block->getCrmInvoiceItem()->create()->getCollection()
+		->addFieldToFilter('parent_id', $invoiceId);
+	?>
+	<div class="content-header">
+		<h3 class="icon-head head-sales-order">Order # <?php echo $crmInvoice->getData('order_number') ?></h3>
+	</div>
+    <div class="grid np">
+        <div style="width: 600px; float: right;">
+            <table cellspacing="5" class="data" id="invoicesInfo_table">
+                <colgroup>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td colspan="4" class="align-right" style="text-align: right;">
+                        <strong>Order Date:</strong>
+                    </td>
+                    <td style="border: 1px solid !important;">
+                        <?php echo date("m-d-Y", strtotime($crmInvoice->getData('created_at'))) ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <?php if($crmInvoice->getData('qb_invoice_id')) { ?>
+                            <strong>Invoice #:</strong>
+                        <?php } else { ?>
+                            <strong>Order #:</strong>
+                        <?php } ?>
+                    </td>
+                    <td colspan="3"><strong>Bill To:</strong></td>
+                    <td><strong>eBay ID:</strong></td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid !important;">
+                        <?php if($crmInvoice->getData('qb_invoice_id')) { ?>
+                            <?php echo $crmInvoice->getData('qb_invoice_id') ?>
+                        <?php } else { ?>
+	                        <?php echo $crmInvoice->getData('order_number') ?>
+                        <?php } ?>
+                    </td>
+                    <td colspan="3" style="border: 1px solid !important;">
+                        <strong><?php echo $crmInvoice->getData('billing_firstname') ." ". $crmInvoice->getData('billing_lastname') ?></strong><br>
+                        <?php if(isset($order_street_view) && $order_street_view == 1) { ?>
+                            <span><?php echo $crmInvoice->getData('billing_street') ?></span><br>
+                        <?php } ?>
+                        <span><?php echo $crmInvoice->getData('billing_city') ?>, <?php echo $crmInvoice->getData('billing_region') ?> <?php echo $crmInvoice->getData('billing_postcode') ?></span>
+                    </td>
+                    <td style="border: 1px solid !important;"><?php echo $crmInvoice->getData('ebay_id') ?></td>
+                </tr>
+                <tr>
+                    <td>Tracking #:</td>
+                    <td>Rep:</td>
+                    <td>Ship Date:</td>
+                    <td>Via:</td>
+                    <td>MSG Status:</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid !important;"><?php echo $crmInvoice->getData('tracking_id') ?></td>
+                    <td style="border: 1px solid !important;"><?php echo $crmInvoice->getData('rep') ?></td>
+                    <td style="border: 1px solid !important;"><?php if($crmInvoice->getData('ship_date')) { echo date("m-d-Y", strtotime($crmInvoice->getData('ship_date'))); } ?></td>
+                    <td style="border: 1px solid !important;"><?php echo $crmInvoice->getData('shipping_method') ?></td>
+                    <td style="border: 1px solid !important;"><?php echo $crmInvoice->getData('status') ?></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div style="height: 20px; clear: both;"></div>
+
+	<div class="grid np">
+		<div class="hor-scroll">
+			<table cellspacing="0" class="data" id="invoicesGrid_table">
+				<colgroup>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+				</colgroup>
+				<thead>
+				<tr class="headings">
+					<th><span class="nobr">Qty</span></th>
+					<th><span class="nobr">Product Name</span></th>
+					<th><span class="nobr">SKU</span></th>
+					<th><span class="nobr">Unit Price</span></th>
+					<th><span class="nobr">Amount</span></th>
+				</tr>
+				</thead>
+				<tbody>
+				<?php foreach ($crmItems as $item) { ?>
+					<tr>
+						<td><?php echo $item['qty'] ?></td>
+						<td><?php echo $item['item_sku'] ?></td>
+						<td><?php echo $item['item_name'] ?></td>
+						<td><?php echo $currencyChange->currency($item['unit_price'], true, false) ?></td>
+						<td><?php echo $currencyChange->currency($item['total'], true, false) ?></td>
+					</tr>
+				<?php } ?>
+                <tr>
+                    <td colspan="5" style="background-color: #DBDBDB; height: 15px;"></td>
+                </tr>
+				<tr style="background-color: #F6F6F6;">
+					<td colspan="3"></td>
+					<td class="align-center">Tax Amount:</td>
+					<td><?php echo $currencyChange->currency($crmInvoice['tax_amount'], true, false) ?></td>
+				</tr>
+				<tr>
+					<td colspan="3"></td>
+					<td class="align-center">Shipping Amount:</td>
+					<td><?php echo $currencyChange->currency($crmInvoice['shipping_amount'], true, false) ?></td>
+				</tr>
+				<tr style="background-color: #F6F6F6;">
+					<td colspan="3"></td>
+					<td class="align-center">Discount Amount:</td>
+					<td><?php if($crmInvoice['discount_amount'] > 0) { echo "-"; } ?><?php echo $currencyChange->currency($crmInvoice['discount_amount'], true, false) ?></td>
+				</tr>
+				<tr>
+					<td colspan="3"></td>
+					<td class="align-center"><strong>Total:</strong></td>
+					<td><strong><?php echo $currencyChange->currency($crmInvoice['grand_total'], true, false) ?></strong></td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+    <div style="height: 20px; clear: both;"></div>
+
+    <div class="grid np">
+        <div style="width: 500px;">
+            <table cellspacing="0" class="data" id="invoicesMessage_table">
+                <colgroup>
+                    <col>
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td><strong>Customer Message:</strong></td>
+                </tr>
+                <tr>
+                    <td><?php echo nl2br($crmInvoice->getData('customer_message')) ?></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <style>
+        #invoicesInfo_table {
+            border: 0;
+        }
+        #invoicesInfo_table td {
+            border: 0 !important;
+        }
+    </style>
+<?php } ?>

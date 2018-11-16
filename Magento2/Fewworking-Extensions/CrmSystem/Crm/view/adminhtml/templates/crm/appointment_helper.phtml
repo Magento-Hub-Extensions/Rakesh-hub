@@ -1,0 +1,185 @@
+<!-- empty modal for view/edit form -->
+<div id="ajax-modal2-window" class="ajax-modal2 appointment-modal appointment-modal-content">
+    <!-- Modal content -->
+    <div class="ajax-modal2-content">
+
+        <div class="ajax-modal2-body">
+            <fieldset id="appointment-form">
+                <div id="ajax-form2">
+
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+<script>
+    require(
+            [
+                'jquery',
+                'Magento_Ui/js/modal/modal'
+            ],
+            function (
+                    $,
+                    modal
+                    ) {
+                var options = {
+                    type: 'popup',
+                    responsive: true,
+                    innerScroll: true,
+                    buttons: [{
+                            text: $.mage.__('Save'),
+                            class: 'mymodal1',
+                            click: function () {
+                                saveApptData($);
+                            }
+                        }, {
+                            text: $.mage.__('Cancel'),
+                            class: 'mymodal1',
+                            click: function () {
+                                this.closeModal();
+                            }
+                        }]
+                };
+
+                var popup = modal(options, $('#ajax-modal2-window'));
+                $(document).on("click", "a.grid-edit", function () {
+//                
+                    $('body').loader('show');
+                    var url = $(this).attr('data-url');
+                    var data = {form_key: window.FORM_KEY};
+
+                    $.ajax({
+                        url: url,
+                        type: 'POST', // http method
+                        data: data, // data to submit
+                        //data: form_var,  // data to submit
+                        success: function (data, status, xhr) {
+                            $('#ajax-form2').html(data);
+                            $("#ajax-modal2-window").modal("openModal");
+                            $('body').loader('hide');
+                        },
+                        error: function (jqXhr, textStatus, errorMessage) {
+                            console.log('Error' + errorMessage);
+                            $('body').loader('hide');
+                        }
+                    });
+                });
+            }
+    );
+
+
+    function saveApptData($) {
+        $('body').loader('show');
+        //var form_var = $("input, textarea, select",$("#ajax-form2-wrapper tbody")).serializeArray();
+        var form_var = $('#ajax-form2').find('input,textarea,select').serialize();
+        
+        var data = {};
+        data.form_key = window.FORM_KEY;
+        data.customer_id = 1; 
+
+        data.form_var = form_var;
+        console.log(data);
+        $.ajax({
+            url: '<?php echo $this->getUrl("crm/appointment/ajaxsave") ?>?isAjax=true',
+            type: 'POST', // http method
+            data: data, // data to submit
+            //data: form_var,  // data to submit
+            success: function (data, status, xhr) {
+                $('body').loader('hide');
+                // $('p').append('status: ' + status + ', data: ' + data);
+                console.log(data);
+               
+               window.location.reload();
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                $('body').loader('hide');
+                console.log(jqXhr);
+                $('p').append('Error' + errorMessage);
+                
+               window.location.reload();
+            }
+        });
+    }
+
+</script>
+
+<!-- <style>
+    .ajax-modal2-header {
+        min-height: 10px;
+    }
+
+    .ajax-modal2-body {
+        padding: 20px;
+    }
+
+    /* Modal Content */
+    .ajax-modal2-content {
+        /*        position: relative;
+                background-color: #fefefe;
+                margin: auto;
+                padding: 0;
+                border: 1px solid #888;
+                width: 40%;
+                box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+                -webkit-animation-name: ajaxanimatetop;
+                -webkit-animation-duration: 0.4s;
+                animation-name: ajaxanimatetop;
+                animation-duration: 0.4s*/
+    }
+
+    /* Add Animation */
+    @-webkit-keyframes ajaxanimatetop {
+        from {top:-300px; opacity:0}
+        to {top:0; opacity:1}
+    }
+
+    @keyframes ajaxanimatetop {
+        from {top:-300px; opacity:0}
+        to {top:0; opacity:1}
+    }
+
+    /** form css */
+    #ajax-form2 table#ajax-form2-wrapper {
+        width: 100%;
+    }
+    #ajax-form2 legend {
+        display: block;
+        font-size: 16px;
+        padding: 0 10px;
+    }
+    #ajax-form2 table#ajax-form2-wrapper td {
+        width: 33%;
+        padding: 5px 0;
+        vertical-align: middle;
+    }
+    #ajax-form2 table#ajax-form2-wrapper td label {
+        font-weight: 600;
+        font-size: 14px;
+    }
+    #ajax-form2 input.text-box {
+        width: 90%;
+        height: 20px;
+        margin-top: 5px;
+    }
+    #ajax-form2 input.text-box.double {
+        width: 95%;
+    }
+    #ajax-form2 textarea.textarea-box {
+        width: 95%;
+        height: 100px;
+    }
+    #ajax-form2 select.select-box {
+        width: 92%;
+        height: 25px;
+        margin-top: 5px;
+    }
+    .ajax-form2-buttons {
+        text-align: center;
+    }
+    .ajax-form2-buttons input {
+        padding: 3px 12px;
+        margin: 0 10px;
+        cursor: pointer;
+    }
+</style> -->

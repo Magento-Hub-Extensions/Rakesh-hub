@@ -1,0 +1,400 @@
+<?php
+
+//$admin_user_session = Mage::getSingleton('admin/session');
+//$adminuserId = $admin_user_session->getUser()->getUserId();
+//$role_id = Mage::getModel('admin/user')->load($adminuserId)->getRole()->getData('role_id');
+//$model = Mage::getModel("crm/crmadminacl")->load($role_id, "role_id");
+
+$role_id=$block->getRoleId();
+$model=$block->getCrmaclModel();
+
+//echo "roleid= $role_id"; exit;
+?>
+<?php if ($model->getId()) { ?>
+    <?php
+    $inventory_read = $model->getData('inventory_read');
+    $inventory_read_fields = explode(',', $inventory_read);
+    //print_r($inventory_read_fields);
+    ?>
+    <?php $product = $block->getLoadedProduct($this->getRequest()->getParam('id')); ?>
+    <?php $productId = $product->getId(); ?>
+    <?php $boolean = array(0 => 'No', 1 => 'Yes'); ?>
+    <div class="info-box">
+        <h1><?php echo $product->getName() ?></h1>
+        <div class="attribute-info">
+            <ul class="first-box box">
+                <li>
+                    <label>Public Title</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("public_title", $inventory_read_fields)) { ?>
+                            <?php echo $product->getName() ?>
+                        <?php } ?>
+                    </span>
+                </li>
+                <li>
+                    <label>SKU</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("sku", $inventory_read_fields)) { ?>
+                            <?php echo $product->getSku() ?>
+                        <?php } ?>
+                    </span>
+                </li>
+                <li>
+                    <label>Sell on Amazon</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("sellon_amazon", $inventory_read_fields)) { ?>
+                            <?php echo !empty($boolean[$product->getData('sell_amazon')])?$boolean[$product->getData('sell_amazon')]:'' ?>
+                        <?php } ?>
+                    </span>
+                </li>
+                <li>
+                    <label>Greysheet Bid</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("greysheet_bid", $inventory_read_fields)) { ?><?php echo $product->getData('greysheet_bid') ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>Numismedia Price</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("numismedia_price", $inventory_read_fields)) { ?><?php echo $product->getData('numismedia_price') ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>Free Shipping</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("free_shipping", $inventory_read_fields)) { ?><?php echo !empty($boolean[$product->getData('quote_only')])?$boolean[$product->getData('quote_only')]:'' ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>Buyback</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("msg_buyback", $inventory_read_fields)) { ?><?php echo !empty($boolean[$product->getData('msg_buyout')])?$boolean[$product->getData('msg_buyout')]:''; ?>
+                        <?php } ?></span>
+                </li>
+            </ul>
+            <ul class="second-box box">
+                <li>
+                    <label>Population</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("population", $inventory_read_fields)) { ?><?php echo $product->getData('population') ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>Pricing Method</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("pricing_method", $inventory_read_fields)) { ?><?php echo $product->getAttributeText('price_method') ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>Amazon Price</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("amazon_price", $inventory_read_fields)) { ?><?php echo !empty($boolean[$product->getData('market4_price')])?$boolean[$product->getData('market4_price')]:'' ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>Greysheet Ask</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("greysheet_ask", $inventory_read_fields)) { ?><?php echo $product->getData('greysheet_ask') ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>Numismedia Next</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("numismedia_next", $inventory_read_fields)) { ?><?php echo $product->getData('numismedia_next') ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>Amex/Disc</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("amex_disc", $inventory_read_fields)) { ?><?php echo !empty($boolean[$product->getData('amex_disc')])?$boolean[$product->getData('amex_disc')]:'' ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>MSG Buyback</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("msg_buyback", $inventory_read_fields)) { ?><?php echo $product->getData('buyouts') ?>
+                        <?php } ?></span>
+                </li>
+            </ul>
+            <ul class="third-box box">
+                <li>
+                    <label>Cost</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("cost", $inventory_read_fields)) { ?><?php echo $product->getData('cost') ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>MSG Price</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("msg_price", $inventory_read_fields)) { ?><?php echo $product->getPrice() ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>eBay Price</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("ebay_price", $inventory_read_fields)) { ?><?php echo !empty($boolean[$product->getData('ebay_price')])?$boolean[$product->getData('ebay_price')]:''; ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>PCGS Price</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("pcgs_price", $inventory_read_fields)) { ?><?php echo !empty($product->getData('pcgs_price'))?$product->getData('pcgs_price'):'' ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>Sell on CCE</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("sellon_cce", $inventory_read_fields)) { ?><?php echo !empty($boolean[$product->getData('sell_on_cce')])?$boolean[$product->getData('sell_on_cce')]:'' ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>Restockable</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("restockable", $inventory_read_fields)) { ?><?php echo !empty($boolean[$product->getData('restockable')])?$boolean[$product->getData('restockable')]:''; ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>Buyback Method</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("buyback_method", $inventory_read_fields)) { ?><?php echo $product->getAttributeText('buyout_pricing') ?>
+                        <?php } ?></span>
+                </li>
+            </ul>
+            
+            <ul class="fourth-box box">
+                <li>
+                    <label>Status</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("tool_status", $inventory_read_fields)) { ?><?php echo $product->getAttributeText('tool_status') ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>Sell on MSG</label>
+                    <span class="data">&nbsp;<?php if (in_array("all", $inventory_read_fields) || in_array("sellon_msg", $inventory_read_fields)) { ?><?php echo !empty($boolean[$product->getData('sell_on_msg')])?$boolean[$product->getData('sell_on_msg')]:'' ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>Sell on eBay</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("sellon_ebay", $inventory_read_fields)) { ?><?php echo !empty($boolean[$product->getData('sell_on_ebay')])?$boolean[$product->getData('sell_on_ebay')]:''; ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>PCGS Next</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("pcgs_next", $inventory_read_fields)) { ?><?php echo $product->getData('pcgs_next') ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>CCE Retail</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("cce_retail", $inventory_read_fields)) { ?><?php echo $product->getData('cce_retail') ?>
+                        <?php } ?></span>
+                </li>
+                <?php 
+//                $resource = Mage::getSingleton('core/resource');
+//                $readConnection = $resource->getConnection('core_read');
+//                $m2epro_listing = $resource->getTableName('m2epro_listing');
+//                $m2epro_listing_product = $resource->getTableName('m2epro_listing_product');
+//                $m2epro_ebay_listing_product = $resource->getTableName('m2epro_ebay_listing_product');
+//                $m2epro_ebay_item = $resource->getTableName('m2epro_ebay_item');
+                
+                /////
+                $resource= $block->getResource();
+                $readConnection = $resource->getConnection();
+                $m2epro_listing = $resource->getTableName('m2epro_listing');
+                $m2epro_listing_product = $resource->getTableName('m2epro_listing_product');
+                $m2epro_ebay_listing_product = $resource->getTableName('m2epro_ebay_listing_product');
+                $m2epro_ebay_item = $resource->getTableName('m2epro_ebay_item');
+                
+                ?>
+                <?php /* ?>
+                  <li>
+                  <label>View on eBay</label>
+                  <?php
+                  $sql1 = "SELECT id, listing_id, status FROM $m2epro_listing_product WHERE product_id = $productId";
+                  $results = $readConnection->fetchAll($sql1);
+                  echo '<pre>'; print_r($results); echo '</pre>';
+                  ?>
+                  <?php if(count($results) > 0) { ?>
+                  <div class="data">
+                  <ul>
+                  <?php foreach ($results as $_result) { ?>
+                  <li>
+                  <?php
+                  $sql2 = "SELECT ebay_item_id FROM $m2epro_ebay_listing_product WHERE listing_product_id = ". $_result['id'];
+                  $result = $readConnection->fetchRow($sql2);
+                  echo '<pre>'; print_r($result); echo '</pre>';
+                  if(isset($result['ebay_item_id'])) {
+                  $sql4    = "SELECT item_id FROM $m2epro_ebay_item WHERE id = " . $result['ebay_item_id'] . " AND product_id = $productId";
+                  $result4 = $readConnection->fetchRow( $sql4 );
+
+                  $value = $result4['ebay_item_id'];
+                  } else {
+                  $value = '';
+                  }
+
+                  $html = '';
+                  if (is_null($value) || $value === '') {
+                  $html = '<span style="color: gray;">' . Mage::helper('M2ePro')->__('Not Listed') . '</span>';
+                  } elseif ($_result['status'] == Ess_M2ePro_Model_Listing_Product::STATUS_NOT_LISTED) {
+                  $html = Mage::helper('M2ePro')->__('N/A');
+                  } else {
+                  $sql3        = "SELECT account_id, marketplace_id FROM $m2epro_listing WHERE id = " . $_result['listing_id'];
+                  $listingData = $readConnection->fetchRow( $sql3 );
+
+                  $url = $this->getUrl(
+                  'M2ePro/adminhtml_ebay_listing/gotoEbay/',
+                  array(
+                  'item_id'        => $value,
+                  'account_id'     => $listingData['account_id'],
+                  'marketplace_id' => $listingData['marketplace_id']
+                  )
+                  );
+
+                  $html = '<a href="' . $url . '" target="_blank">' . $value . '</a>';
+                  }
+                  ?>
+                  <?php echo $html; ?>
+                  </li>
+                  <?php } ?>
+                  </ul>
+                  </div>
+                  <?php } else { ?>
+                  <span class="data">&nbsp;-</span>
+                  <?php } ?>
+                  </li>
+                  <?php */ ?>
+                <li>
+                    <label>View on eBay</label>
+                    <div class="data">
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("view_on_ebay", $inventory_read_fields)) { ?>
+                            <?php
+                            $sql1 = "SELECT account_id, marketplace_id, item_id FROM $m2epro_ebay_item WHERE product_id = $productId";
+                            $results = $readConnection->fetchAll($sql1);
+                            //echo '<pre>'; print_r($results); echo '</pre>';
+                            ?>
+                            <?php if (count($results) > 0) { ?>
+                                <ul style="list-style: disc;">
+                                    <?php foreach ($results as $_result) { ?>
+                                        <?php
+                                        $url = $this->getUrl(
+                                                'M2ePro/ebay/listing/gotoEbay/', array(
+                                            'item_id' => $_result['item_id'],
+                                            'account_id' => $_result['account_id'],
+                                            'marketplace_id' => $_result['marketplace_id']
+                                                )
+                                        );
+
+                                        $html = '<a href="' . $url . '" target="_blank">' . $_result['item_id'] . '</a>';
+                                        ?>
+                                        <li><?php echo $html ?></li>
+                                    <?php } ?>
+                                </ul>
+                            <?php } else { ?>
+                                &nbsp;-
+                            <?php } ?>
+                        <?php } ?>
+                    </div>
+                </li>
+            </ul>
+            <ul class="fifth-box box">
+                <li>
+                    <label>Visibility</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("visibility", $inventory_read_fields)) { ?><?php echo $product->getAttributeText('visibility') ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>On Hold</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("on_hold", $inventory_read_fields)) { ?><?php echo !empty($boolean[$product->getData('on_hold')])?$boolean[$product->getData('on_hold')]:'' ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>Generic Pricing Method</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("generic_pricing_method", $inventory_read_fields)) { ?><?php echo $product->getAttributeText('generic_sku_pricing') ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>Generic Base SKU</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("generic_base_sku", $inventory_read_fields)) { ?><?php echo $product->getData('generic_sku') ?>
+                        <?php } ?></span>
+                </li>
+                <li>
+                    <label>Generic Premium</label>
+                    <span class="data">&nbsp;
+                        <?php if (in_array("all", $inventory_read_fields) || in_array("generic_premium", $inventory_read_fields)) { ?><?php echo $product->getData('generic_plus') ?>
+                        <?php } ?></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <style>
+        .info-box { margin-bottom: 40px; }
+        .info-box h1 { margin-bottom: 20px; }
+        .info-box .attribute-info {
+            display: block;
+            overflow: hidden;
+        }
+        .info-box .attribute-info .box {
+            float: left;
+            height: 100%;
+            min-width: 325px;
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+        .info-box .attribute-info .box li {
+            margin: 10px 0;
+        }
+        .info-box .attribute-info .box li:first-child {
+            margin-top: 0;
+        }
+        .info-box .attribute-info .box li:last-child {
+            margin-bottom: 0;
+        }
+        .info-box .attribute-info .box li label {
+            display: inline-block;
+            height: 18px;
+            width: 175px;
+            background-color: #EEECEC;
+            font-size: 16px;
+            padding: 5px;
+            vertical-align: top;
+        }
+        .info-box .attribute-info .box li span {
+            display: inline-block;
+            width: 125px;
+            height: 18px;
+            background-color: #FFFFFF;
+            font-size: 16px;
+            padding: 5px;
+        }
+        .info-box .attribute-info .box li div {
+            display: inline-block;
+            width: 125px;
+            height: 18px;
+            background-color: #FFFFFF;
+            font-size: 16px;
+            padding: 5px;
+        }
+        .info-box .attribute-info .box.first-box {
+            width: 475px;
+        }
+        .info-box .attribute-info .box.first-box li span {
+            width: 275px;
+        }
+        .info-box .attribute-info .box.fifth-box li span {
+            width: 140px;
+        }
+        .clearfix {
+            clear: both;
+            display: block;
+        }
+    </style>
+<?php } else { ?>
+    Access Denied
+<?php } ?>

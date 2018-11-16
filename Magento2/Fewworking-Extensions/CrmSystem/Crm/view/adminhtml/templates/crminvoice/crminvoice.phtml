@@ -1,0 +1,441 @@
+<?php
+$sessionVars = $block->getBackendSession()->getSessionVars();
+$page = ($sessionVars['page']) ? $sessionVars['page'] : 1;
+$limit = ($sessionVars['limit']) ? $sessionVars['limit'] : 20;
+$totalPage = 1;
+$asrOptions = $block->getAsrOption();
+$dialerOptions = $block->getDialerOption();
+?>
+<div id="invoicesGrid">
+    <input id="total_page" name="total_page" type="hidden" value="<?php echo $totalPage ?>"/>
+    <table cellspacing="0" class="actions custom-pagination">
+        <tbody>
+        <tr>
+            <td class="filter-actions a-left custom-pagination-left">
+                <button type="button" class="scalable" id="reset"><span>Reset Filter</span></button>
+                <button type="button" class="scalable task" id="search"><span>Search</span></button>
+                <button type="button" class="scalable save" id="submit"><span>Submit</span></button>
+            </td>
+            <td class="pager a-right admin__data-grid-pager-wrap custom-pagination-left"></td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="invoicesGrid_massaction">
+        <table cellpadding="0" cellspacing="0" class="massaction">
+            <tbody>
+            <tr>
+                <td></td>
+                <td>
+                    <div class="right">
+                        <div class="entry-edit">
+                            <fieldset>
+                                <span class="field-row">
+                                    <label>Actions</label>
+                                    <select id="invoicesGrid_massaction-select" name="mass_action_invoice" class="required-entry select absolute-advice local-validation">
+                                        <option value=""></option>
+                                        <option value="asr_pool">Set ASR Pool</option>
+                                        <option value="dialer_pool">Set Dialer Pool</option>
+                                    </select>
+                                </span>
+                                <span class="outer-span" id="invoicesGrid_massaction-form-additional">
+                                    <span class="field-row" id="asr_pool">
+                                        <label>ASR Pool</label>
+                                        <select name="mass_action_option_invoice[asr_pool]" class="required-entry absolute-advice select">
+                                            <?php foreach ($asrOptions as $value => $label) { ?>
+                                                <option value="<?php echo $value ?>"><?php echo $label ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </span>
+                                    <span class="field-row" id="dialer_pool">
+                                        <label>Dialer Pool</label>
+                                        <select name="mass_action_option_invoice[dialer_pool]" class="required-entry absolute-advice select">
+                                            <?php foreach ($dialerOptions as $value => $label) { ?>
+                                                <option value="<?php echo $value ?>"><?php echo $label ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </span>
+                                </span>
+                                <span class="field-row">
+                                    <button type="button" class="scalable " id="invoicemass"><span>Submit</span></button>
+                                </span>
+                            </fieldset>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+	<div class="grid">
+		<div class="hor-scroll">
+			<table cellspacing="0" class="data" id="invoicesGrid_table">
+				<colgroup>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+				</colgroup>
+				<thead>
+					<tr class="headings">
+						<th><span class="nobr"></span></th>
+						<th><span class="nobr">Order Date</span></th>
+						<th><span class="nobr">Status</span></th>
+						<th><span class="nobr">Order #</span></th>
+						<th><span class="nobr">Name</span></th>
+						<th><span class="nobr">Rep</span></th>
+						<th><span class="nobr">Qty</span></th>
+						<th><span class="nobr">SKU</span></th>
+						<th><span class="nobr">Items</span></th>
+						<th><span class="nobr">Unit Price</span></th>
+						<th><span class="nobr">Totals</span></th>
+						<th><span class="">Dialer Pool</span></th>
+						<th><span class="">ASR Pool</span></th>
+						<th  class="agg-invoice"><span>Aggregated <br>Total</span></th>
+						<th class="order-count-invoice"><span>Order Count</span></th>
+						<th><span class="nobr">Assign to</span></th>
+						<th><span class="nobr">Action</span></th>
+					</tr>
+					<tr class="filter">
+						<th>
+                            <span><input type="checkbox" id="mass_checkbox_invoice" name="mass_checkbox_invoice" value="1"/></span>
+                        </th>
+						<th>
+                            <div class="range">
+                                <div class="range-line date">
+                                    <!-- <span class="label">From:</span> -->
+                                    <input placeholder="From:" type="text" name="created_at[from]" id="filter_invoice_created_at_from" value="" class="allfieldfilter input-text no-changes" />
+                                    
+                                </div>
+                                <div class="range-line date">
+                                    <!-- <span class="label">To:</span> -->
+                                    <input placeholder="To:" type="text" name="created_at[to]" id="filter_invoice_created_at_to" value="" class="allfieldfilter input-text no-changes" />
+                                   
+                                </div>
+                            </div>
+                            <script type="text/javascript">
+                                require([
+                                    "jquery",
+                                    "mage/calendar"
+                            ], function($,calendar){
+                                 $("#filter_invoice_created_at_from").calendar({
+                                          dateFormat: "M/d/yy",
+                                          showsTime: false,
+                                          timeFormat: "HH:mm:ss",
+                                          sideBySide: true,
+                                          closeText: "Done",
+                                          selectOtherMonths: true,
+                                          onClose: function( selectedDate ) {
+                                            $( "#filter_invoice_created_at_to" ).datepicker( "option", "minDate", selectedDate );
+                                          }
+                                       });
+
+                                        $("#filter_invoice_created_at_to").calendar({
+                                          dateFormat: "M/d/yy",
+                                          showsTime: false,
+                                          timeFormat: "HH:mm:ss",
+                                          sideBySide: true,
+                                          closeText: "Done",
+                                          selectOtherMonths: true, 
+                                          onClose: function( selectedDate ) {
+                                            $( "#filter_invoice_created_at_from" ).datepicker( "option", "maxDate", selectedDate );
+                                          }
+                                       });
+                            });
+                            </script>
+                        </th>
+						<th>
+                            <div class="field-100">
+                                <input type="text" name="order_number" id="filter_order_number" value="" class="allfieldfilter input-text no-changes" />
+                            </div>
+                        </th>
+						<th>
+                            <div class="field-100">
+                                <input type="text" name="status" id="filter_status" value="" class="allfieldfilter input-text no-changes" />
+                            </div>
+                        </th>
+						<th>
+                            <div class="field-100">
+                                <input type="text" name="customer_name" id="filter_customer_name" value="" class="allfieldfilter input-text no-changes" />
+                            </div>
+                        </th>
+                        <th>
+                            <div class="field-100">
+                                <input type="text" name="rep" id="filter_rep" value="" class="allfieldfilter input-text no-changes" />
+                            </div>
+                        </th>
+                        <th></th>
+						<th>
+                            <div class="field-100">
+                                <input type="text" name="item[item_sku]" id="filter_item_sku" value="" class="input-text no-changes allfieldfilter"/>
+                            </div>
+                        </th>
+						<th>
+                            <div class="field-100">
+                                <input type="text" name="item[item_name]" id="filter_item_name" value="" class="input-text no-changes allfieldfilter" />
+                            </div>
+                        </th>
+						<th></th>
+						<th></th>
+						<th>
+                            <div class="field-100">
+                                <select name="select_join[dialer_pool]" id="filter_dialer_pool" class="input-select no-changes allfieldfilter" >
+                                    <option value=""></option>
+	                                <?php foreach ($dialerOptions as $value => $label) { ?>
+                                        <option value="<?php echo $value ?>"><?php echo $label ?></option>
+	                                <?php } ?>
+                                </select>
+                            </div>
+                        </th>
+						<th>
+                            <div class="field-100">
+                                <select name="select_join[asr_pool]" id="filter_asr_pool" class="input-select no-changes allfieldfilter" >
+                                    <option value=""></option>
+	                                <?php foreach ($asrOptions as $value => $label) { ?>
+                                        <option value="<?php echo $value ?>"><?php echo $label ?></option>
+	                                <?php } ?>
+                                </select>
+                            </div>
+                        </th>
+						<th class="agg-invoice">
+                            <div class="range">
+                                <div class="range-line">
+                                    <!-- <span class="label">From:</span> -->
+                                    <input placeholder="From" type="text" name="range_having[aggregated_total][from]" id="filter_invoice_aggregated_total_from" value="" class="input-text no-changes allfieldfilter" />
+                                </div>
+                                <div class="range-line">
+                                    <!-- <span class="label">To:</span> -->
+                                    <input placeholder="To" type="text" name="range_having[aggregated_total][to]" id="filter_invoice_aggregated_total_to" value="" class="input-text no-changes allfieldfilter" />
+                                </div>
+                            </div>
+                        </th>
+						<th class="order-count-invoice">
+                            <div class="range">
+                                <div class="range-line">
+                                    <!-- <span class="label">From:</span> -->
+                                    <input placeholder="From" type="text" name="range_having[order_count][from]" id="filter_invoice_order_count_from" value="" class="input-text no-changes allfieldfilter" />
+                                </div>
+                                <div class="range-line">
+                                    <!-- <span class="label">To:</span> -->
+                                    <input placeholder="To" type="text" name="range_having[order_count][to]" id="filter_invoice_order_count_to" value="" class="input-text no-changes allfieldfilter" />
+                                </div>
+                            </div>
+                        </th>
+						<th></th>
+						<th><div class="actionwidth-100area"></div></th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<style>
+    #invoicesGrid_table tbody tr td.align-left {
+        text-align: left;
+    }
+    #invoicesGrid_table tbody tr td.align-center {
+        text-align: center;
+    }
+    #invoicesGrid_table tbody tr td.align-right {
+        text-align: right;
+    }
+    #invoicesGrid_table tbody tr td.color-red {
+        color: red;
+    }
+    #invoicesGrid_table tr.filter select {
+        border: none;
+    }
+    #invoicesGrid_massaction-form-additional .field-row {
+        display: none;
+    }
+</style>
+<script type="text/javascript">
+
+require([ 'jquery'],function($){
+    
+    $j = $;
+    $j(document).ready(function() {
+        ajaxCall('<?php echo $page ?>', '<?php echo $limit ?>');
+    });
+
+    $('#mass_checkbox_invoice').on('click',function(){
+        //alert('hhh');
+        if($j(this).prop('checked')) {
+            $j("input:checkbox",$j("#invoicesGrid_table tbody")).prop('checked', true);
+        } else {
+            $j("input:checkbox",$j("#invoicesGrid_table tbody")).prop('checked', false);
+        }
+
+    });
+        
+
+    $('#invoicesGrid_massaction-select').on('change',function(){
+
+        var value = $j(this).val();
+        if(!value || value == "") {
+            $j("#invoicesGrid_massaction-form-additional .field-row").hide();
+        } else {
+            $j("#invoicesGrid_massaction-form-additional .field-row").hide();
+            $j("#invoicesGrid_massaction-form-additional #"+ value).show();
+        }
+
+    });
+        
+
+
+    $('#invoicemass').on('click',function(){
+        //alert('sdsasds');
+        var mass_var = $j("select", $j("#invoicesGrid .invoicesGrid_massaction table.massaction")).serialize();
+        var id_var = $j("input:checkbox",$j("#invoicesGrid_table tbody")).serialize();
+        var data = {};
+        data.mass_var = mass_var;
+        data.id_var = id_var;
+        data.form_key = window.FORM_KEY;
+        $j.ajax({
+            url: '<?php echo $this->getUrl("crm/crminvoice/ajaxmass") ?>',
+            type: 'POST',  // http method
+            data: data,  // data to submit
+            showLoader: true,
+            success: function (data, status, xhr) {
+                ajaxCall('<?php echo $page ?>', '<?php echo $limit ?>');
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                console.log('Error' + errorMessage);
+            }
+        });
+
+    });
+
+
+    $('#invoicesGrid').on('click','.invoiceSetPage',function(){
+        var pageNum="";
+        var limit="";
+        if($(this).data('id') == 'pre')
+        {
+            pageNum = $(this).data('page');
+            limit = $(this).data('limit');
+        }
+
+        if($(this).data('id') == 'next')
+        {
+            pageNum = $(this).data('page');
+            limit = $(this).data('limit');
+        }
+        ajaxCall(pageNum, limit);
+        $j("#invoicesGrid table.actions input.input-text.page").val(pageNum);
+    });
+        
+
+    $('#invoicesGrid').on('keypress','#invoiceInputPage',function(event){
+        console.log('invoicesGrid');
+        var limit = $(this).data('limit');
+        var totalPage = $(this).data('totalpage');
+
+        console.log(limit);
+        console.log(totalPage);
+
+        var keyCode = event.keyCode || event.which;
+        var pageNum = 1;
+        totalPage = parseInt(totalPage);
+        if(keyCode==Event.KEY_RETURN){
+            pageNum = parseInt($(this).val());
+            if(pageNum < 1) {
+                pageNum = 1;
+            } else if(pageNum > totalPage) {
+                pageNum = totalPage;
+            }
+
+            if(isNaN(pageNum)) {
+                pageNum = 1;
+            }
+            ajaxCall(pageNum, limit);
+            //$j("#invoicesGrid table.actions input.input-text.page").val(pageNum);
+        }
+
+    });
+
+    
+    $j('#invoicesGrid').on('change','#limitchange',function(){
+        var pageNum = 1;
+        var limit = $(this).val();
+        ajaxCall(pageNum, limit);
+        $j("#invoicesGrid table.actions input.input-text.page").val(pageNum);
+
+    });
+
+   $('#reset').on('click',function(){
+        $j("input, textarea, select", $j("#invoicesGrid_table thead tr.filter")).val('');
+        ajaxCall('<?php echo $page ?>', '<?php echo $limit ?>');
+    });
+
+    $('#search').on('click',function(){
+        ajaxCall('<?php echo $page ?>', '<?php echo $limit ?>');
+    });
+    
+    $('.allfieldfilter').on('keypress',function(event){
+        console.log(event.keyCode);
+        var keyCode = event.keyCode || event.which;
+        if(keyCode==Event.KEY_RETURN) {
+            ajaxCall('<?php echo $page ?>', '<?php echo $limit ?>');
+        }
+
+    });
+    
+    function ajaxCall(page, limit) {
+        //alert('jhj');
+        var filter_var = $j("input, textarea, select",$j("#invoicesGrid_table thead tr.filter")).serialize();
+        var data = {};
+        data.page = page;
+        data.limit = limit;
+        
+        data.filter_var = filter_var;
+        data.form_key = window.FORM_KEY;
+        $j.ajax({
+            url: '<?php echo $this->getUrl("crm/crminvoice/ajaxlistall") ?>',
+            type: 'POST',  // http method
+            data: data,  // data to submit
+            showLoader: true,
+            success: function (data, status, xhr) {
+                var $parsedData = JSON.parse(data);
+                $j('#invoicesGrid_table tbody').html($parsedData.list);
+                $j('#invoicesGrid table.actions tbody tr td.pager').html($parsedData.pagination);
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                console.log('Error' + errorMessage);
+                $j("#loading-mask").hide();
+            }
+        });
+    }
+
+    $('#submit').on('click',function(){
+        var form_var = $j("input, select",$j("#invoicesGrid_table tbody")).serialize();
+        var data = {};
+        data.form_var = form_var;
+        data.form_key = window.FORM_KEY;
+        $j.ajax({
+            url: '<?php echo $this->getUrl("crm/crminvoice/ajaxupdate") ?>',
+            type: 'POST',  // http method
+            data: data,  // data to submit
+            showLoader: true,
+            success: function (data, status, xhr) {
+                window.location.reload();
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                window.location.reload();
+            }
+        });
+    });
+        
+   
+
+});
+</script>

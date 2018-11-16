@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+    	<!-- parent menu CRM -->
+        <add id="Ueg_Crm::parent" title="CRM" module="Ueg_Crm" sortOrder="40" resource="Ueg_Crm::parent"/>
+
+        <!-- submenu CRM ACL Role -->
+        <add id="Ueg_Crm::crmadminacl" title="CRM ACL Role" module="Ueg_Crm" sortOrder="10" action="crm/crmadminacl" resource="Ueg_Crm::crmadminacl" parent="Ueg_Crm::parent"/>
+       
+        <!-- CRM Dashboard -->
+       <add id="Ueg_Crm::crmdashboard" title="CRM Dashboard" module="Ueg_Crm" sortOrder="40" action="crm/crmdashboard" resource="Ueg_Crm::crmdashboard" parent="Ueg_Crm::parent"/>
+
+       <!-- Dialer Dashboard -->
+       <add id="Ueg_Crm::dialer" title="Dialer Dashboard" module="Ueg_Crm" sortOrder="30" action="crm/dialer/dashboard" resource="Ueg_Crm::dialer" parent="Ueg_Crm::parent"/>
+
+       <!-- ASR Dashboard -->
+       <add id="Ueg_Crm::asr" title="ASR Dashboard" module="Ueg_Crm" sortOrder="20" action="crm/asr/dashboard" resource="Ueg_Crm::asr" parent="Ueg_Crm::parent"/>
+
+       <!-- Inventory -->
+       <add id="Ueg_Crm::crm" title="Inventory" module="Ueg_Crm" sortOrder="50" action="crm/crm" resource="Ueg_Crm::crm" parent="Ueg_Crm::parent"/>
+
+       <!-- Calendar -->
+       <add id="Ueg_Crm::appointment" title="Calendar" module="Ueg_Crm" sortOrder="60" action="crm/appointment" resource="Ueg_Crm::appointment" parent="Ueg_Crm::parent"/>
+
+       <!-- Accounts -->
+       <add id="Ueg_Crm::account_client" title="Accounts" module="Ueg_Crm" sortOrder="70" action="crm/account" resource="Ueg_Crm::account_client" parent="Ueg_Crm::parent"/>
+
+       <!-- Order Search -->
+       <add id="Ueg_Crm::crminvoice" title="Order Search" module="Ueg_Crm" sortOrder="80" action="crm/crminvoice" resource="Ueg_Crm::crminvoice" parent="Ueg_Crm::parent"/>
+
+       <!-- Order Review -->
+       <add id="Ueg_Crm::crmorderreview" title="Order Review" module="Ueg_Crm" sortOrder="90" action="crm/crmorderreview" resource="Ueg_Crm::crmorderreview" parent="Ueg_Crm::parent"/>
+
+       <!-- Order Research -->
+       <add id="Ueg_Crm::crmorderresearch" title="Order Research" module="Ueg_Crm" sortOrder="100" action="crm/crmorderresearch" resource="Ueg_Crm::crmorderresearch" parent="Ueg_Crm::parent"/>
+
+        <!-- ASR Orders -->
+       <add id="Ueg_Crm::crmasrorder" title="ASR Orders" module="Ueg_Crm" sortOrder="110" action="crm/crmasrorder" resource="Ueg_Crm::crmasrorder" parent="Ueg_Crm::parent"/>
+
+       <!-- Hot Clients -->
+       <add id="Ueg_Crm::hot_client" title="Hot Clients" module="Ueg_Crm" sortOrder="120" action="crm/hotclient" resource="Ueg_Crm::hot_client" parent="Ueg_Crm::parent"/>
+
+       <!-- Overdue Tasks -->
+       <add id="Ueg_Crm::overdue" title="Overdue Tasks" module="Ueg_Crm" sortOrder="130" action="crm/overdue" resource="Ueg_Crm::overdue" parent="Ueg_Crm::parent"/>
+
+       <!-- Rep Notification -->
+       <add id="Ueg_Crm::repnotification" title="Rep Notification" module="Ueg_Crm" sortOrder="140" action="crm/repnotification" resource="Ueg_Crm::repnotification" parent="Ueg_Crm::parent"/>
+
+       <!-- Series View -->
+       <add id="Ueg_Crm::series" title="Series View" module="Ueg_Crm" sortOrder="150" action="crm/series" resource="Ueg_Crm::series" parent="Ueg_Crm::parent"/>
+
+       <!-- Master Client -->
+       <add id="Ueg_Crm::master" title="Master Client" module="Ueg_Crm" sortOrder="160" action="crm/master" resource="Ueg_Crm::master" parent="Ueg_Crm::parent"/>
+
+       <!-- Client Master Inventory -->
+       <add id="Ueg_Crm::masterinv" title="Client Master Inventory" module="Ueg_Crm" sortOrder="170" action="crm/masterinv" resource="Ueg_Crm::masterinv" parent="Ueg_Crm::parent"/>
+
+
+        <add id="Ueg_Crm::newinv" title="New Inventory" module="Ueg_Crm" sortOrder="171" action="amazon/amazon" resource="Ueg_Crm::newinv" parent="Ueg_Crm::parent"/>
+
+
+        <add id="Ueg_Crm::saleslog" title="Sales Log" module="Ueg_Crm" sortOrder="180" action="crm/saleslog" resource="Ueg_Crm::saleslog" parent="Ueg_Crm::parent"/>
+
+       <!-- Client Master Inventory -->
+       <add id="Ueg_Crm::amazonsaleslog" title="Amazon Sales Log" module="Ueg_Crm" sortOrder="190" action="crm/amazon" resource="Ueg_Crm::amazonsaleslog" parent="Ueg_Crm::parent"/>
+
+    </menu>
+</config>

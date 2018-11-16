@@ -1,0 +1,652 @@
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
+$readConnection = $resource->getConnection();
+$subscriberTable = $resource->getTableName('aw_advancednewsletter_subscriber');
+$segmentTable = $resource->getTableName('aw_advancednewsletter_segment');
+
+$registry = $objectManager->get('Magento\Framework\Registry');
+$customerFactory = $objectManager->create('Magento\Customer\Model\CustomerFactory');
+$countryFactory = $objectManager->create('Magento\Directory\Model\CountryFactory');
+$authSession = $objectManager->create('Magento\Backend\Model\Auth\Session');
+$userFactory = $objectManager->create('Magento\User\Model\UserFactory');
+$crmadminaclFactory = $objectManager->create('Ueg\Crm\Model\CrmadminaclFactory');
+$formKeyObj = $objectManager->get('Magento\Framework\Data\Form\FormKey');
+$customeroptions15242422066 = $objectManager->create('Ueg\Crm\Model\Customer\Attribute\Source\Customeroptions15242422066');
+$customeroptions15201797334 = $objectManager->create('Ueg\Crm\Model\Customer\Attribute\Source\CustomCustomerAssignedToOptions');
+$customeroptions15242422063 = $objectManager->create('Ueg\Crm\Model\Customer\Attribute\Source\Customeroptions15242422063');
+$customeroptions15242422064 = $objectManager->create('Ueg\Crm\Model\Customer\Attribute\Source\Customeroptions15242422064');
+$customeroptions15242422065 = $objectManager->create('Ueg\Crm\Model\Customer\Attribute\Source\Customeroptions15242422065');
+?>
+
+<?php $customer = $registry->registry('current_customer'); ?>
+<?php $customerId = $customer->getId(); ?>
+<?php //echo "<pre>"; print_r($customer->getData()); echo "</pre>";       ?>
+<?php $billingAddress = $customer->getPrimaryBillingAddress(); ?>
+<?php $shippingAddress = $customer->getPrimaryShippingAddress(); ?>
+<?php //echo "<pre>"; print_r($billingAddress->getData()); echo "</pre>";       ?>
+<?php
+$additionalAddress = "";
+foreach ($customer->getAddresses() as $address) {
+    if ($billingAddress) {
+        if ($address->getId() != $billingAddress->getId()) {
+            $additionalAddress = $address;
+            break;
+        }
+    } else {
+        $additionalAddress = $address;
+        break;
+    }
+}
+//$regionCollection = Mage::getModel('directory/region_api')->items("US");
+
+$regionCollection = $countryFactory->create()->loadByCode("us")->getRegions();
+
+$regionArray = array();
+foreach ($regionCollection as $_region) {
+    $regionArray[$_region->getData('region_id')] = $_region[$_region->getData('name')];
+}
+?>
+<?php //echo "<pre>"; print_r($additionalAddress->getData()); echo "</pre>";       ?>
+<?php
+$admin_user_session = $authSession;
+$adminuserId = $admin_user_session->getUser()->getUserId();
+$role_id = $userFactory->create()->load($adminuserId)->getRole()->getData('role_id');
+$model = $crmadminaclFactory->create()->load($role_id, "role_id");
+?>
+<?php if ($model->getId()) { ?>
+    <?php
+    $account_overview_read = $model->getData('account_overview_read');
+    $account_overview_read_fields = explode(',', $account_overview_read);
+    //print_r($account_overview_read_fields);
+    $account_overview_write = $model->getData('account_overview_write');
+    $account_overview_write_fields = explode(',', $account_overview_write);
+    //print_r($account_overview_write_fields);
+    $boolean = array(0 => "No", 1 => "Yes");
+    ?>
+    <div id="customer_info_tabs_account_content" xxxxxxxxxxx>
+        <div class="entry-edit">
+            <form class="edit_form" action="<?php echo $this->getUrl("crm/crmcustomer/save") ?>" method="post">
+                <div class="no-display">
+                    <input name="form_key" type="hidden" value="<?php echo $formKeyObj->getFormKey() ?>"/>
+                    <input type="hidden" name="account[id]" value="<?php echo $customer->getId() ?>"/>
+                </div>
+                <div class="entry-edit-head">
+                    <h4 class="icon-head head-edit-form fieldset-legend">Overview</h4>
+                    <div class="form-buttons">
+                        <button type="submit"><span>Save</span></button>
+                    </div>
+                </div>
+                <div class="fieldset" id="_accountbase_fieldset">
+                    <div class="hor-scroll">
+                        <table cellspacing="0" class="form-list crm-customer-form">
+                            <tbody>
+                                <tr>
+                                    <td class="element">
+                                        <span class="label">First Name:</span>
+                                        <span class="value">
+                                            <?php if (in_array("all", $account_overview_write_fields) || in_array("first_name", $account_overview_write_fields)) { ?>
+                                                <input id="_accountfirstname" name="account[firstname]" value="<?php echo $customer->getData('firstname') ?>" class="input-text required-entry" type="text">
+                                            <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("first_name", $account_overview_read_fields)) { ?>
+                                                <?php echo $customer->getData('firstname') ?>
+                                            <?php } ?>
+                                        </span>
+                                    </td>
+                                    <td class="element">
+                                        <span class="label">Last Name:</span>
+                                        <span class="value">
+                                            <?php if (in_array("all", $account_overview_write_fields) || in_array("last_name", $account_overview_write_fields)) { ?>
+                                                <input id="_accountlastname" name="account[lastname]" value="<?php echo $customer->getData('lastname') ?>" class="input-text required-entry" type="text">
+                                            <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("last_name", $account_overview_read_fields)) { ?>
+                                                <?php echo $customer->getData('lastname') ?>
+                                            <?php } ?>
+                                        </span>
+                                    </td>
+                                    <td class="element">
+                                        <?php if ($billingAddress) { ?>
+                                            <span class="label">Phone:</span>
+                                            <span class="value">
+                                                <?php if (in_array("all", $account_overview_write_fields) || in_array("phone", $account_overview_write_fields)) { ?>
+                                                    <input id="_accountphone" name="account[address][primary][<?php echo $billingAddress->getData('entity_id') ?>][telephone]" value="<?php echo $billingAddress->getData('telephone') ?>" class="input-text" type="text">
+                                                <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("phone", $account_overview_read_fields)) { ?>
+                                                    <?php echo $billingAddress->getData('telephone') ?>
+                                                <?php } ?>
+                                            </span>
+                                        <?php } ?>
+                                    </td>
+                                    <td class="element">
+                                        <?php if ($billingAddress) { ?>
+                                            <span class="label">Phone Type:</span>
+                                            <span class="value">
+                                                <?php
+                                                // $options = Mage::getModel('crm/eav_entity_attribute_source_customeroptions15242422066')->getOptionArray()
+                                                $options = $customeroptions15242422066->getOptionArray()
+                                                ?>
+                                                <?php if (in_array("all", $account_overview_write_fields) || in_array("phone_type", $account_overview_write_fields)) { ?>
+                                                    <select id="_accountphonetype" name="account[address][primary][<?php echo $billingAddress->getData('entity_id') ?>][phone_type]" class=" select">
+                                                        <?php foreach ($options as $key => $_option) { ?>
+                                                            <option value="<?php echo $key ?>" <?php
+                                                            if ($billingAddress->getData('phone_type') == $key) {
+                                                                echo "selected='selected'";
+                                                            }
+                                                            ?>><?php echo $_option ?></option>
+                                                                <?php } ?>
+                                                    </select>
+                                                <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("phone_type", $account_overview_read_fields)) { ?>
+                                                    <?php echo $options[$billingAddress->getData('phone_type')] ?>
+                                                <?php } ?>
+                                            </span>
+                                        <?php } ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="element">
+                                        <?php if ($billingAddress) { ?>
+                                            <span class="label">Company:</span>
+                                            <span class="value">
+                                                <?php if (in_array("all", $account_overview_write_fields) || in_array("company", $account_overview_write_fields)) { ?>
+                                                    <input id="_accountcompany" name="account[address][primary][<?php echo $billingAddress->getData('entity_id') ?>][company]" value="<?php echo $billingAddress->getData('company') ?>" class="input-text" type="text">
+                                                <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("company", $account_overview_read_fields)) { ?>
+                                                    <?php echo $billingAddress->getData('company') ?>
+                                                <?php } ?>
+                                            </span>
+                                        <?php } ?>
+                                    </td>
+                                    <td class="element">
+                                        <span class="label">Email:</span>
+                                        <span class="value">
+                                            <?php if (in_array("all", $account_overview_write_fields) || in_array("email", $account_overview_write_fields)) { ?>
+                                                <input id="_accountemail" name="account[email]" value="<?php echo $customer->getData('email') ?>" class="input-text required-entry" type="text">
+                                            <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("email", $account_overview_read_fields)) { ?>
+                                                <?php echo $customer->getData('email') ?>
+                                                <?php /* ?><input id="_accountemail" name="account[email]" value="<?php echo $customer->getData('email') ?>" type="hidden"><?php */ ?>
+                                            <?php } ?>
+                                        </span>
+                                    </td>
+                                    <td class="element">
+                                        <?php if ($additionalAddress) { ?>
+                                            <span class="label">Additional Phone:</span>
+                                            <span class="value">
+                                                <?php if (in_array("all", $account_overview_write_fields) || in_array("additional_phone", $account_overview_write_fields)) { ?>
+                                                    <input id="_accountaddtionalphone" name="account[address][additional][<?php echo $additionalAddress->getData('entity_id') ?>][telephone]" value="<?php echo $additionalAddress->getData('telephone') ?>" class="input-text" type="text">
+                                                <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("additional_phone", $account_overview_read_fields)) { ?>
+                                                    <?php echo $additionalAddress->getData('telephone') ?>
+                                                <?php } ?>
+                                            </span>
+                                        <?php } ?>
+                                    </td>
+                                    <td class="element">
+                                        <?php if ($additionalAddress) { ?>
+                                            <span class="label">Phone Type:</span>
+                                            <span class="value">
+                                                <?php
+                                                // $options = Mage::getModel('crm/eav_entity_attribute_source_customeroptions15242422066')->getOptionArray()
+                                                $options = $customeroptions15242422066->getOptionArray()
+                                                ?>
+                                                <?php if (in_array("all", $account_overview_write_fields) || in_array("additional_phone_type", $account_overview_write_fields)) { ?>
+                                                    <select id="_accountaddtionalphonetype" name="account[address][additional][<?php echo $additionalAddress->getData('entity_id') ?>][phone_type]" class=" select">
+                                                        <?php foreach ($options as $key => $_option) { ?>
+                                                            <option value="<?php echo $key ?>" <?php
+                                                            if ($additionalAddress->getData('phone_type') == $key) {
+                                                                echo "selected='selected'";
+                                                            }
+                                                            ?>><?php echo $_option ?></option>
+                                                                <?php } ?>
+                                                    </select>
+                                                <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("additional_phone_type", $account_overview_read_fields)) { ?>
+                                                    <?php echo $options[$additionalAddress->getData('phone_type')] ?>
+                                                <?php } ?>
+                                            </span>
+                                        <?php } ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="element">
+                                        <span class="label">eBay ID:</span>
+                                        <span class="value">
+                                            <?php if (in_array("all", $account_overview_write_fields) || in_array("ebay_id", $account_overview_write_fields)) { ?>
+                                                <input id="_accountebayid" name="account[ebay_id]" value="<?php echo $customer->getData('ebay_id') ?>" class="input-text" type="text">
+                                            <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("ebay_id", $account_overview_read_fields)) { ?>
+                                                <?php echo $customer->getData('ebay_id') ?>
+                                            <?php } ?>
+                                        </span>
+                                    </td>
+                                    <td class="element">
+                                        <span class="label">Client Code:</span>
+                                        <span class="value">
+                                            <?php if (in_array("all", $account_overview_write_fields) || in_array("client_code", $account_overview_write_fields)) { ?>
+                                                <input id="_accountclientcode" name="account[client_code]" value="<?php echo $customer->getData('client_code') ?>" class="input-text" type="text">
+                                            <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("client_code", $account_overview_read_fields)) { ?>
+                                                <?php echo $customer->getData('client_code') ?>
+                                            <?php } ?>
+                                        </span>
+                                    </td>
+                                    <td class="element">
+                                        <span class="label">Hot Client:</span>
+                                        <span class="value">
+                                            <?php if (in_array("all", $account_overview_write_fields) || in_array("hot_client", $account_overview_write_fields)) { ?>
+                                                <select id="_accounthotclient" name="account[hot_client]" class=" select">
+                                                    <option value="0" <?php
+                                                    if ($customer->getData('hot_client') == 0) {
+                                                        echo "selected='selected'";
+                                                    }
+                                                    ?>>No</option>
+                                                    <option value="1" <?php
+                                                    if ($customer->getData('hot_client') == 1) {
+                                                        echo "selected='selected'";
+                                                    }
+                                                    ?>>Yes</option>
+                                                </select>
+                                            <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("hot_client", $account_overview_read_fields)) { ?>
+                                                <?php echo $boolean[$customer->getData('hot_client')] ?>
+                                            <?php } ?>
+                                        </span>
+                                    </td>
+                                    <td class="element">
+                                        <span class="label">Assigned To:</span>
+                                        <span class="value">
+                                            <?php $value = $customer->getData('assigned_to'); ?>
+                                            <?php $values = explode(',', $value); ?>
+                                            <?php
+                                            // $options = Mage::getModel('crm/eav_entity_attribute_source_customeroptions15201797334')->getOptionArray() 
+
+                                            $options = $customeroptions15201797334->getOptionArray()
+                                            ?>
+                                            <?php if (in_array("all", $account_overview_write_fields) || in_array("assigned_to", $account_overview_write_fields)) { ?>
+                                                <select id="_accountassignedto" name="account[assigned_to][]" class=" select multiselect" multiple="multiple">
+                                                    <?php foreach ($options as $key => $_option) { ?>
+                                                        <option value="<?php echo $key ?>" <?php
+                                                        if (in_array($key, $values)) {
+                                                            echo "selected='selected'";
+                                                        }
+                                                        ?>><?php echo $_option ?></option>
+                                                            <?php } ?>
+                                                </select>
+                                            <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("assigned_to", $account_overview_read_fields)) { ?>
+                                                <?php
+                                                $valueOptions = array();
+                                                foreach ($values as $_item) {
+                                                    $valueOptions[] = $options[$_item];
+                                                }
+                                                echo implode(', ', $valueOptions);
+                                                ?>
+                                            <?php } ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="element">
+                                        <span class="label">Preferred Contact Time:</span>
+                                        <span class="value">
+                                            <?php if (in_array("all", $account_overview_write_fields) || in_array("contact_time", $account_overview_write_fields)) { ?>
+                                                <input id="_accountpreferredcontacttime" name="account[preferred_contact_time]" value="<?php echo $customer->getData('preferred_contact_time') ?>" class="input-text" type="text">
+                                            <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("contact_time", $account_overview_read_fields)) { ?>
+                                                <?php echo $customer->getData('preferred_contact_time') ?>
+                                            <?php } ?>
+                                        </span>
+                                    </td>
+                                    <td></td>
+                                    <td class="element">
+                                        <span class="label">Preferred Contact Method:</span>
+                                        <span class="value">
+                                            <?php $options = $customeroptions15242422063->getOptionArray() ?>
+                                            <?php if (in_array("all", $account_overview_write_fields) || in_array("contact_method", $account_overview_write_fields)) { ?>
+                                                <select id="_accountpreferredcontactmethod" name="account[preferred_contact_method]" class=" select">
+                                                    <?php foreach ($options as $key => $_option) { ?>
+                                                        <option value="<?php echo $key ?>" <?php
+                                                        if ($customer->getData('preferred_contact_method') == $key) {
+                                                            echo "selected='selected'";
+                                                        }
+                                                        ?>><?php echo $_option ?></option>
+                                                            <?php } ?>
+                                                </select>
+                                            <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("contact_method", $account_overview_read_fields)) { ?>
+                                                <?php echo $options[$customer->getData('preferred_contact_method')] ?>
+                                            <?php } ?>
+                                        </span>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="element">
+                                        <span class="label">Source of Sale:</span>
+                                        <span class="value">
+                                            <?php $options = $customeroptions15242422064->getOptionArray() ?>
+                                            <?php if (in_array("all", $account_overview_write_fields) || in_array("source_sale", $account_overview_write_fields)) { ?>
+                                                <select id="_accountsourcesale" name="account[source_sale]" class=" select">
+                                                    <?php foreach ($options as $key => $_option) { ?>
+                                                        <option value="<?php echo $key ?>" <?php
+                                                        if ($customer->getData('source_sale') == $key) {
+                                                            echo "selected='selected'";
+                                                        }
+                                                        ?>><?php echo $_option ?></option>
+                                                            <?php } ?>
+                                                </select>
+                                            <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("source_sale", $account_overview_read_fields)) { ?>
+                                                <?php echo $options[$customer->getData('source_sale')] ?>
+                                            <?php } ?>
+                                        </span>
+                                    </td>
+                                    <td></td>
+                                    <td class="element">
+                                        <span class="label">Preferred Payment Method:</span>
+                                        <span class="value">
+                                            <?php $options = $customeroptions15242422065->getOptionArray() ?>
+                                            <?php if (in_array("all", $account_overview_write_fields) || in_array("payment_method", $account_overview_write_fields)) { ?>
+                                                <select id="_accountpreferredpayment" name="account[preferred_payment]" class=" select">
+                                                    <?php foreach ($options as $key => $_option) { ?>
+                                                        <option value="<?php echo $key ?>" <?php
+                                                        if ($customer->getData('preferred_payment') == $key) {
+                                                            echo "selected='selected'";
+                                                        }
+                                                        ?>><?php echo $_option ?></option>
+                                                            <?php } ?>
+                                                </select>
+                                            <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("payment_method", $account_overview_read_fields)) { ?>
+                                                <?php echo $options[$customer->getData('preferred_payment')] ?>
+                                            <?php } ?>
+                                        </span>
+                                    </td>
+                                    <td class="element">
+                                        <span class="label">Administrator Only:</span>
+                                        <span class="value">
+                                            <?php if (in_array("all", $account_overview_write_fields) || in_array("admin_only", $account_overview_write_fields)) { ?>
+                                                <select id="_accountadminonly" name="account[admin_only]" class=" select">
+                                                    <option value="0" <?php
+                                                    if ($customer->getData('admin_only') == 0) {
+                                                        echo "selected='selected'";
+                                                    }
+                                                    ?>>No</option>
+                                                    <option value="1" <?php
+                                                    if ($customer->getData('admin_only') == 1) {
+                                                        echo "selected='selected'";
+                                                    }
+                                                    ?>>Yes</option>
+                                                </select>
+                                            <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("admin_only", $account_overview_read_fields)) { ?>
+                                                <?php echo $boolean[$customer->getData('admin_only')] ?>
+                                            <?php } ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="element">
+                                        <span class="label">Mailing List:</span>
+                                        <?php
+                                        $query = "SELECT segments_codes FROM $subscriberTable WHERE customer_id = $customerId";
+                                        $result = $readConnection->fetchOne($query);
+                                        $customerSegmentArray = array();
+                                        if (isset($result) && !empty($result)) {
+                                            $customerSegmentArray = explode(',', $result);
+                                        }
+                                        $segmentArray = array();
+                                        $query = "SELECT code, title FROM $segmentTable";
+                                        $results = $readConnection->fetchAll($query);
+                                        if (isset($result) && !empty($result)) {
+                                            foreach ($results as $item) {
+                                                $id = $item['code'];
+                                                $segmentArray[$id] = $item['title'];
+                                            }
+                                        }
+                                        ?>
+                                        <span class="value">
+                                            <?php if (in_array("all", $account_overview_write_fields) || in_array("mailing_list", $account_overview_write_fields)) { ?>
+                                                <select id="_accountmailinglist" name="account[mailing_list][]" class=" select multiselect" multiple="multiple">
+                                                    <?php foreach ($segmentArray as $key => $_option) { ?>
+                                                        <option value="<?php echo $key ?>" <?php
+                                                        if (in_array($key, $customerSegmentArray)) {
+                                                            echo "selected='selected'";
+                                                        }
+                                                        ?>><?php echo $_option ?></option>
+                                                            <?php } ?>
+                                                </select>
+                                            <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("mailing_list", $account_overview_read_fields)) { ?>
+                                                <?php
+                                                $valueOptions = array();
+                                                foreach ($customerSegmentArray as $_item) {
+                                                    $valueOptions[] = $segmentArray[$_item];
+                                                }
+                                                echo implode(', ', $valueOptions);
+                                                ?>
+                                            <?php } ?>
+                                        </span>
+                                    </td>
+                                    <td></td>
+                                    <td class="element" colspan="2">
+                                        <span class="label" style="vertical-align: top;">Notes:</span>
+                                        <span class="value">
+                                            <?php if (in_array("all", $account_overview_write_fields) || in_array("notes", $account_overview_write_fields)) { ?>
+                                                <textarea name="account[customer_notes]" style="width:300px; height: 100px;"><?php echo $customer->getData('customer_notes') ?></textarea>
+                                            <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("notes", $account_overview_read_fields)) { ?>
+                                                <?php echo nl2br($customer->getData('customer_notes')) ?>
+                                            <?php } ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="element" colspan="2">
+                                        <?php if ($billingAddress) { ?>
+                                            <fieldset class="address_area">
+                                                <legend>Billing Address:</legend>
+                                                <div class="address_wrapper">
+                                                    <span class="wide_box value">
+                                                        <?php if (in_array("all", $account_overview_write_fields) || in_array("billing_street", $account_overview_write_fields)) { ?>
+                                                            <input type="text" name="account[address][billing][<?php echo $billingAddress->getData('entity_id') ?>][street]" value="<?php echo $billingAddress->getData('street') ?>"/>
+                                                        <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("billing_street", $account_overview_read_fields)) { ?>
+                                                            <?php echo $billingAddress->getData('street') ?>
+                                                        <?php } ?>
+                                                    </span><br>
+                                                    <span class="small_box value">
+                                                        <?php if (in_array("all", $account_overview_write_fields) || in_array("billing_city", $account_overview_write_fields)) { ?>
+                                                            <input type="text" name="account[address][billing][<?php echo $billingAddress->getData('entity_id') ?>][city]" value="<?php echo $billingAddress->getData('city') ?>"/>
+                                                        <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("billing_city", $account_overview_read_fields)) { ?>
+                                                            <?php echo $billingAddress->getData('city') ?>
+                                                        <?php } ?>
+                                                    </span>
+                                                    <span class="small_box value">
+                                                        <?php if (in_array("all", $account_overview_write_fields) || in_array("billing_state", $account_overview_write_fields)) { ?>
+                                                            <select name="account[address][billing][<?php echo $billingAddress->getData('entity_id') ?>][region_id]">
+                                                                <?php foreach ($regionCollection as $region) { ?>
+                                                                    <?php $key = $region['region_id']; ?>
+                                                                    <option value="<?php echo $key ?>" <?php
+                                                                    if ($key == $billingAddress->getData('region_id')) {
+                                                                        echo "selected='selected'";
+                                                                    }
+                                                                    ?>><?php echo $region['name'] ?></option>
+                                                                        <?php } ?>
+                                                            </select>
+                                                        <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("billing_state", $account_overview_read_fields)) { ?>
+                                                            <?php echo $regionArray[$billingAddress->getData('region_id')] ?>
+                                                        <?php } ?>
+                                                    </span>
+                                                    <span class="small_box value">
+                                                        <?php if (in_array("all", $account_overview_write_fields) || in_array("billing_zip", $account_overview_write_fields)) { ?>
+                                                            <input type="text" name="account[address][billing][<?php echo $billingAddress->getData('entity_id') ?>][postcode]" value="<?php echo $billingAddress->getData('postcode') ?>"/>
+                                                        <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("billing_zip", $account_overview_read_fields)) { ?>
+                                                            <?php echo $billingAddress->getData('postcode') ?>
+                                                        <?php } ?>
+                                                    </span>
+                                                </div>
+                                            </fieldset>
+                                        <?php } ?>
+                                    </td>
+                                    <td class="element" colspan="2">
+                                        <?php if ($shippingAddress) { ?>
+                                            <fieldset class="address_area">
+                                                <legend>Shipping Address:</legend>
+                                                <div class="address_wrapper">
+                                                    <span class="wide_box value">
+                                                        <?php if (in_array("all", $account_overview_write_fields) || in_array("shipping_street", $account_overview_write_fields)) { ?>
+                                                            <input type="text" name="account[address][shipping][<?php echo $shippingAddress->getData('entity_id') ?>][street]" value="<?php echo $shippingAddress->getData('street') ?>"/>
+                                                        <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("shipping_street", $account_overview_read_fields)) { ?>
+                                                            <?php echo $shippingAddress->getData('street') ?>
+                                                        <?php } ?>
+                                                    </span><br>
+                                                    <span class="small_box value">
+                                                        <?php if (in_array("all", $account_overview_write_fields) || in_array("shipping_city", $account_overview_write_fields)) { ?>
+                                                            <input type="text" name="account[address][shipping][<?php echo $shippingAddress->getData('entity_id') ?>][city]" value="<?php echo $shippingAddress->getData('city') ?>"/>
+                                                        <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("shipping_city", $account_overview_read_fields)) { ?>
+                                                            <?php echo $shippingAddress->getData('city') ?>
+                                                        <?php } ?>
+                                                    </span>
+                                                    <span class="small_box value">
+                                                        <?php if (in_array("all", $account_overview_write_fields) || in_array("shipping_state", $account_overview_write_fields)) { ?>
+                                                            <select name="account[address][shipping][<?php echo $shippingAddress->getData('entity_id') ?>][region_id]">
+                                                                <?php foreach ($regionCollection as $region) { ?>
+                                                                    <?php $key = $region['region_id']; ?>
+                                                                    <option value="<?php echo $key ?>" <?php
+                                                                    if ($key == $shippingAddress->getData('region_id')) {
+                                                                        echo "selected='selected'";
+                                                                    }
+                                                                    ?>><?php echo $region['name'] ?></option>
+                                                                        <?php } ?>
+                                                            </select>
+                                                        <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("shipping_state", $account_overview_read_fields)) { ?>
+                                                            <?php echo $regionArray[$shippingAddress->getData('region_id')] ?>
+                                                        <?php } ?>
+                                                    </span>
+                                                    <span class="small_box value">
+                                                        <?php if (in_array("all", $account_overview_write_fields) || in_array("shipping_zip", $account_overview_write_fields)) { ?>
+                                                            <input type="text" name="account[address][shipping][<?php echo $shippingAddress->getData('entity_id') ?>][postcode]" value="<?php echo $shippingAddress->getData('postcode') ?>"/>
+                                                        <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("shipping_zip", $account_overview_read_fields)) { ?>
+                                                            <?php echo $shippingAddress->getData('postcode') ?>
+                                                        <?php } ?>
+                                                    </span>
+                                                </div>
+                                            </fieldset>
+                                        <?php } ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="element">
+                                        <span class="label">Date Modified:</span>
+                                        <span class="range-line date">
+                                            <?php if (in_array("all", $account_overview_read_fields) || in_array("date_modified", $account_overview_read_fields)) { ?>
+                                                <?php echo date("m/d/Y", strtotime($customer->getData('updated_at'))) ?>
+                                            <?php } ?>
+                                        </span>
+                                    </td>
+                                    <td class="element">
+                                        <span class="label">Date Created:</span>
+                                        <span class="value">
+                                            <?php if (in_array("all", $account_overview_read_fields) || in_array("date_createdkl;", $account_overview_read_fields)) { ?>
+                                                <?php echo date("m/d/Y", strtotime($customer->getData('created_at'))) ?>
+                                            <?php } ?>
+                                        </span>
+                                    </td>
+                                    <td class="element">
+                                        <span class="label">Last Contact:</span>
+                                        <span class="range-line date">
+                                            <?php if (in_array("all", $account_overview_write_fields) || in_array("last_contact", $account_overview_write_fields)) { ?>
+                                                <input name="account[last_contacted]" id="_accountlast_contacted" value="<?php echo date("m/d/Y", strtotime($customer->getData('last_contacted'))) ?>" class=" input-text" type="text"/>
+                                                <img id="_accountlast_contacted_trig" alt="" src="<?php echo $this->getSkinUrl("images/grid-cal.gif") ?>"/>
+                                                <?php /*                                                 * ****<script type="text/javascript">
+                                                  Calendar.setup({
+                                                  inputField: "_accountlast_contacted",
+                                                  ifFormat: "%m/%e/%y",
+                                                  button: "_accountlast_contacted_trig",
+                                                  showsTime: false,
+                                                  align: "Bl",
+                                                  singleClick: true
+                                                  });
+                                                  </script>
+                                                  <?php ****************** */ ?>
+
+                                                <script>
+                                                    require([
+                                                        "jquery",
+                                                        "mage/calendar"
+                                                    ], function ($) {
+                                                        $("#_accountlast_contacted").calendar({
+                                                            buttonText: "<?php echo __('Select Date') ?>",
+                                                            dateFormat: "mm/dd/yyyy",
+                                                        });
+                                                    });
+                                                </script>
+
+                                            <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("last_contact", $account_overview_read_fields)) { ?>
+                                                <?php echo date("m/d/Y", strtotime($customer->getData('last_contacted'))) ?>
+                                            <?php } ?>
+                                        </span>
+                                    </td>
+                                    <td class="element">
+                                        <span class="label">Last Communication:</span>
+                                        <span class="value">
+                                            <?php if (in_array("all", $account_overview_write_fields) || in_array("shipping_zip", $account_overview_write_fields)) { ?>
+                                                <input name="account[last_communication]" id="_accountlast_communication" value="<?php echo date("m/d/Y", strtotime($customer->getData('last_communication'))) ?>" class=" input-text" type="text"/>
+                                                <img style="margin: 0 0 0 5px;" id="_accountlast_communication_trig" alt="" src="<?php echo $this->getSkinUrl("images/grid-cal.gif") ?>"/>
+                                                <?php /*                                                 * ******** 
+                                                  <script type="text/javascript">
+                                                  Calendar.setup({
+                                                  inputField: "_accountlast_communication",
+                                                  ifFormat: "%m/%e/%y",
+                                                  button: "_accountlast_communication_trig",
+                                                  showsTime: false,
+                                                  align: "Bl",
+                                                  singleClick: true
+                                                  });
+                                                  </script>
+                                                  <?php ****************** */ ?>
+                                                <script>
+                                                    require([
+                                                        "jquery",
+                                                        "mage/calendar"
+                                                    ], function ($) {
+                                                        $("#_accountlast_communication").calendar({
+                                                            buttonText: "<?php echo __('Select Date') ?>",
+                                                            dateFormat: "mm/dd/yyyy",
+                                                        });
+                                                    });
+                                                </script>
+                                            <?php } elseif (in_array("all", $account_overview_read_fields) || in_array("shipping_zip", $account_overview_read_fields)) { ?>
+                                                <?php echo date("m/d/Y", strtotime($customer->getData('last_communication'))) ?>
+                                            <?php } ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+<?php } ?>
+<style>
+    fieldset.address_area {
+        width: 400px;
+    }
+    fieldset.address_area legend {
+        display: block;
+        padding: 5px;
+        font-weight: 600;
+    }
+    fieldset.address_area .wide_box input {
+        width: 315px;
+        margin: 5px 0;
+    }
+    fieldset.address_area .small_box input,
+    fieldset.address_area .small_box select {
+        width: 100px;
+    }
+    .crm-customer-form span.value {
+        position: relative;
+        display: inline-block;
+    }
+</style>
+<script type="text/javascript">
+    require(["jquery"], function ($j) {
+//        $j = jQuery.noConflict();
+        $j(document).ready(function () {
+            var $layerHtml = '<div class="layer-div" style="position:absolute; left:0; right:0; top:0; bottom:0;"></div>';
+            $j('#customer_info_tabs_account_content').find("input, textarea, select", $j(".crm-customer-form")).prop('disabled', true).parent().append($layerHtml);
+            $j(".layer-div").click(function () {
+                $parent = $j(this).parent();
+                $j("input, textarea, select", $j($parent)).prop('disabled', false);
+                $j(this).hide();
+            });
+            //$j('#customer_info_tabs_account_content').find("select").prop('disabled', false);
+        });
+    });
+</script>
