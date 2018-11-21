@@ -27,6 +27,8 @@ class Notification extends \Magento\Framework\App\Action\Action
 
 	protected $uegHelper;
 
+	protected $coreSession;
+
 	public function __construct(
 		\Magento\Framework\App\Action\Context $context,
 		\Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
@@ -39,6 +41,7 @@ class Notification extends \Magento\Framework\App\Action\Action
 		\Magento\Directory\Model\CountryFactory $countryFactory,
 		\Magento\Catalog\Helper\Image $_image,
 		\Ueg\OrderNotification\Helper\Data $uegHelper,
+		\Magento\Framework\Session\SessionManagerInterface $coreSession,
     	CustomCookie $cookieManagerInterface)
 	{
 		$this->resultJsonFactory = $resultJsonFactory;
@@ -52,6 +55,7 @@ class Notification extends \Magento\Framework\App\Action\Action
 		$this->countryFactory = $countryFactory;
 		$this->_cookieManagerInterface = $cookieManagerInterface;
 		$this->uegHelper = $uegHelper;
+		$this->coreSession = $coreSession;
 		parent::__construct($context);
 	}
 
@@ -60,14 +64,25 @@ class Notification extends \Magento\Framework\App\Action\Action
     {
         $orders = $this->orderCollectionFactory->create()->addAttributeToSelect(
             '*'
-        )->addAttributeToFilter(
-            'status',
-            ['in' => $this->orderConfig->getVisibleOnFrontStatuses()]
-        )->addAttributeToSort(
+        )->addAttributeToFilter('status', array('in' => $this->getOrderFilter())
+    	)->addAttributeToSort(
             'created_at',
             'desc'
         )->getFirstItem();
+         
         return $orders;
+    }
+
+
+    private function getOrderFilter()
+    {
+    	if($this->uegHelper->getOrderStatus() == "completed_order")
+    	{
+    		return array('complete');
+    	}else{
+    		
+    		return array('canceled','complete','pending','processing');
+    	}
     }
 
 
@@ -122,34 +137,42 @@ class Notification extends \Magento\Framework\App\Action\Action
 
 		$allOrderItem = $orderObject->getAllVisibleItems();
 
+		$this->coreSession->start();
 
-		foreach ($allOrderItem as $key => $item) {
-				$productId = $item->getProductId();
-				$productObject = $this->productFactory->create()->load($productId);
-				$images = $this->getProductImageUrl($productObject);
+		$itemNumber = array();
+		
 
-				$price = $this->helperdata->currency(number_format($productObject->getFinalPrice(),2),true,false);
-				$JsonResponce = array();
-				$html = '';
-				$html .= '<div class="recentordernotification">
-							<div class="notice-img">
-								<a class="notice-product-link" href="'.$productObject->getProductUrl().'"><img src="'.$images.'" alt="'.$productObject->getName().'" title="'.$productObject->getName().'"></a>
-							</div>
-							<div class="notice-text"> Someone in '.$finalAddress.'  bought <a class="notice-product-link" href="'.$productObject->getProductUrl().'">'.$productObject->getName().'</a> <br> 
-								<div class="bottom-line price">'.$price.'</div> 
-								<div class="time-ago bottom-line">'.$finalDateTime.' ago</div> <br> '.$shippingAddress->getFirstName()." ".$shippingAddress->getLastName().'
-							</div>
-							</div>';
-				$random = md5(rand(1,1000));
-				$this->_cookieManagerInterface->delete('order_security_token');
-				$this->_cookieManagerInterface->setCookie($random,444);
-				$JsonResponce['msg'] = $html;
-				$JsonResponce['token'] = $this->_cookieManagerInterface->getCookie('order_security_token');
-				$JsonResponce['update'] = $this->getNotifyOrderStatus();
-				$result->setData($JsonResponce);
-				
+		
+		foreach ($allOrderItem as $key => $item){
+				$itemNumber[] = $item;
 		}
 
+		$randomArrayItem = $itemNumber[array_rand($itemNumber)];
+
+
+		$productId = $randomArrayItem->getProductId();
+		$productObject = $this->productFactory->create()->load($productId);
+		$images = $this->getProductImageUrl($productObject);
+
+		$price = $this->helperdata->currency(number_format($productObject->getFinalPrice(),2),true,false);
+		$JsonResponce = array();
+		$html = '';
+		$html .= '<div class="recentordernotification">
+					<div class="notice-img">
+						<a class="notice-product-link" href="'.$productObject->getProductUrl().'"><img src="'.$images.'" alt="'.$productObject->getName().'" title="'.$productObject->getName().'"></a>
+					</div>
+					<div class="notice-text"> Someone in '.$finalAddress.'  bought <a class="notice-product-link" href="'.$productObject->getProductUrl().'">'.$productObject->getName().'</a> <br> 
+						<div class="bottom-line price">'.$price.'</div> 
+						<div class="time-ago bottom-line">'.$finalDateTime.' ago</div> <br> '.$shippingAddress->getFirstName()." ".$shippingAddress->getLastName().'
+					</div>
+					</div>';
+		$random = md5(rand(1,1000));
+		$this->_cookieManagerInterface->delete('order_security_token');
+		$this->_cookieManagerInterface->setCookie($random,444);
+		$JsonResponce['msg'] = $html;
+		$JsonResponce['token'] = $this->_cookieManagerInterface->getCookie('order_security_token');
+		$JsonResponce['update'] = $this->getNotifyOrderStatus();
+		$result->setData($JsonResponce);
 		return $result;
 
 	}
