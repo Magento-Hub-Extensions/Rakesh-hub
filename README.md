@@ -10,9 +10,9 @@ Features:
 
 >> Clone this repo into your Projects directory
 
-    git clone https://github.com/Magento-Hub-Extensions/Rakesh-hub
-    cd Rakesh-hub
-    
+    `git clone https://github.com/Magento-Hub-Extensions/Rakesh-hub`
+     cd Rakesh-hub
+
 >> FEDEX RATE
 
 >> RECENT ORDER NOTIFICATION OF MAGENTO 2.
