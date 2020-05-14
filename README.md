@@ -13,12 +13,17 @@ Features:
     `git clone https://github.com/Magento-Hub-Extensions/Rakesh-hub`
      cd Rakesh-hub
 
->> FEDEX RATE
+>> 
 
->> RECENT ORDER NOTIFICATION OF MAGENTO 2.
+    Fedex rate for magento 1.9
 
->> CRM SYSTEM OF MAGENTO 2.4 .
+>> 
+    
+    Recent order notification of magento 2.*
 
+>> 
+
+    Concept of Crm system of magento 2.4
 
 
 
